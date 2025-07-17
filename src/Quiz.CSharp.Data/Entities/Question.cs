@@ -13,11 +13,13 @@ public abstract class Question : BaseEntity
     public Collection Collection { get; init; } = null!;
     public ICollection<UserAnswer> UserAnswers { get; init; } = [];
     public ICollection<QuestionHint> Hints { get; init; } = [];
+    public ICollection<MCQOption> Options { get; init; } = [];
+    public ICollection<TestCase> TestCases { get; init; } = [];
 }
 
 public sealed class MCQQuestion : Question
 {
-    public ICollection<MCQOption> Options { get; init; } = [];
+    // Options collection is inherited from base Question
 }
 
 public sealed class TrueFalseQuestion : Question
@@ -45,6 +47,6 @@ public sealed class CodeWritingQuestion : Question
 {
     public string? Solution { get; init; }
     public ICollection<string> Examples { get; init; } = [];
-    public ICollection<TestCase> TestCases { get; init; } = [];
     public ICollection<string> Rubric { get; init; } = [];
+    // TestCases collection is inherited from base Question
 } 

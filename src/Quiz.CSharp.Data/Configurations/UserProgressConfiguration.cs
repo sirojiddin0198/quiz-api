@@ -8,6 +8,7 @@ public sealed class UserProgressConfiguration : IEntityTypeConfiguration<UserPro
 {
     public void Configure(EntityTypeBuilder<UserProgress> builder)
     {
+        builder.ToTable("user_progress");
         builder.HasKey(up => new { up.UserId, up.CollectionId });
         builder.Property(up => up.UserId).HasMaxLength(100);
         builder.Property(up => up.CollectionId).IsRequired();

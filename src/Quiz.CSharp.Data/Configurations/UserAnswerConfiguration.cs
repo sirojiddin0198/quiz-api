@@ -8,6 +8,7 @@ public sealed class UserAnswerConfiguration : IEntityTypeConfiguration<UserAnswe
 {
     public void Configure(EntityTypeBuilder<UserAnswer> builder)
     {
+        builder.ToTable("user_answers");
         builder.HasKey(ua => ua.Id);
         builder.Property(ua => ua.Id).ValueGeneratedOnAdd();
         builder.Property(ua => ua.UserId).HasMaxLength(100);

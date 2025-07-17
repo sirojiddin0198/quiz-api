@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Quiz.CSharp.Data.Entities;
 using Quiz.Shared.Common;
 
-public sealed class CSharpRepository(CSharpDbContext context) : ICSharpRepository
+public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpRepository
 {
     public async Task<IReadOnlyList<Collection>> GetCollectionsAsync(CancellationToken cancellationToken = default)
     {

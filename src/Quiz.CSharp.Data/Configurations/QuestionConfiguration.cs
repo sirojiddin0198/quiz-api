@@ -8,6 +8,7 @@ public sealed class QuestionConfiguration : IEntityTypeConfiguration<Question>
 {
     public void Configure(EntityTypeBuilder<Question> builder)
     {
+        builder.ToTable("questions");
         builder.HasKey(q => q.Id);
         builder.Property(q => q.Id).ValueGeneratedOnAdd();
         builder.Property(q => q.CollectionId).IsRequired();
@@ -15,17 +16,18 @@ public sealed class QuestionConfiguration : IEntityTypeConfiguration<Question>
         builder.Property(q => q.Difficulty).HasMaxLength(50);
         builder.Property(q => q.Prompt).HasMaxLength(2000);
         builder.Property(q => q.EstimatedTimeMinutes);
+
         builder.HasOne(q => q.Collection)
-            .WithMany()
+            .WithMany(c => c.Questions)
             .HasForeignKey(q => q.CollectionId)
             .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasDiscriminator<string>("question_type")
-            .HasValue<MCQQuestion>("mcq")
-            .HasValue<TrueFalseQuestion>("true_false")
-            .HasValue<FillQuestion>("fill")
-            .HasValue<ErrorSpottingQuestion>("error_spotting")
-            .HasValue<OutputPredictionQuestion>("output_prediction")
-            .HasValue<CodeWritingQuestion>("code_writing");
-        // Type-specific configuration can be added here if needed
+            .HasValue<MCQQuestion>("MCQ")
+            .HasValue<TrueFalseQuestion>("TrueFalse")
+            .HasValue<FillQuestion>("Fill")
+            .HasValue<ErrorSpottingQuestion>("ErrorSpotting")
+            .HasValue<OutputPredictionQuestion>("OutputPrediction")
+            .HasValue<CodeWritingQuestion>("CodeWriting");
     }
 } 

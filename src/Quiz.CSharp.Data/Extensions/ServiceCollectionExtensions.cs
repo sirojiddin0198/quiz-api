@@ -11,11 +11,13 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<CSharpDbContext>(options =>
+        services.AddDbContext<ICSharpDbContext, CSharpDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
                    .UseSnakeCaseNamingConvention());
 
         services.AddScoped<ICSharpRepository, CSharpRepository>();
+        services.AddHostedService<DatabaseMigrationService>();
+        services.AddHostedService<DataSeedingService>();
 
         return services;
     }

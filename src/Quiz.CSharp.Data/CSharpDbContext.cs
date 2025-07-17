@@ -4,25 +4,32 @@ using Microsoft.EntityFrameworkCore;
 using Quiz.CSharp.Data.Entities;
 using System.Reflection;
 
-public sealed class CSharpDbContext(DbContextOptions<CSharpDbContext> options) : DbContext(options)
+public interface ICSharpDbContext
 {
-    public DbSet<Collection> Collections => Set<Collection>();
-    public DbSet<Question> Questions => Set<Question>();
-    public DbSet<MCQQuestion> MCQQuestions => Set<MCQQuestion>();
-    public DbSet<TrueFalseQuestion> TrueFalseQuestions => Set<TrueFalseQuestion>();
-    public DbSet<FillQuestion> FillQuestions => Set<FillQuestion>();
-    public DbSet<ErrorSpottingQuestion> ErrorSpottingQuestions => Set<ErrorSpottingQuestion>();
-    public DbSet<OutputPredictionQuestion> OutputPredictionQuestions => Set<OutputPredictionQuestion>();
-    public DbSet<CodeWritingQuestion> CodeWritingQuestions => Set<CodeWritingQuestion>();
-    public DbSet<UserAnswer> UserAnswers => Set<UserAnswer>();
-    public DbSet<UserProgress> UserProgress => Set<UserProgress>();
-    public DbSet<MCQOption> MCQOptions => Set<MCQOption>();
-    public DbSet<QuestionHint> QuestionHints => Set<QuestionHint>();
-    public DbSet<TestCase> TestCases => Set<TestCase>();
+    DbSet<Collection> Collections { get; set; }
+    DbSet<Question> Questions { get; set; }
+    DbSet<UserAnswer> UserAnswers { get; set; }
+    DbSet<UserProgress> UserProgress { get; set; }
+    DbSet<MCQOption> MCQOptions { get; set; }
+    DbSet<QuestionHint> QuestionHints { get; set; }
+    DbSet<TestCase> TestCases { get; set; }
+
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+}
+
+public sealed class CSharpDbContext(DbContextOptions<CSharpDbContext> options) : DbContext(options), ICSharpDbContext
+{
+    public DbSet<Collection> Collections { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<UserAnswer> UserAnswers { get; set; }
+    public DbSet<UserProgress> UserProgress { get; set; }
+    public DbSet<MCQOption> MCQOptions { get; set; }
+    public DbSet<QuestionHint> QuestionHints { get; set; }
+    public DbSet<TestCase> TestCases { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("csharp");
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        base.OnModelCreating(modelBuilder);
     }
 } 
