@@ -8,6 +8,5 @@ public sealed class TestCase : BaseEntity
     public required int QuestionId { get; init; }
     public required string Input { get; init; }
     public required string ExpectedOutput { get; init; }
-    
-    public Question Question { get; init; } = null!;
+    public CodeWritingQuestion Question { get; init; } = null!;
 } 

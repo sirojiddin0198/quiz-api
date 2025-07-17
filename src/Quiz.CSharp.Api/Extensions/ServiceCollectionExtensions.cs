@@ -11,12 +11,12 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCSharpApi(this IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(CategoryProfile).Assembly);
+        services.AddAutoMapper(typeof(CollectionProfile).Assembly);
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(typeof(SubmitAnswerRequestValidator).Assembly);
 
-        services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<ICollectionService, CollectionService>();
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAnswerService, AnswerService>();
         services.AddScoped<IAnswerValidator, AnswerValidator>();

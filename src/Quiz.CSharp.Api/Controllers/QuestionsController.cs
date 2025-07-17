@@ -15,12 +15,12 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
     [Authorize]
     [ProducesResponseType<PaginatedApiResponse<QuestionResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetQuestions(
-        [FromQuery] string categoryId,
+        [FromQuery] int collectionId,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
-        var questions = await questionService.GetQuestionsByCategoryAsync(categoryId, page, pageSize, cancellationToken);
+        var questions = await questionService.GetQuestionsByCollectionAsync(collectionId, page, pageSize, cancellationToken);
         return Ok(new PaginatedApiResponse<QuestionResponse>(
             questions.Items.ToList(),
             questions.TotalCount,
@@ -31,10 +31,10 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
     [HttpGet("preview")]
     [ProducesResponseType<ApiResponse<List<QuestionResponse>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPreviewQuestions(
-        [FromQuery] string categoryId,
+        [FromQuery] int collectionId,
         CancellationToken cancellationToken)
     {
-        var questions = await questionService.GetPreviewQuestionsAsync(categoryId, cancellationToken);
+        var questions = await questionService.GetPreviewQuestionsAsync(collectionId, cancellationToken);
         return Ok(new ApiResponse<List<QuestionResponse>>(questions));
     }
 

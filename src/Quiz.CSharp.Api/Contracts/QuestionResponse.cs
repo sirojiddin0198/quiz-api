@@ -14,7 +14,8 @@ public sealed record QuestionResponse
 
 public sealed record QuestionMetadata
 {
-    public required string Category { get; init; }
+    public required int CollectionId { get; init; }
+    public required string CollectionCode { get; init; }
     public required string Subcategory { get; init; }
     public required string Difficulty { get; init; }
     public int EstimatedTime { get; init; }

@@ -8,21 +8,20 @@ public sealed class AnswerValidator : IAnswerValidator
 {
     public Task<bool> ValidateAnswerAsync(Question question, string userAnswer, CancellationToken cancellationToken = default)
     {
-        var result = question.Type switch
+        var result = question switch
         {
-            QuestionType.MCQ => ValidateMCQAnswer(question, userAnswer),
-            QuestionType.TrueFalse => ValidateTrueFalseAnswer(question, userAnswer),
-            QuestionType.Fill => ValidateFillAnswer(question, userAnswer),
-            QuestionType.ErrorSpotting => ValidateErrorSpottingAnswer(question, userAnswer),
-            QuestionType.OutputPrediction => ValidateOutputPredictionAnswer(question, userAnswer),
-            QuestionType.CodeWriting => ValidateCodeWritingAnswer(question, userAnswer),
+            MCQQuestion mcq => ValidateMCQAnswer(mcq, userAnswer),
+            TrueFalseQuestion tf => ValidateTrueFalseAnswer(tf, userAnswer),
+            FillQuestion fill => ValidateFillAnswer(fill, userAnswer),
+            ErrorSpottingQuestion err => ValidateErrorSpottingAnswer(err, userAnswer),
+            OutputPredictionQuestion op => ValidateOutputPredictionAnswer(op, userAnswer),
+            CodeWritingQuestion code => ValidateCodeWritingAnswer(code, userAnswer),
             _ => false
         };
-        
         return Task.FromResult(result);
     }
 
-    private static bool ValidateMCQAnswer(Question question, string userAnswer)
+    private static bool ValidateMCQAnswer(MCQQuestion question, string userAnswer)
     {
         try
         {
@@ -41,39 +40,33 @@ public sealed class AnswerValidator : IAnswerValidator
         }
     }
 
-    private static bool ValidateTrueFalseAnswer(Question question, string userAnswer)
+    private static bool ValidateTrueFalseAnswer(TrueFalseQuestion question, string userAnswer)
     {
-        var correctAnswer = question.Options.FirstOrDefault(o => o.IsCorrect);
-        return correctAnswer is not null && 
-               string.Equals(userAnswer, correctAnswer.Id, StringComparison.OrdinalIgnoreCase);
+        if (bool.TryParse(userAnswer, out var parsed))
+        {
+            return parsed == question.CorrectAnswer;
+        }
+        return false;
     }
 
-    private static bool ValidateFillAnswer(Question question, string userAnswer)
-    {
-        var normalizeCode = (string code) => code.Replace("```csharp", "").Replace("```", "").Trim();
-        
-        var correctAnswer = question.Options.FirstOrDefault(o => o.IsCorrect);
-        return correctAnswer is not null && 
-               normalizeCode(correctAnswer.Option) == normalizeCode(userAnswer);
-    }
-
-    private static bool ValidateErrorSpottingAnswer(Question question, string userAnswer)
+    private static bool ValidateFillAnswer(FillQuestion question, string userAnswer)
     {
         var normalizeCode = (string code) => code.Replace("```csharp", "").Replace("```", "").Trim();
-        
-        var correctAnswer = question.Options.FirstOrDefault(o => o.IsCorrect);
-        return correctAnswer is not null && 
-               normalizeCode(correctAnswer.Option) == normalizeCode(userAnswer);
+        return normalizeCode(question.CorrectAnswer) == normalizeCode(userAnswer);
     }
 
-    private static bool ValidateOutputPredictionAnswer(Question question, string userAnswer)
+    private static bool ValidateErrorSpottingAnswer(ErrorSpottingQuestion question, string userAnswer)
     {
-        var correctAnswer = question.Options.FirstOrDefault(o => o.IsCorrect);
-        return correctAnswer is not null && 
-               string.Equals(correctAnswer.Option.Trim(), userAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
+        var normalizeCode = (string code) => code.Replace("```csharp", "").Replace("```", "").Trim();
+        return normalizeCode(question.CorrectAnswer) == normalizeCode(userAnswer);
     }
 
-    private static bool ValidateCodeWritingAnswer(Question question, string userAnswer)
+    private static bool ValidateOutputPredictionAnswer(OutputPredictionQuestion question, string userAnswer)
+    {
+        return string.Equals(question.ExpectedOutput.Trim(), userAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool ValidateCodeWritingAnswer(CodeWritingQuestion question, string userAnswer)
     {
         return !string.IsNullOrWhiteSpace(userAnswer);
     }

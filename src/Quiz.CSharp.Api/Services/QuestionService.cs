@@ -2,6 +2,7 @@ namespace Quiz.CSharp.Api.Services;
 
 using AutoMapper;
 using Quiz.CSharp.Api.Contracts;
+using Quiz.CSharp.Data.Entities;
 using Quiz.CSharp.Data.Services;
 using Quiz.Shared.Authentication;
 using Quiz.Shared.Common;
@@ -11,13 +12,13 @@ public sealed class QuestionService(
     IMapper mapper,
     ICurrentUser currentUser) : IQuestionService
 {
-    public async Task<PaginatedResult<QuestionResponse>> GetQuestionsByCategoryAsync(
-        string categoryId,
+    public async Task<PaginatedResult<QuestionResponse>> GetQuestionsByCollectionAsync(
+        int collectionId,
         int page,
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        var questions = await repository.GetQuestionsByCategoryAsync(categoryId, page, pageSize, cancellationToken);
+        var questions = await repository.GetQuestionsByCollectionAsync(collectionId, page, pageSize, cancellationToken);
         var responses = new List<QuestionResponse>();
 
         foreach (var question in questions.Items)
@@ -51,9 +52,9 @@ public sealed class QuestionService(
         return new PaginatedResult<QuestionResponse>(responses, questions.TotalCount, questions.Page, questions.PageSize);
     }
 
-    public async Task<List<QuestionResponse>> GetPreviewQuestionsAsync(string categoryId, CancellationToken cancellationToken = default)
+    public async Task<List<QuestionResponse>> GetPreviewQuestionsAsync(int collectionId, CancellationToken cancellationToken = default)
     {
-        var questions = await repository.GetPreviewQuestionsAsync(categoryId, cancellationToken);
+        var questions = await repository.GetPreviewQuestionsAsync(collectionId, cancellationToken);
         return mapper.Map<List<QuestionResponse>>(questions);
     }
 

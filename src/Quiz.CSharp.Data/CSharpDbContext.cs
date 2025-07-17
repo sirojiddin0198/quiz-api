@@ -6,8 +6,14 @@ using System.Reflection;
 
 public sealed class CSharpDbContext(DbContextOptions<CSharpDbContext> options) : DbContext(options)
 {
-    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Collection> Collections => Set<Collection>();
     public DbSet<Question> Questions => Set<Question>();
+    public DbSet<MCQQuestion> MCQQuestions => Set<MCQQuestion>();
+    public DbSet<TrueFalseQuestion> TrueFalseQuestions => Set<TrueFalseQuestion>();
+    public DbSet<FillQuestion> FillQuestions => Set<FillQuestion>();
+    public DbSet<ErrorSpottingQuestion> ErrorSpottingQuestions => Set<ErrorSpottingQuestion>();
+    public DbSet<OutputPredictionQuestion> OutputPredictionQuestions => Set<OutputPredictionQuestion>();
+    public DbSet<CodeWritingQuestion> CodeWritingQuestions => Set<CodeWritingQuestion>();
     public DbSet<UserAnswer> UserAnswers => Set<UserAnswer>();
     public DbSet<UserProgress> UserProgress => Set<UserProgress>();
     public DbSet<MCQOption> MCQOptions => Set<MCQOption>();

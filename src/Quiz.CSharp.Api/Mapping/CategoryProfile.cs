@@ -4,11 +4,10 @@ using AutoMapper;
 using Quiz.CSharp.Api.Contracts;
 using Quiz.CSharp.Data.Entities;
 
-public sealed class CategoryProfile : Profile
+public sealed class CollectionProfile : Profile
 {
-    public CategoryProfile()
+    public CollectionProfile()
     {
-        CreateMap<Category, CategoryResponse>()
-            .ForMember(dest => dest.TotalQuestions, opt => opt.MapFrom(src => src.Questions.Count(q => q.IsActive)));
+        CreateMap<Collection, CollectionResponse>();
     }
 } 

@@ -10,33 +10,22 @@ public sealed class QuestionConfiguration : IEntityTypeConfiguration<Question>
     {
         builder.HasKey(q => q.Id);
         builder.Property(q => q.Id).ValueGeneratedOnAdd();
-        builder.Property(q => q.Type).HasConversion<string>();
-        builder.Property(q => q.CategoryId).HasMaxLength(100);
+        builder.Property(q => q.CollectionId).IsRequired();
         builder.Property(q => q.Subcategory).HasMaxLength(200);
         builder.Property(q => q.Difficulty).HasMaxLength(50);
         builder.Property(q => q.Prompt).HasMaxLength(2000);
-        
-        builder.HasMany(q => q.Options)
-            .WithOne(o => o.Question)
-            .HasForeignKey(o => o.QuestionId)
+        builder.Property(q => q.EstimatedTimeMinutes);
+        builder.HasOne(q => q.Collection)
+            .WithMany()
+            .HasForeignKey(q => q.CollectionId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasMany(q => q.UserAnswers)
-            .WithOne(ua => ua.Question)
-            .HasForeignKey(ua => ua.QuestionId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasMany(q => q.Hints)
-            .WithOne(h => h.Question)
-            .HasForeignKey(h => h.QuestionId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasMany(q => q.TestCases)
-            .WithOne(tc => tc.Question)
-            .HasForeignKey(tc => tc.QuestionId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasIndex(q => q.CategoryId);
-        builder.HasIndex(q => q.IsActive);
+        builder.HasDiscriminator<string>("question_type")
+            .HasValue<MCQQuestion>("mcq")
+            .HasValue<TrueFalseQuestion>("true_false")
+            .HasValue<FillQuestion>("fill")
+            .HasValue<ErrorSpottingQuestion>("error_spotting")
+            .HasValue<OutputPredictionQuestion>("output_prediction")
+            .HasValue<CodeWritingQuestion>("code_writing");
+        // Type-specific configuration can be added here if needed
     }
 } 

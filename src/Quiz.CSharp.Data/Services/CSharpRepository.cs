@@ -9,31 +9,35 @@ public sealed class CSharpRepository(
     CSharpDbContext context,
     ILogger<CSharpRepository> logger) : ICSharpRepository
 {
-    public async Task<IReadOnlyList<Category>> GetCategoriesAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Collection>> GetCollectionsAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Categories
+        return await context.Collections
             .Where(c => c.IsActive)
             .OrderBy(c => c.SortOrder)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Category?> GetCategoryByIdAsync(string categoryId, CancellationToken cancellationToken = default)
+    public async Task<Collection?> GetCollectionByIdAsync(int collectionId, CancellationToken cancellationToken = default)
     {
-        return await context.Categories
-            .FirstOrDefaultAsync(c => c.Id == categoryId && c.IsActive, cancellationToken);
+        return await context.Collections
+            .FirstOrDefaultAsync(c => c.Id == collectionId && c.IsActive, cancellationToken);
     }
 
-    public async Task<PaginatedResult<Question>> GetQuestionsByCategoryAsync(
-        string categoryId,
+    public async Task<Collection?> GetCollectionByCodeAsync(string code, CancellationToken cancellationToken = default)
+    {
+        return await context.Collections
+            .FirstOrDefaultAsync(c => c.Code == code && c.IsActive, cancellationToken);
+    }
+
+    public async Task<PaginatedResult<Question>> GetQuestionsByCollectionAsync(
+        int collectionId,
         int page,
         int pageSize,
         CancellationToken cancellationToken = default)
     {
         var query = context.Questions
-            .Where(q => q.CategoryId == categoryId && q.IsActive)
-            .Include(q => q.Options)
-            .Include(q => q.Hints)
-            .Include(q => q.TestCases);
+            .Where(q => q.CollectionId == collectionId && q.IsActive)
+            .Include(q => q.Hints);
 
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
@@ -44,11 +48,10 @@ public sealed class CSharpRepository(
         return new PaginatedResult<Question>(items, totalCount, page, pageSize);
     }
 
-    public async Task<IReadOnlyList<Question>> GetPreviewQuestionsAsync(string categoryId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Question>> GetPreviewQuestionsAsync(int collectionId, CancellationToken cancellationToken = default)
     {
         return await context.Questions
-            .Where(q => q.CategoryId == categoryId && q.IsActive)
-            .Include(q => q.Options)
+            .Where(q => q.CollectionId == collectionId && q.IsActive)
             .OrderBy(q => Guid.NewGuid())
             .Take(2)
             .ToListAsync(cancellationToken);
@@ -57,9 +60,7 @@ public sealed class CSharpRepository(
     public async Task<Question?> GetQuestionByIdAsync(int questionId, CancellationToken cancellationToken = default)
     {
         return await context.Questions
-            .Include(q => q.Options)
             .Include(q => q.Hints)
-            .Include(q => q.TestCases)
             .FirstOrDefaultAsync(q => q.Id == questionId && q.IsActive, cancellationToken);
     }
 
@@ -77,10 +78,10 @@ public sealed class CSharpRepository(
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<UserProgress?> GetUserProgressAsync(string userId, string categoryId, CancellationToken cancellationToken = default)
+    public async Task<UserProgress?> GetUserProgressAsync(string userId, int collectionId, CancellationToken cancellationToken = default)
     {
         return await context.UserProgress
-            .FirstOrDefaultAsync(up => up.UserId == userId && up.CategoryId == categoryId, cancellationToken);
+            .FirstOrDefaultAsync(up => up.UserId == userId && up.CollectionId == collectionId, cancellationToken);
     }
 
     public async Task UpdateUserProgressAsync(UserProgress progress, CancellationToken cancellationToken = default)

@@ -4,19 +4,25 @@ using AutoMapper;
 using Quiz.CSharp.Api.Contracts;
 using Quiz.CSharp.Data.Services;
 
-public sealed class CategoryService(
+public sealed class CollectionService(
     ICSharpRepository repository,
-    IMapper mapper) : ICategoryService
+    IMapper mapper) : ICollectionService
 {
-    public async Task<List<CategoryResponse>> GetCategoriesAsync(CancellationToken cancellationToken = default)
+    public async Task<List<CollectionResponse>> GetCollectionsAsync(CancellationToken cancellationToken = default)
     {
-        var categories = await repository.GetCategoriesAsync(cancellationToken);
-        return mapper.Map<List<CategoryResponse>>(categories);
+        var collections = await repository.GetCollectionsAsync(cancellationToken);
+        return mapper.Map<List<CollectionResponse>>(collections);
     }
 
-    public async Task<CategoryResponse?> GetCategoryByIdAsync(string categoryId, CancellationToken cancellationToken = default)
+    public async Task<CollectionResponse?> GetCollectionByIdAsync(int collectionId, CancellationToken cancellationToken = default)
     {
-        var category = await repository.GetCategoryByIdAsync(categoryId, cancellationToken);
-        return category is not null ? mapper.Map<CategoryResponse>(category) : null;
+        var collection = await repository.GetCollectionByIdAsync(collectionId, cancellationToken);
+        return collection is not null ? mapper.Map<CollectionResponse>(collection) : null;
+    }
+
+    public async Task<CollectionResponse?> GetCollectionByCodeAsync(string code, CancellationToken cancellationToken = default)
+    {
+        var collection = await repository.GetCollectionByCodeAsync(code, cancellationToken);
+        return collection is not null ? mapper.Map<CollectionResponse>(collection) : null;
     }
 } 

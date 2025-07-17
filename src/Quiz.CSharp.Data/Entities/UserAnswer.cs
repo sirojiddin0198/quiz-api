@@ -12,6 +12,5 @@ public sealed class UserAnswer : BaseEntity
     public required int TimeSpentSeconds { get; init; }
     public DateTime SubmittedAt { get; init; } = DateTime.UtcNow;
     public int AttemptNumber { get; init; }
-    
     public Question Question { get; init; } = null!;
 } 

@@ -5,11 +5,11 @@ using Quiz.Shared.Common;
 
 public interface IQuestionService
 {
-    Task<PaginatedResult<QuestionResponse>> GetQuestionsByCategoryAsync(
-        string categoryId,
+    Task<PaginatedResult<QuestionResponse>> GetQuestionsByCollectionAsync(
+        int collectionId,
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);
-    Task<List<QuestionResponse>> GetPreviewQuestionsAsync(string categoryId, CancellationToken cancellationToken = default);
+    Task<List<QuestionResponse>> GetPreviewQuestionsAsync(int collectionId, CancellationToken cancellationToken = default);
     Task<QuestionResponse?> GetQuestionByIdAsync(int questionId, CancellationToken cancellationToken = default);
 } 
