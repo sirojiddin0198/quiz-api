@@ -1,0 +1,101 @@
+namespace Quiz.CSharp.Data.Services;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Quiz.CSharp.Data.Entities;
+using Quiz.Shared.Common;
+
+public sealed class CSharpRepository(
+    CSharpDbContext context,
+    ILogger<CSharpRepository> logger) : ICSharpRepository
+{
+    public async Task<IReadOnlyList<Category>> GetCategoriesAsync(CancellationToken cancellationToken = default)
+    {
+        return await context.Categories
+            .Where(c => c.IsActive)
+            .OrderBy(c => c.SortOrder)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Category?> GetCategoryByIdAsync(string categoryId, CancellationToken cancellationToken = default)
+    {
+        return await context.Categories
+            .FirstOrDefaultAsync(c => c.Id == categoryId && c.IsActive, cancellationToken);
+    }
+
+    public async Task<PaginatedResult<Question>> GetQuestionsByCategoryAsync(
+        string categoryId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var query = context.Questions
+            .Where(q => q.CategoryId == categoryId && q.IsActive)
+            .Include(q => q.Options)
+            .Include(q => q.Hints)
+            .Include(q => q.TestCases);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<Question>(items, totalCount, page, pageSize);
+    }
+
+    public async Task<IReadOnlyList<Question>> GetPreviewQuestionsAsync(string categoryId, CancellationToken cancellationToken = default)
+    {
+        return await context.Questions
+            .Where(q => q.CategoryId == categoryId && q.IsActive)
+            .Include(q => q.Options)
+            .OrderBy(q => Guid.NewGuid())
+            .Take(2)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Question?> GetQuestionByIdAsync(int questionId, CancellationToken cancellationToken = default)
+    {
+        return await context.Questions
+            .Include(q => q.Options)
+            .Include(q => q.Hints)
+            .Include(q => q.TestCases)
+            .FirstOrDefaultAsync(q => q.Id == questionId && q.IsActive, cancellationToken);
+    }
+
+    public async Task<UserAnswer?> GetLatestAnswerAsync(string userId, int questionId, CancellationToken cancellationToken = default)
+    {
+        return await context.UserAnswers
+            .Where(ua => ua.UserId == userId && ua.QuestionId == questionId)
+            .OrderByDescending(ua => ua.SubmittedAt)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task SaveAnswerAsync(UserAnswer answer, CancellationToken cancellationToken = default)
+    {
+        context.UserAnswers.Add(answer);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<UserProgress?> GetUserProgressAsync(string userId, string categoryId, CancellationToken cancellationToken = default)
+    {
+        return await context.UserProgress
+            .FirstOrDefaultAsync(up => up.UserId == userId && up.CategoryId == categoryId, cancellationToken);
+    }
+
+    public async Task UpdateUserProgressAsync(UserProgress progress, CancellationToken cancellationToken = default)
+    {
+        context.UserProgress.Update(progress);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<int> GetNextAttemptNumberAsync(string userId, int questionId, CancellationToken cancellationToken = default)
+    {
+        var lastAttempt = await context.UserAnswers
+            .Where(ua => ua.UserId == userId && ua.QuestionId == questionId)
+            .OrderByDescending(ua => ua.AttemptNumber)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return (lastAttempt?.AttemptNumber ?? 0) + 1;
+    }
+} 

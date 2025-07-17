@@ -1,0 +1,17 @@
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/bin/Debug/net8.0/Quiz.CSharp.Data.deps.json
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/bin/Debug/net8.0/Quiz.CSharp.Data.runtimeconfig.json
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/bin/Debug/net8.0/Quiz.CSharp.Data.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/bin/Debug/net8.0/Quiz.CSharp.Data.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/bin/Debug/net8.0/Quiz.Shared.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/bin/Debug/net8.0/Quiz.Shared.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/Quiz.CSharp.Data.csproj.AssemblyReference.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/Quiz.CSharp.Data.GeneratedMSBuildEditorConfig.editorconfig
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/Quiz.CSharp.Data.AssemblyInfoInputs.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/Quiz.CSharp.Data.AssemblyInfo.cs
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/Quiz.CSharp.Data.csproj.CoreCompileInputs.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/Quiz.CSh.D8F8CE7E.Up2Date
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/Quiz.CSharp.Data.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/refint/Quiz.CSharp.Data.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/Quiz.CSharp.Data.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/Quiz.CSharp.Data.genruntimeconfig.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Data/obj/Debug/net8.0/ref/Quiz.CSharp.Data.dll

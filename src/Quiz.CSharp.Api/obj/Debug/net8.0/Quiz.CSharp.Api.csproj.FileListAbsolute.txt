@@ -1,0 +1,17 @@
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/Quiz.CSharp.Api.csproj.AssemblyReference.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/Quiz.CSharp.Api.GeneratedMSBuildEditorConfig.editorconfig
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/Quiz.CSharp.Api.AssemblyInfoInputs.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/Quiz.CSharp.Api.AssemblyInfo.cs
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/Quiz.CSharp.Api.csproj.CoreCompileInputs.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/bin/Debug/net8.0/Quiz.CSharp.Api.deps.json
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/bin/Debug/net8.0/Quiz.CSharp.Api.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/bin/Debug/net8.0/Quiz.CSharp.Api.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/bin/Debug/net8.0/Quiz.CSharp.Data.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/bin/Debug/net8.0/Quiz.Shared.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/bin/Debug/net8.0/Quiz.Shared.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/bin/Debug/net8.0/Quiz.CSharp.Data.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/Quiz.CSh.8585286D.Up2Date
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/Quiz.CSharp.Api.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/refint/Quiz.CSharp.Api.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/Quiz.CSharp.Api.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.CSharp.Api/obj/Debug/net8.0/ref/Quiz.CSharp.Api.dll

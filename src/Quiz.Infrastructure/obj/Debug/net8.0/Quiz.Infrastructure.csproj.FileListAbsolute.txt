@@ -1,0 +1,15 @@
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/Quiz.Infrastructure.csproj.AssemblyReference.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/Quiz.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/Quiz.Infrastructure.AssemblyInfoInputs.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/Quiz.Infrastructure.AssemblyInfo.cs
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/Quiz.Infrastructure.csproj.CoreCompileInputs.cache
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/bin/Debug/net8.0/Quiz.Infrastructure.deps.json
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/bin/Debug/net8.0/Quiz.Infrastructure.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/bin/Debug/net8.0/Quiz.Infrastructure.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/bin/Debug/net8.0/Quiz.Shared.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/bin/Debug/net8.0/Quiz.Shared.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/Quiz.Inf.0673D5CB.Up2Date
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/Quiz.Infrastructure.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/refint/Quiz.Infrastructure.dll
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/Quiz.Infrastructure.pdb
+/Users/wahid/Development/Personal/Ilmhub/quiz-api/src/Quiz.Infrastructure/obj/Debug/net8.0/ref/Quiz.Infrastructure.dll

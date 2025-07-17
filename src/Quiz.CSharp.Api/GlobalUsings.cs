@@ -1,0 +1,13 @@
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using AutoMapper;
+global using FluentValidation;
+global using Quiz.CSharp.Api.Contracts;
+global using Quiz.CSharp.Api.Contracts.Requests;
+global using Quiz.CSharp.Api.Services;
+global using Quiz.CSharp.Data.Services;
+global using Quiz.Shared.Authentication;
+global using Quiz.Shared.Common;
+global using Quiz.Shared.Contracts;
+global using System.Text.Json; 
