@@ -13,23 +13,6 @@ using Quiz.Infrastructure.Authentication;
 [RequireSubscription("csharp-quiz")]
 public sealed class ResultsController(IResultsService resultsService) : ControllerBase
 {
-    [HttpGet("collections/{collectionId}")]
-    [Authorize]
-    [ProducesResponseType<ApiResponse<CollectionResultsResponse>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ApiResponse<CollectionResultsResponse>>(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetCollectionResults(
-        int collectionId,
-        CancellationToken cancellationToken)
-    {
-        var result = await resultsService.GetCollectionResultsAsync(collectionId, cancellationToken);
-        
-        return result.IsSuccess
-            ? Ok(new ApiResponse<CollectionResultsResponse>(result.Value))
-            : BadRequest(new ApiResponse<CollectionResultsResponse>(
-                Success: false,
-                Message: result.ErrorMessage));
-    }
-
     [HttpGet("collections/{collectionId}/review")]
     [Authorize]
     [ProducesResponseType<ApiResponse<List<QuestionReviewResponse>>>(StatusCodes.Status200OK)]

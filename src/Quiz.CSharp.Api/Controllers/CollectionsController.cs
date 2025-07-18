@@ -17,26 +17,4 @@ public sealed class CollectionsController(ICollectionService collectionService) 
         var collections = await collectionService.GetCollectionsAsync(cancellationToken);
         return Ok(new ApiResponse<List<CollectionResponse>>(collections));
     }
-
-    [HttpGet("{collectionId:int}")]
-    [ProducesResponseType(typeof(ApiResponse<CollectionResponse>), 200)]
-    [ProducesResponseType(typeof(ApiResponse<CollectionResponse>), 404)]
-    public async Task<IActionResult> GetCollection(int collectionId, CancellationToken cancellationToken)
-    {
-        var collection = await collectionService.GetCollectionByIdAsync(collectionId, cancellationToken);
-        return collection is not null
-            ? Ok(new ApiResponse<CollectionResponse>(collection))
-            : NotFound(new ApiResponse<CollectionResponse>(Success: false, Message: "Collection not found"));
-    }
-
-    [HttpGet("code/{code}")]
-    [ProducesResponseType(typeof(ApiResponse<CollectionResponse>), 200)]
-    [ProducesResponseType(typeof(ApiResponse<CollectionResponse>), 404)]
-    public async Task<IActionResult> GetCollectionByCode(string code, CancellationToken cancellationToken)
-    {
-        var collection = await collectionService.GetCollectionByCodeAsync(code, cancellationToken);
-        return collection is not null
-            ? Ok(new ApiResponse<CollectionResponse>(collection))
-            : NotFound(new ApiResponse<CollectionResponse>(Success: false, Message: "Collection not found"));
-    }
 } 

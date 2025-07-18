@@ -54,17 +54,14 @@ The following endpoints require authentication:
 
 ### Collections
 - `GET /api/csharp/collections` - List collections
-- `GET /api/csharp/collections/{id}` - Get collection by ID
-- `GET /api/csharp/collections/code/{code}` - Get collection by code
 
 ### Questions
 - `GET /api/csharp/questions` - Get questions by collection
-- `GET /api/csharp/questions/{id}` - Get specific question
 - `GET /api/csharp/questions/preview` - Get preview questions
 
 ### Answers
 - `POST /api/csharp/answers` - Submit answer
-- `GET /api/csharp/answers/{questionId}` - Get user's answer history
+- `GET /api/csharp/answers/{questionId}/latest` - Get latest answer for question
 
 ### Progress
 - `GET /api/csharp/progress/{collectionId}` - Get user progress

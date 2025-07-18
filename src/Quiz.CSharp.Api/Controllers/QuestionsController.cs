@@ -40,16 +40,4 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
         var questions = await questionService.GetPreviewQuestionsAsync(collectionId, cancellationToken);
         return Ok(new ApiResponse<List<QuestionResponse>>(questions));
     }
-
-    [HttpGet("{questionId:int}")]
-    [Authorize]
-    [ProducesResponseType<ApiResponse<QuestionResponse>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ApiResponse<QuestionResponse>>(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetQuestion(int questionId, CancellationToken cancellationToken)
-    {
-        var question = await questionService.GetQuestionByIdAsync(questionId, cancellationToken);
-        return question is not null
-            ? Ok(new ApiResponse<QuestionResponse>(question))
-            : NotFound(new ApiResponse<QuestionResponse>(Success: false, Message: "Question not found"));
-    }
 } 

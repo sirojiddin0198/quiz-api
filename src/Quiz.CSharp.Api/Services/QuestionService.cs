@@ -57,10 +57,4 @@ public sealed class QuestionService(
         var questions = await repository.GetPreviewQuestionsAsync(collectionId, cancellationToken);
         return mapper.Map<List<QuestionResponse>>(questions);
     }
-
-    public async Task<QuestionResponse?> GetQuestionByIdAsync(int questionId, CancellationToken cancellationToken = default)
-    {
-        var question = await repository.GetQuestionByIdAsync(questionId, cancellationToken);
-        return question is not null ? mapper.Map<QuestionResponse>(question) : null;
-    }
 } 

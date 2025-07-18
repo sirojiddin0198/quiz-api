@@ -5,31 +5,7 @@ These endpoints allow users to review their answers and get detailed results aft
 
 ## Endpoints
 
-### 1. Get Collection Results Summary
-**GET** `/api/csharp/results/collections/{collectionId}`
-
-Returns a summary of the user's performance for a specific collection.
-
-**Authentication:** Required
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "collectionId": 1,
-    "collectionName": "Tip Tizimi OOP",
-    "totalQuestions": 16,
-    "answeredQuestions": 15,
-    "correctAnswers": 12,
-    "scorePercentage": 80.0,
-    "totalTimeSpent": "00:45:30",
-    "completedAt": "2024-01-15T10:30:00Z"
-  }
-}
-```
-
-### 2. Get Detailed Answer Review
+### 1. Get Detailed Answer Review
 **GET** `/api/csharp/results/collections/{collectionId}/review?includeUnanswered=false`
 
 Returns detailed review of all answered questions with correct answers and explanations.
@@ -86,7 +62,7 @@ Returns detailed review of all answered questions with correct answers and expla
 }
 ```
 
-### 3. Complete Session (for Preview/Anonymous Users)
+### 2. Complete Session (for Preview/Anonymous Users)
 **POST** `/api/csharp/results/sessions/{sessionId}/complete`
 
 Allows anonymous users to submit all answers at once and get immediate results.

@@ -28,17 +28,7 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Collection?> GetCollectionByIdAsync(int collectionId, CancellationToken cancellationToken = default)
-    {
-        return await context.Collections
-            .FirstOrDefaultAsync(c => c.Id == collectionId && c.IsActive, cancellationToken);
-    }
 
-    public async Task<Collection?> GetCollectionByCodeAsync(string code, CancellationToken cancellationToken = default)
-    {
-        return await context.Collections
-            .FirstOrDefaultAsync(c => c.Code == code && c.IsActive, cancellationToken);
-    }
 
     public async Task<PaginatedResult<Question>> GetQuestionsByCollectionAsync(
         int collectionId,

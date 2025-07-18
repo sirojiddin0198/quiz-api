@@ -7,8 +7,6 @@ public interface ICSharpRepository
 {
     Task<IReadOnlyList<Collection>> GetCollectionsAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<CollectionWithQuestionCount>> GetCollectionsWithQuestionCountAsync(CancellationToken cancellationToken = default);
-    Task<Collection?> GetCollectionByIdAsync(int collectionId, CancellationToken cancellationToken = default);
-    Task<Collection?> GetCollectionByCodeAsync(string code, CancellationToken cancellationToken = default);
     Task<PaginatedResult<Question>> GetQuestionsByCollectionAsync(
         int collectionId,
         int page,

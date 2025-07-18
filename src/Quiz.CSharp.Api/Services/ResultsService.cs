@@ -76,48 +76,7 @@ public sealed class ResultsService(
         public string? ExpectedOutput { get; set; }
     }
 
-    public async Task<Result<CollectionResultsResponse>> GetCollectionResultsAsync(
-        int collectionId,
-        CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrEmpty(currentUser.UserId))
-            return Result<CollectionResultsResponse>.Failure("User is not authenticated");
 
-        var collection = await repository.GetCollectionByIdAsync(collectionId, cancellationToken);
-        if (collection == null)
-            return Result<CollectionResultsResponse>.Failure("Collection not found");
-
-        var progress = await repository.GetUserProgressAsync(currentUser.UserId, collectionId, cancellationToken);
-        if (progress == null)
-            return Result<CollectionResultsResponse>.Failure("No progress found for this collection");
-
-        // Get all user answers for time calculation
-        var questions = await repository.GetQuestionsByCollectionAsync(collectionId, 1, int.MaxValue, cancellationToken);
-        var totalTimeSpent = TimeSpan.Zero;
-        
-        foreach (var question in questions.Items)
-        {
-            var answer = await repository.GetLatestAnswerAsync(currentUser.UserId, question.Id, cancellationToken);
-            if (answer != null)
-            {
-                totalTimeSpent = totalTimeSpent.Add(TimeSpan.FromSeconds(answer.TimeSpentSeconds));
-            }
-        }
-
-        var response = new CollectionResultsResponse
-        {
-            CollectionId = collectionId,
-            CollectionName = collection.Title,
-            TotalQuestions = progress.TotalQuestions,
-            AnsweredQuestions = progress.AnsweredQuestions,
-            CorrectAnswers = progress.CorrectAnswers,
-            ScorePercentage = progress.SuccessRate,
-            TotalTimeSpent = totalTimeSpent,
-            CompletedAt = progress.LastAnsweredAt
-        };
-
-        return Result<CollectionResultsResponse>.Success(response);
-    }
 
     public async Task<Result<List<QuestionReviewResponse>>> GetAnswerReviewAsync(
         int collectionId,

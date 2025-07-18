@@ -5,10 +5,6 @@ using Quiz.Shared.Common;
 
 public interface IResultsService
 {
-    Task<Result<CollectionResultsResponse>> GetCollectionResultsAsync(
-        int collectionId,
-        CancellationToken cancellationToken = default);
-    
     Task<Result<List<QuestionReviewResponse>>> GetAnswerReviewAsync(
         int collectionId,
         bool includeUnanswered = false,

@@ -11,5 +11,4 @@ public interface IQuestionService
         int pageSize,
         CancellationToken cancellationToken = default);
     Task<List<QuestionResponse>> GetPreviewQuestionsAsync(int collectionId, CancellationToken cancellationToken = default);
-    Task<QuestionResponse?> GetQuestionByIdAsync(int questionId, CancellationToken cancellationToken = default);
 } 
