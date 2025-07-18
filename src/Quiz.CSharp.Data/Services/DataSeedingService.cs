@@ -12,6 +12,72 @@ public class DataSeedingService(
     IServiceProvider serviceProvider,
     ILogger<DataSeedingService> logger) : IHostedService
 {
+    // Internal metadata classes - not exposed outside this service
+    internal class QuestionMetadataBase
+    {
+        public string? CodeBefore { get; set; }
+        public string? CodeAfter { get; set; }
+        public List<QuestionHintData> Hints { get; set; } = [];
+        public string? Explanation { get; set; }
+    }
+
+    internal class MCQMetadata : QuestionMetadataBase
+    {
+        public List<MCQOptionData> Options { get; set; } = [];
+        public List<string> CorrectAnswerIds { get; set; } = [];
+    }
+
+    internal class TrueFalseMetadata : QuestionMetadataBase
+    {
+        public bool CorrectAnswer { get; set; }
+    }
+
+    internal class FillMetadata : QuestionMetadataBase
+    {
+        public string? CodeWithBlank { get; set; }
+        public string CorrectAnswer { get; set; } = string.Empty;
+        public List<string> FillHints { get; set; } = [];
+    }
+
+    internal class ErrorSpottingMetadata : QuestionMetadataBase
+    {
+        public string? CodeWithError { get; set; }
+        public string CorrectAnswer { get; set; } = string.Empty;
+    }
+
+    internal class OutputPredictionMetadata : QuestionMetadataBase
+    {
+        public string? Snippet { get; set; }
+        public string ExpectedOutput { get; set; } = string.Empty;
+    }
+
+    internal class CodeWritingMetadata : QuestionMetadataBase
+    {
+        public string? Solution { get; set; }
+        public List<string> Examples { get; set; } = [];
+        public List<string> Rubric { get; set; } = [];
+        public List<TestCaseData> TestCases { get; set; } = [];
+    }
+
+    internal class MCQOptionData
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
+        public bool IsCorrect { get; set; }
+    }
+
+    internal class QuestionHintData
+    {
+        public string Hint { get; set; } = string.Empty;
+        public int OrderIndex { get; set; }
+    }
+
+    internal class TestCaseData
+    {
+        public string Input { get; set; } = string.Empty;
+        public string ExpectedOutput { get; set; } = string.Empty;
+    }
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Starting data seeding service...");
@@ -160,71 +226,34 @@ public class DataSeedingService(
         };
 
         dbContext.Questions.Add(question);
-        await dbContext.SaveChangesAsync(cancellationToken); // Save to get the generated ID
-
-        var questionId = question.Id;
-
-        // Create MCQ options if it's an MCQ question
-        if (seedQuestion.Type.ToLowerInvariant() == "mcq")
-        {
-            foreach (var option in seedQuestion.Options)
-            {
-                var isCorrect = seedQuestion.Answer.Contains(option.Id);
-                var mcqOption = new MCQOption
-                {
-                    Id = option.Id,
-                    QuestionId = questionId,
-                    Option = option.Option,
-                    IsCorrect = isCorrect,
-                    IsActive = true
-                };
-                dbContext.MCQOptions.Add(mcqOption);
-            }
-        }
-
-        // Create hints if any
-        if (!string.IsNullOrEmpty(seedQuestion.Explanation))
-        {
-            var hint = new QuestionHint
-            {
-                Id = 0, // Will be auto-generated
-                QuestionId = questionId,
-                Hint = seedQuestion.Explanation,
-                OrderIndex = 1,
-                IsActive = true
-            };
-            dbContext.QuestionHints.Add(hint);
-        }
-
-        // Create test cases for code writing questions
-        if (seedQuestion.Type.ToLowerInvariant() == "code_writing" && seedQuestion.TestCases.Any())
-        {
-            foreach (var (index, testCase) in seedQuestion.TestCases.Select((tc, i) => (i, tc)))
-            {
-                var dbTestCase = new TestCase
-                {
-                    Id = 0, // Will be auto-generated
-                    QuestionId = questionId,
-                    Input = testCase.Input,
-                    ExpectedOutput = testCase.ExpectedOutput,
-                    IsActive = true
-                };
-                dbContext.TestCases.Add(dbTestCase);
-            }
-        }
-
         return true;
     }
 
     private MCQQuestion CreateMCQQuestion(Collection collection, SeedQuestion seedQuestion)
     {
+        var metadata = new MCQMetadata
+        {
+            CodeBefore = seedQuestion.CodeBefore,
+            CodeAfter = seedQuestion.CodeAfter,
+            Options = seedQuestion.Options.Select(o => new MCQOptionData
+            {
+                Id = o.Id,
+                Text = o.Option,
+                IsCorrect = seedQuestion.Answer.Contains(o.Id)
+            }).ToList(),
+            CorrectAnswerIds = seedQuestion.Answer,
+            Explanation = seedQuestion.Explanation,
+            Hints = CreateHintsFromExplanation(seedQuestion.Explanation)
+        };
+
         return new MCQQuestion
         {
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
-            Difficulty = "Beginner", // Default difficulty
+            Difficulty = DetermineDifficulty(seedQuestion),
             Prompt = seedQuestion.Prompt,
-            EstimatedTimeMinutes = 2, // Default time
+            EstimatedTimeMinutes = 2,
+            Metadata = JsonSerializer.Serialize(metadata),
             IsActive = true
         };
     }
@@ -233,74 +262,150 @@ public class DataSeedingService(
     {
         var correctAnswer = seedQuestion.Answer.FirstOrDefault()?.ToLowerInvariant() == "true";
         
+        var metadata = new TrueFalseMetadata
+        {
+            CodeBefore = seedQuestion.CodeBefore,
+            CodeAfter = seedQuestion.CodeAfter,
+            CorrectAnswer = correctAnswer,
+            Explanation = seedQuestion.Explanation,
+            Hints = CreateHintsFromExplanation(seedQuestion.Explanation)
+        };
+
         return new TrueFalseQuestion
         {
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
-            Difficulty = "Beginner",
+            Difficulty = DetermineDifficulty(seedQuestion),
             Prompt = seedQuestion.Prompt,
             EstimatedTimeMinutes = 1,
-            CorrectAnswer = correctAnswer,
+            Metadata = JsonSerializer.Serialize(metadata),
             IsActive = true
         };
     }
 
     private FillQuestion CreateFillQuestion(Collection collection, SeedQuestion seedQuestion)
     {
+        var metadata = new FillMetadata
+        {
+            CodeBefore = seedQuestion.CodeBefore,
+            CodeAfter = seedQuestion.CodeAfter,
+            CodeWithBlank = seedQuestion.CodeWithBlank,
+            CorrectAnswer = seedQuestion.Answer.FirstOrDefault() ?? string.Empty,
+            FillHints = seedQuestion.Examples?.ToList() ?? new List<string>(),
+            Explanation = seedQuestion.Explanation,
+            Hints = CreateHintsFromExplanation(seedQuestion.Explanation)
+        };
+
         return new FillQuestion
         {
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
-            Difficulty = "Beginner",
+            Difficulty = DetermineDifficulty(seedQuestion),
             Prompt = seedQuestion.Prompt,
             EstimatedTimeMinutes = 3,
-            CorrectAnswer = seedQuestion.Answer.FirstOrDefault() ?? string.Empty,
-            FillHints = seedQuestion.Examples?.ToList() ?? new List<string>(),
+            Metadata = JsonSerializer.Serialize(metadata),
             IsActive = true
         };
     }
 
     private ErrorSpottingQuestion CreateErrorSpottingQuestion(Collection collection, SeedQuestion seedQuestion)
     {
+        var metadata = new ErrorSpottingMetadata
+        {
+            CodeBefore = seedQuestion.CodeBefore,
+            CodeAfter = seedQuestion.CodeAfter,
+            CodeWithError = seedQuestion.CodeWithError,
+            CorrectAnswer = seedQuestion.Answer.FirstOrDefault() ?? string.Empty,
+            Explanation = seedQuestion.Explanation,
+            Hints = CreateHintsFromExplanation(seedQuestion.Explanation)
+        };
+
         return new ErrorSpottingQuestion
         {
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
-            Difficulty = "Intermediate",
+            Difficulty = DetermineDifficulty(seedQuestion, "Intermediate"),
             Prompt = seedQuestion.Prompt,
             EstimatedTimeMinutes = 5,
-            CorrectAnswer = seedQuestion.Answer.FirstOrDefault() ?? string.Empty,
+            Metadata = JsonSerializer.Serialize(metadata),
             IsActive = true
         };
     }
 
     private OutputPredictionQuestion CreateOutputPredictionQuestion(Collection collection, SeedQuestion seedQuestion)
     {
+        var metadata = new OutputPredictionMetadata
+        {
+            CodeBefore = seedQuestion.CodeBefore,
+            CodeAfter = seedQuestion.CodeAfter,
+            Snippet = seedQuestion.Snippet,
+            ExpectedOutput = seedQuestion.Answer.FirstOrDefault() ?? string.Empty,
+            Explanation = seedQuestion.Explanation,
+            Hints = CreateHintsFromExplanation(seedQuestion.Explanation)
+        };
+
         return new OutputPredictionQuestion
         {
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
-            Difficulty = "Intermediate",
+            Difficulty = DetermineDifficulty(seedQuestion, "Intermediate"),
             Prompt = seedQuestion.Prompt,
             EstimatedTimeMinutes = 3,
-            ExpectedOutput = seedQuestion.Answer.FirstOrDefault() ?? string.Empty,
+            Metadata = JsonSerializer.Serialize(metadata),
             IsActive = true
         };
     }
 
     private CodeWritingQuestion CreateCodeWritingQuestion(Collection collection, SeedQuestion seedQuestion)
     {
+        var metadata = new CodeWritingMetadata
+        {
+            CodeBefore = seedQuestion.CodeBefore,
+            CodeAfter = seedQuestion.CodeAfter,
+            Solution = seedQuestion.Solution,
+            Examples = seedQuestion.Examples?.ToList() ?? new List<string>(),
+            Rubric = seedQuestion.Rubric?.ToList() ?? new List<string>(),
+            TestCases = seedQuestion.TestCases.Select(tc => new TestCaseData
+            {
+                Input = tc.Input,
+                ExpectedOutput = tc.ExpectedOutput
+            }).ToList(),
+            Explanation = seedQuestion.Explanation,
+            Hints = CreateHintsFromExplanation(seedQuestion.Explanation)
+        };
+
         return new CodeWritingQuestion
         {
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
-            Difficulty = "Advanced",
+            Difficulty = DetermineDifficulty(seedQuestion, "Advanced"),
             Prompt = seedQuestion.Prompt,
             EstimatedTimeMinutes = 10,
-            Solution = seedQuestion.Solution,
-            Examples = seedQuestion.Examples?.ToList() ?? new List<string>(),
-            Rubric = seedQuestion.Rubric?.ToList() ?? new List<string>(),
+            Metadata = JsonSerializer.Serialize(metadata),
             IsActive = true
         };
+    }
+
+    private List<QuestionHintData> CreateHintsFromExplanation(string? explanation)
+    {
+        var hints = new List<QuestionHintData>();
+        
+        if (!string.IsNullOrWhiteSpace(explanation))
+        {
+            hints.Add(new QuestionHintData
+            {
+                Hint = explanation,
+                OrderIndex = 1
+            });
+        }
+
+        return hints;
+    }
+
+    private string DetermineDifficulty(SeedQuestion seedQuestion, string defaultDifficulty = "Beginner")
+    {
+        // You can implement more sophisticated logic here based on question properties
+        // For now, using defaults based on question type
+        return defaultDifficulty;
     }
 } 

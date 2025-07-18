@@ -43,15 +43,8 @@ namespace Quiz.CSharp.Data.Migrations
                     difficulty = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     prompt = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
                     estimated_time_minutes = table.Column<int>(type: "integer", nullable: false),
+                    metadata = table.Column<string>(type: "jsonb", nullable: false),
                     question_type = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
-                    solution = table.Column<string>(type: "text", nullable: true),
-                    examples = table.Column<string[]>(type: "text[]", nullable: true),
-                    rubric = table.Column<string[]>(type: "text[]", nullable: true),
-                    error_spotting_question_correct_answer = table.Column<string>(type: "text", nullable: true),
-                    correct_answer = table.Column<string>(type: "text", nullable: true),
-                    fill_hints = table.Column<string[]>(type: "text[]", nullable: true),
-                    expected_output = table.Column<string>(type: "text", nullable: true),
-                    true_false_question_correct_answer = table.Column<bool>(type: "boolean", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     is_active = table.Column<bool>(type: "boolean", nullable: false)
@@ -89,89 +82,6 @@ namespace Quiz.CSharp.Data.Migrations
                         name: "fk_user_progress_collection_collection_id",
                         column: x => x.collection_id,
                         principalTable: "collections",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "mcq_options",
-                columns: table => new
-                {
-                    id = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    question_id = table.Column<int>(type: "integer", nullable: false),
-                    option = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    is_correct = table.Column<bool>(type: "boolean", nullable: false),
-                    mcq_question_id = table.Column<int>(type: "integer", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    is_active = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_mcq_options", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_mcq_options_question_question_id",
-                        column: x => x.question_id,
-                        principalTable: "questions",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_mcq_options_questions_mcq_question_id",
-                        column: x => x.mcq_question_id,
-                        principalTable: "questions",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "question_hints",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    question_id = table.Column<int>(type: "integer", nullable: false),
-                    hint = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    order_index = table.Column<int>(type: "integer", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    is_active = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_question_hints", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_question_hints_questions_question_id",
-                        column: x => x.question_id,
-                        principalTable: "questions",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "test_cases",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    question_id = table.Column<int>(type: "integer", nullable: false),
-                    input = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    expected_output = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    code_writing_question_id = table.Column<int>(type: "integer", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    is_active = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_test_cases", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_test_cases_questions_code_writing_question_id",
-                        column: x => x.code_writing_question_id,
-                        principalTable: "questions",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_test_cases_questions_question_id",
-                        column: x => x.question_id,
-                        principalTable: "questions",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -221,34 +131,9 @@ namespace Quiz.CSharp.Data.Migrations
                 column: "sort_order");
 
             migrationBuilder.CreateIndex(
-                name: "ix_mcq_options_mcq_question_id",
-                table: "mcq_options",
-                column: "mcq_question_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_mcq_options_question_id",
-                table: "mcq_options",
-                column: "question_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_question_hints_question_id",
-                table: "question_hints",
-                column: "question_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_questions_collection_id",
                 table: "questions",
                 column: "collection_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_test_cases_code_writing_question_id",
-                table: "test_cases",
-                column: "code_writing_question_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_test_cases_question_id",
-                table: "test_cases",
-                column: "question_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_answers_question_id",
@@ -279,15 +164,6 @@ namespace Quiz.CSharp.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "mcq_options");
-
-            migrationBuilder.DropTable(
-                name: "question_hints");
-
-            migrationBuilder.DropTable(
-                name: "test_cases");
-
             migrationBuilder.DropTable(
                 name: "user_answers");
 

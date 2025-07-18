@@ -16,18 +16,24 @@ public sealed class QuestionConfiguration : IEntityTypeConfiguration<Question>
         builder.Property(q => q.Difficulty).HasMaxLength(50);
         builder.Property(q => q.Prompt).HasMaxLength(2000);
         builder.Property(q => q.EstimatedTimeMinutes);
+        
+        // Configure JSON metadata column for PostgreSQL
+        builder.Property(q => q.Metadata)
+            .HasColumnType("jsonb")
+            .IsRequired();
 
         builder.HasOne(q => q.Collection)
             .WithMany(c => c.Questions)
             .HasForeignKey(q => q.CollectionId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // Configure discriminator with snake_case
         builder.HasDiscriminator<string>("question_type")
-            .HasValue<MCQQuestion>("MCQ")
-            .HasValue<TrueFalseQuestion>("TrueFalse")
-            .HasValue<FillQuestion>("Fill")
-            .HasValue<ErrorSpottingQuestion>("ErrorSpotting")
-            .HasValue<OutputPredictionQuestion>("OutputPrediction")
-            .HasValue<CodeWritingQuestion>("CodeWriting");
+            .HasValue<MCQQuestion>("mcq")
+            .HasValue<TrueFalseQuestion>("true_false")
+            .HasValue<FillQuestion>("fill")
+            .HasValue<ErrorSpottingQuestion>("error_spotting")
+            .HasValue<OutputPredictionQuestion>("output_prediction")
+            .HasValue<CodeWritingQuestion>("code_writing");
     }
 } 

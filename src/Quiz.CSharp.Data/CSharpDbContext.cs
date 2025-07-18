@@ -10,9 +10,6 @@ public interface ICSharpDbContext
     DbSet<Question> Questions { get; set; }
     DbSet<UserAnswer> UserAnswers { get; set; }
     DbSet<UserProgress> UserProgress { get; set; }
-    DbSet<MCQOption> MCQOptions { get; set; }
-    DbSet<QuestionHint> QuestionHints { get; set; }
-    DbSet<TestCase> TestCases { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
@@ -23,9 +20,6 @@ public sealed class CSharpDbContext(DbContextOptions<CSharpDbContext> options) :
     public DbSet<Question> Questions { get; set; }
     public DbSet<UserAnswer> UserAnswers { get; set; }
     public DbSet<UserProgress> UserProgress { get; set; }
-    public DbSet<MCQOption> MCQOptions { get; set; }
-    public DbSet<QuestionHint> QuestionHints { get; set; }
-    public DbSet<TestCase> TestCases { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -15,6 +15,8 @@ public sealed class CollectionConfiguration : IEntityTypeConfiguration<Collectio
         builder.Property(c => c.Title).HasMaxLength(200).IsRequired();
         builder.Property(c => c.Description).HasMaxLength(1000);
         builder.Property(c => c.Icon).HasMaxLength(50);
+        builder.Property(c => c.SortOrder);
+        
         builder.HasIndex(c => c.IsActive);
         builder.HasIndex(c => c.SortOrder);
         builder.HasIndex(c => c.Code).IsUnique();

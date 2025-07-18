@@ -6,6 +6,45 @@ using System.Text.Json;
 
 public sealed class AnswerValidator : IAnswerValidator
 {
+    // Internal metadata classes matching the structure from DataSeedingService
+    private class MCQMetadata
+    {
+        public List<MCQOptionData> Options { get; set; } = [];
+        public List<string> CorrectAnswerIds { get; set; } = [];
+    }
+
+    private class MCQOptionData
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
+        public bool IsCorrect { get; set; }
+    }
+
+    private class TrueFalseMetadata
+    {
+        public bool CorrectAnswer { get; set; }
+    }
+
+    private class FillMetadata
+    {
+        public string CorrectAnswer { get; set; } = string.Empty;
+    }
+
+    private class ErrorSpottingMetadata
+    {
+        public string CorrectAnswer { get; set; } = string.Empty;
+    }
+
+    private class OutputPredictionMetadata
+    {
+        public string ExpectedOutput { get; set; } = string.Empty;
+    }
+
+    private class CodeWritingMetadata
+    {
+        public string? Solution { get; set; }
+    }
+
     public Task<bool> ValidateAnswerAsync(Question question, string userAnswer, CancellationToken cancellationToken = default)
     {
         var result = question switch
@@ -25,11 +64,11 @@ public sealed class AnswerValidator : IAnswerValidator
     {
         try
         {
+            var metadata = JsonSerializer.Deserialize<MCQMetadata>(question.Metadata);
+            if (metadata == null) return false;
+
             var userAnswers = JsonSerializer.Deserialize<string[]>(userAnswer);
-            var correctAnswers = question.Options
-                .Where(o => o.IsCorrect)
-                .Select(o => o.Id)
-                .ToArray();
+            var correctAnswers = metadata.CorrectAnswerIds.ToArray();
 
             return userAnswers?.Length == correctAnswers.Length &&
                    userAnswers.All(ua => correctAnswers.Contains(ua));
@@ -42,32 +81,74 @@ public sealed class AnswerValidator : IAnswerValidator
 
     private static bool ValidateTrueFalseAnswer(TrueFalseQuestion question, string userAnswer)
     {
-        if (bool.TryParse(userAnswer, out var parsed))
+        try
         {
-            return parsed == question.CorrectAnswer;
+            var metadata = JsonSerializer.Deserialize<TrueFalseMetadata>(question.Metadata);
+            if (metadata == null) return false;
+
+            if (bool.TryParse(userAnswer, out var parsed))
+            {
+                return parsed == metadata.CorrectAnswer;
+            }
+            return false;
         }
-        return false;
+        catch
+        {
+            return false;
+        }
     }
 
     private static bool ValidateFillAnswer(FillQuestion question, string userAnswer)
     {
-        var normalizeCode = (string code) => code.Replace("```csharp", "").Replace("```", "").Trim();
-        return normalizeCode(question.CorrectAnswer) == normalizeCode(userAnswer);
+        try
+        {
+            var metadata = JsonSerializer.Deserialize<FillMetadata>(question.Metadata);
+            if (metadata == null) return false;
+
+            var normalizeCode = (string code) => code.Replace("```csharp", "").Replace("```", "").Trim();
+            return normalizeCode(metadata.CorrectAnswer) == normalizeCode(userAnswer);
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private static bool ValidateErrorSpottingAnswer(ErrorSpottingQuestion question, string userAnswer)
     {
-        var normalizeCode = (string code) => code.Replace("```csharp", "").Replace("```", "").Trim();
-        return normalizeCode(question.CorrectAnswer) == normalizeCode(userAnswer);
+        try
+        {
+            var metadata = JsonSerializer.Deserialize<ErrorSpottingMetadata>(question.Metadata);
+            if (metadata == null) return false;
+
+            var normalizeCode = (string code) => code.Replace("```csharp", "").Replace("```", "").Trim();
+            return normalizeCode(metadata.CorrectAnswer) == normalizeCode(userAnswer);
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private static bool ValidateOutputPredictionAnswer(OutputPredictionQuestion question, string userAnswer)
     {
-        return string.Equals(question.ExpectedOutput.Trim(), userAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
+        try
+        {
+            var metadata = JsonSerializer.Deserialize<OutputPredictionMetadata>(question.Metadata);
+            if (metadata == null) return false;
+
+            return string.Equals(metadata.ExpectedOutput.Trim(), userAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private static bool ValidateCodeWritingAnswer(CodeWritingQuestion question, string userAnswer)
     {
+        // For code writing questions, we just check if an answer was provided
+        // In a real scenario, you might run tests or use more sophisticated validation
         return !string.IsNullOrWhiteSpace(userAnswer);
     }
 } 
