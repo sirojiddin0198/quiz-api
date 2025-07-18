@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAnswerService, AnswerService>();
         services.AddScoped<IAnswerValidator, AnswerValidator>();
+        services.AddScoped<IResultsService, ResultsService>();
 
         return services;
     }
