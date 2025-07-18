@@ -20,5 +20,10 @@ public interface ICSharpRepository
     Task SaveAnswerAsync(UserAnswer answer, CancellationToken cancellationToken = default);
     Task<UserProgress?> GetUserProgressAsync(string userId, int collectionId, CancellationToken cancellationToken = default);
     Task UpdateUserProgressAsync(UserProgress progress, CancellationToken cancellationToken = default);
+    Task CreateUserProgressAsync(UserProgress progress, CancellationToken cancellationToken = default);
+    Task<(int totalQuestions, int answeredQuestions, int correctAnswers)> CalculateProgressStatsAsync(
+        string userId, 
+        int collectionId, 
+        CancellationToken cancellationToken = default);
     Task<int> GetNextAttemptNumberAsync(string userId, int questionId, CancellationToken cancellationToken = default);
 } 

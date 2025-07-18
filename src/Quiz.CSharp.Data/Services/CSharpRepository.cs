@@ -103,6 +103,44 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
         await context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task CreateUserProgressAsync(UserProgress progress, CancellationToken cancellationToken = default)
+    {
+        context.UserProgress.Add(progress);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<(int totalQuestions, int answeredQuestions, int correctAnswers)> CalculateProgressStatsAsync(
+        string userId, 
+        int collectionId, 
+        CancellationToken cancellationToken = default)
+    {
+        // Get total questions in collection
+        var totalQuestions = await context.Questions
+            .Where(q => q.CollectionId == collectionId && q.IsActive)
+            .CountAsync(cancellationToken);
+
+        // Get distinct answered questions and count correct answers
+        var answeredStats = await context.UserAnswers
+            .Where(ua => ua.UserId == userId)
+            .Join(context.Questions, 
+                ua => ua.QuestionId, 
+                q => q.Id, 
+                (ua, q) => new { ua, q })
+            .Where(joined => joined.q.CollectionId == collectionId && joined.q.IsActive)
+            .GroupBy(joined => joined.ua.QuestionId)
+            .Select(g => new 
+            { 
+                QuestionId = g.Key,
+                IsCorrect = g.OrderByDescending(x => x.ua.SubmittedAt).First().ua.IsCorrect
+            })
+            .ToListAsync(cancellationToken);
+
+        var answeredQuestions = answeredStats.Count;
+        var correctAnswers = answeredStats.Count(s => s.IsCorrect);
+
+        return (totalQuestions, answeredQuestions, correctAnswers);
+    }
+
     public async Task<int> GetNextAttemptNumberAsync(string userId, int questionId, CancellationToken cancellationToken = default)
     {
         var lastAttempt = await context.UserAnswers
