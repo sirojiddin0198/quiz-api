@@ -15,8 +15,8 @@ public sealed class AnswerValidator : IAnswerValidator
 
     private class MCQOptionData
     {
-        public string Id { get; set; } = string.Empty;
-        public string Text { get; set; } = string.Empty;
+        public string? Id { get; set; }
+        public string? Text { get; set; }
         public bool IsCorrect { get; set; }
     }
 
@@ -27,17 +27,17 @@ public sealed class AnswerValidator : IAnswerValidator
 
     private class FillMetadata
     {
-        public string CorrectAnswer { get; set; } = string.Empty;
+        public string? CorrectAnswer { get; set; }
     }
 
     private class ErrorSpottingMetadata
     {
-        public string CorrectAnswer { get; set; } = string.Empty;
+        public string? CorrectAnswer { get; set; }
     }
 
     private class OutputPredictionMetadata
     {
-        public string ExpectedOutput { get; set; } = string.Empty;
+        public string? ExpectedOutput { get; set; }
     }
 
     private class CodeWritingMetadata
@@ -103,7 +103,7 @@ public sealed class AnswerValidator : IAnswerValidator
         try
         {
             var metadata = JsonSerializer.Deserialize<FillMetadata>(question.Metadata);
-            if (metadata == null) return false;
+            if (metadata?.CorrectAnswer == null) return false;
 
             var normalizeCode = (string code) => code.Replace("```csharp", "").Replace("```", "").Trim();
             return normalizeCode(metadata.CorrectAnswer) == normalizeCode(userAnswer);
@@ -119,7 +119,7 @@ public sealed class AnswerValidator : IAnswerValidator
         try
         {
             var metadata = JsonSerializer.Deserialize<ErrorSpottingMetadata>(question.Metadata);
-            if (metadata == null) return false;
+            if (metadata?.CorrectAnswer == null) return false;
 
             var normalizeCode = (string code) => code.Replace("```csharp", "").Replace("```", "").Trim();
             return normalizeCode(metadata.CorrectAnswer) == normalizeCode(userAnswer);
@@ -135,7 +135,7 @@ public sealed class AnswerValidator : IAnswerValidator
         try
         {
             var metadata = JsonSerializer.Deserialize<OutputPredictionMetadata>(question.Metadata);
-            if (metadata == null) return false;
+            if (metadata?.ExpectedOutput == null) return false;
 
             return string.Equals(metadata.ExpectedOutput.Trim(), userAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
         }

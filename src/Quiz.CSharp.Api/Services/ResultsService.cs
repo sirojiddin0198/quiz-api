@@ -35,19 +35,19 @@ public sealed class ResultsService(
     private class FillMetadata : QuestionMetadataBase
     {
         public string? CodeWithBlank { get; set; }
-        public string CorrectAnswer { get; set; } = string.Empty;
+        public string? CorrectAnswer { get; set; }
     }
 
     private class ErrorSpottingMetadata : QuestionMetadataBase
     {
         public string? CodeWithError { get; set; }
-        public string CorrectAnswer { get; set; } = string.Empty;
+        public string? CorrectAnswer { get; set; }
     }
 
     private class OutputPredictionMetadata : QuestionMetadataBase
     {
         public string? Snippet { get; set; }
-        public string ExpectedOutput { get; set; } = string.Empty;
+        public string? ExpectedOutput { get; set; }
     }
 
     private class CodeWritingMetadata : QuestionMetadataBase
@@ -59,21 +59,21 @@ public sealed class ResultsService(
 
     private class MCQOptionData
     {
-        public string Id { get; set; } = string.Empty;
-        public string Text { get; set; } = string.Empty;
+        public string? Id { get; set; }
+        public string? Text { get; set; }
         public bool IsCorrect { get; set; }
     }
 
     private class QuestionHintData
     {
-        public string Hint { get; set; } = string.Empty;
+        public string? Hint { get; set; }
         public int OrderIndex { get; set; }
     }
 
     private class TestCaseData
     {
-        public string Input { get; set; } = string.Empty;
-        public string ExpectedOutput { get; set; } = string.Empty;
+        public string? Input { get; set; }
+        public string? ExpectedOutput { get; set; }
     }
 
     public async Task<Result<CollectionResultsResponse>> GetCollectionResultsAsync(
@@ -213,8 +213,8 @@ public sealed class ResultsService(
         
         var content = new QuestionContentReview
         {
-            CodeBefore = metadata?.CodeBefore,
-            CodeAfter = metadata?.CodeAfter,
+            CodeBefore = string.IsNullOrWhiteSpace(metadata?.CodeBefore) ? null : metadata.CodeBefore,
+            CodeAfter = string.IsNullOrWhiteSpace(metadata?.CodeAfter) ? null : metadata.CodeAfter,
             CodeWithBlank = GetCodeWithBlank(question),
             CodeWithError = GetCodeWithError(question),
             Snippet = GetSnippet(question)
@@ -223,8 +223,9 @@ public sealed class ResultsService(
         var correctAnswer = BuildCorrectAnswer(question);
         
         var hints = metadata?.Hints?
+            .Where(h => !string.IsNullOrWhiteSpace(h.Hint))
             .OrderBy(h => h.OrderIndex)
-            .Select(h => h.Hint)
+            .Select(h => h.Hint!)
             .ToList();
 
         return new QuestionReviewResponse
@@ -235,7 +236,7 @@ public sealed class ResultsService(
             Content = content,
             UserAnswer = userAnswerReview,
             CorrectAnswer = correctAnswer,
-            Explanation = metadata?.Explanation,
+            Explanation = string.IsNullOrWhiteSpace(metadata?.Explanation) ? null : metadata.Explanation,
             Hints = hints
         };
     }
@@ -257,12 +258,14 @@ public sealed class ResultsService(
     private CorrectAnswerReview BuildMCQCorrectAnswer(Question question)
     {
         var metadata = JsonSerializer.Deserialize<MCQMetadata>(question.Metadata);
-        var options = metadata?.Options.Select(o => new MCQCorrectOption
-        {
-            Id = o.Id,
-            Text = o.Text,
-            IsCorrect = o.IsCorrect
-        }).ToList();
+        var options = metadata?.Options
+            .Where(o => !string.IsNullOrWhiteSpace(o.Id) && !string.IsNullOrWhiteSpace(o.Text))
+            .Select(o => new MCQCorrectOption
+            {
+                Id = o.Id ?? string.Empty,
+                Text = o.Text ?? string.Empty,
+                IsCorrect = o.IsCorrect
+            }).ToList();
 
         return new CorrectAnswerReview { Options = options };
     }
@@ -294,17 +297,19 @@ public sealed class ResultsService(
     private CorrectAnswerReview BuildCodeWritingCorrectAnswer(Question question)
     {
         var metadata = JsonSerializer.Deserialize<CodeWritingMetadata>(question.Metadata);
-        var testCaseResults = metadata?.TestCases.Select(tc => new TestCaseResult
-        {
-            Input = tc.Input,
-            ExpectedOutput = tc.ExpectedOutput,
-            UserOutput = null, // Would need to run tests to get this
-            Passed = false
-        }).ToList();
+        var testCaseResults = metadata?.TestCases
+            .Where(tc => !string.IsNullOrWhiteSpace(tc.Input) && !string.IsNullOrWhiteSpace(tc.ExpectedOutput))
+            .Select(tc => new TestCaseResult
+            {
+                Input = tc.Input ?? string.Empty,
+                ExpectedOutput = tc.ExpectedOutput ?? string.Empty,
+                UserOutput = null, // Would need to run tests to get this
+                Passed = false
+            }).ToList();
 
         return new CorrectAnswerReview
         {
-            SampleSolution = metadata?.Solution,
+            SampleSolution = string.IsNullOrWhiteSpace(metadata?.Solution) ? null : metadata.Solution,
             TestCaseResults = testCaseResults
         };
     }
@@ -327,20 +332,23 @@ public sealed class ResultsService(
     {
         if (question is not FillQuestion) return null;
         var metadata = JsonSerializer.Deserialize<FillMetadata>(question.Metadata);
-        return metadata?.CodeWithBlank;
+        var codeWithBlank = metadata?.CodeWithBlank;
+        return string.IsNullOrWhiteSpace(codeWithBlank) ? null : codeWithBlank;
     }
 
     private string? GetCodeWithError(Question question)
     {
         if (question is not ErrorSpottingQuestion) return null;
         var metadata = JsonSerializer.Deserialize<ErrorSpottingMetadata>(question.Metadata);
-        return metadata?.CodeWithError;
+        var codeWithError = metadata?.CodeWithError;
+        return string.IsNullOrWhiteSpace(codeWithError) ? null : codeWithError;
     }
 
     private string? GetSnippet(Question question)
     {
         if (question is not OutputPredictionQuestion) return null;
         var metadata = JsonSerializer.Deserialize<OutputPredictionMetadata>(question.Metadata);
-        return metadata?.Snippet;
+        var snippet = metadata?.Snippet;
+        return string.IsNullOrWhiteSpace(snippet) ? null : snippet;
     }
 } 

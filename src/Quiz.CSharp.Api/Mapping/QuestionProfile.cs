@@ -25,19 +25,19 @@ public sealed class QuestionProfile : Profile
     private class FillMetadata : QuestionMetadataBase
     {
         public string? CodeWithBlank { get; set; }
-        public string CorrectAnswer { get; set; } = string.Empty;
+        public string? CorrectAnswer { get; set; }
     }
 
     private class ErrorSpottingMetadata : QuestionMetadataBase
     {
         public string? CodeWithError { get; set; }
-        public string CorrectAnswer { get; set; } = string.Empty;
+        public string? CorrectAnswer { get; set; }
     }
 
     private class OutputPredictionMetadata : QuestionMetadataBase
     {
         public string? Snippet { get; set; }
-        public string ExpectedOutput { get; set; } = string.Empty;
+        public string? ExpectedOutput { get; set; }
     }
 
     private class CodeWritingMetadata : QuestionMetadataBase
@@ -49,21 +49,21 @@ public sealed class QuestionProfile : Profile
 
     private class MCQOptionData
     {
-        public string Id { get; set; } = string.Empty;
-        public string Text { get; set; } = string.Empty;
+        public string? Id { get; set; }
+        public string? Text { get; set; }
         public bool IsCorrect { get; set; }
     }
 
     private class QuestionHintData
     {
-        public string Hint { get; set; } = string.Empty;
+        public string? Hint { get; set; }
         public int OrderIndex { get; set; }
     }
 
     private class TestCaseData
     {
-        public string Input { get; set; } = string.Empty;
-        public string ExpectedOutput { get; set; } = string.Empty;
+        public string? Input { get; set; }
+        public string? ExpectedOutput { get; set; }
     }
 
     public QuestionProfile()
@@ -117,11 +117,13 @@ public sealed class QuestionProfile : Profile
         try
         {
             var metadata = JsonSerializer.Deserialize<MCQMetadata>(question.Metadata);
-            return metadata?.Options.Select(o => new MCQOptionResponse
-            {
-                Id = o.Id,
-                Option = o.Text
-            }).ToList();
+            return metadata?.Options
+                .Where(o => !string.IsNullOrWhiteSpace(o.Id) && !string.IsNullOrWhiteSpace(o.Text))
+                .Select(o => new MCQOptionResponse
+                {
+                    Id = o.Id!,
+                    Option = o.Text!
+                }).ToList();
         }
         catch
         {
@@ -135,8 +137,9 @@ public sealed class QuestionProfile : Profile
         {
             var metadata = JsonSerializer.Deserialize<QuestionMetadataBase>(question.Metadata);
             return metadata?.Hints
+                .Where(h => !string.IsNullOrWhiteSpace(h.Hint))
                 .OrderBy(h => h.OrderIndex)
-                .Select(h => h.Hint)
+                .Select(h => h.Hint!)
                 .ToList();
         }
         catch
@@ -150,7 +153,8 @@ public sealed class QuestionProfile : Profile
         try
         {
             var metadata = JsonSerializer.Deserialize<QuestionMetadataBase>(question.Metadata);
-            return metadata?.Explanation;
+            var explanation = metadata?.Explanation;
+            return string.IsNullOrWhiteSpace(explanation) ? null : explanation;
         }
         catch
         {
@@ -163,7 +167,8 @@ public sealed class QuestionProfile : Profile
         try
         {
             var metadata = JsonSerializer.Deserialize<QuestionMetadataBase>(question.Metadata);
-            return metadata?.CodeBefore;
+            var codeBefore = metadata?.CodeBefore;
+            return string.IsNullOrWhiteSpace(codeBefore) ? null : codeBefore;
         }
         catch
         {
@@ -176,7 +181,8 @@ public sealed class QuestionProfile : Profile
         try
         {
             var metadata = JsonSerializer.Deserialize<QuestionMetadataBase>(question.Metadata);
-            return metadata?.CodeAfter;
+            var codeAfter = metadata?.CodeAfter;
+            return string.IsNullOrWhiteSpace(codeAfter) ? null : codeAfter;
         }
         catch
         {
@@ -191,7 +197,8 @@ public sealed class QuestionProfile : Profile
         try
         {
             var metadata = JsonSerializer.Deserialize<FillMetadata>(question.Metadata);
-            return metadata?.CodeWithBlank;
+            var codeWithBlank = metadata?.CodeWithBlank;
+            return string.IsNullOrWhiteSpace(codeWithBlank) ? null : codeWithBlank;
         }
         catch
         {
@@ -206,7 +213,8 @@ public sealed class QuestionProfile : Profile
         try
         {
             var metadata = JsonSerializer.Deserialize<ErrorSpottingMetadata>(question.Metadata);
-            return metadata?.CodeWithError;
+            var codeWithError = metadata?.CodeWithError;
+            return string.IsNullOrWhiteSpace(codeWithError) ? null : codeWithError;
         }
         catch
         {
@@ -221,7 +229,8 @@ public sealed class QuestionProfile : Profile
         try
         {
             var metadata = JsonSerializer.Deserialize<OutputPredictionMetadata>(question.Metadata);
-            return metadata?.Snippet;
+            var snippet = metadata?.Snippet;
+            return string.IsNullOrWhiteSpace(snippet) ? null : snippet;
         }
         catch
         {
@@ -236,7 +245,9 @@ public sealed class QuestionProfile : Profile
         try
         {
             var metadata = JsonSerializer.Deserialize<CodeWritingMetadata>(question.Metadata);
-            return metadata?.Examples;
+            return metadata?.Examples
+                .Where(ex => !string.IsNullOrWhiteSpace(ex))
+                .ToList();
         }
         catch
         {
@@ -251,11 +262,13 @@ public sealed class QuestionProfile : Profile
         try
         {
             var metadata = JsonSerializer.Deserialize<CodeWritingMetadata>(question.Metadata);
-            return metadata?.TestCases.Select(tc => new TestCaseResponse
-            {
-                Input = tc.Input,
-                ExpectedOutput = tc.ExpectedOutput
-            }).ToList();
+            return metadata?.TestCases
+                .Where(tc => !string.IsNullOrWhiteSpace(tc.Input) && !string.IsNullOrWhiteSpace(tc.ExpectedOutput))
+                .Select(tc => new TestCaseResponse
+                {
+                    Input = tc.Input!,
+                    ExpectedOutput = tc.ExpectedOutput!
+                }).ToList();
         }
         catch
         {
