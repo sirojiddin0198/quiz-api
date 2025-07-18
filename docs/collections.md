@@ -41,7 +41,8 @@ Retrieves a list of all available collections.
       "icon": "code",
       "sortOrder": 1,
       "createdAt": "2024-01-01T00:00:00Z",
-      "updatedAt": "2024-01-01T00:00:00Z"
+      "updatedAt": "2024-01-01T00:00:00Z",
+      "totalQuestions": 15
     },
     {
       "id": 2,
@@ -51,7 +52,8 @@ Retrieves a list of all available collections.
       "icon": "class",
       "sortOrder": 2,
       "createdAt": "2024-01-01T00:00:00Z",
-      "updatedAt": "2024-01-01T00:00:00Z"
+      "updatedAt": "2024-01-01T00:00:00Z",
+      "totalQuestions": 12
     }
   ]
 }
@@ -86,7 +88,8 @@ Retrieves a specific collection by its ID.
     "icon": "code",
     "sortOrder": 1,
     "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-01T00:00:00Z"
+    "updatedAt": "2024-01-01T00:00:00Z",
+    "totalQuestions": 15
   }
 }
 ```
@@ -121,7 +124,8 @@ Retrieves a specific collection by its code.
     "icon": "code",
     "sortOrder": 1,
     "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-01T00:00:00Z"
+    "updatedAt": "2024-01-01T00:00:00Z",
+    "totalQuestions": 15
   }
 }
 ```
@@ -145,7 +149,8 @@ Retrieves a specific collection by its code.
   "icon": "string",
   "sortOrder": "integer",
   "createdAt": "datetime",
-  "updatedAt": "datetime"
+  "updatedAt": "datetime",
+  "totalQuestions": "integer"
 }
 ```
 
@@ -158,6 +163,7 @@ Retrieves a specific collection by its code.
 - `sortOrder` (int): Display order
 - `createdAt` (datetime): Creation timestamp
 - `updatedAt` (datetime): Last update timestamp
+- `totalQuestions` (int): Total number of questions in the collection
 
 ## Error Responses
 

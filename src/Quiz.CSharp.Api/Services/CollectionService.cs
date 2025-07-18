@@ -12,19 +12,20 @@ public sealed class CollectionService(
 {
     public async Task<List<CollectionResponse>> GetCollectionsAsync(CancellationToken cancellationToken = default)
     {
-        var collections = await repository.GetCollectionsAsync(cancellationToken);
+        var collectionsWithCounts = await repository.GetCollectionsWithQuestionCountAsync(cancellationToken);
         var responses = new List<CollectionResponse>();
 
-        foreach (var collection in collections)
+        foreach (var collectionWithCount in collectionsWithCounts)
         {
-            var response = mapper.Map<CollectionResponse>(collection);
+            var response = mapper.Map<CollectionResponse>(collectionWithCount.Collection);
+            response = response with { TotalQuestions = collectionWithCount.QuestionCount };
 
             // Add user progress if authenticated
             if (currentUser.IsAuthenticated && currentUser.UserId is not null)
             {
                 var userProgress = await repository.GetUserProgressAsync(
                     currentUser.UserId,
-                    collection.Id,
+                    collectionWithCount.Collection.Id,
                     cancellationToken);
 
                 if (userProgress is not null)
@@ -48,6 +49,10 @@ public sealed class CollectionService(
         if (collection is null) return null;
 
         var response = mapper.Map<CollectionResponse>(collection);
+        
+        // Get question count for this collection
+        var questionCount = await repository.GetQuestionsByCollectionAsync(collectionId, 1, 1, cancellationToken);
+        response = response with { TotalQuestions = questionCount.TotalCount };
 
         // Add user progress if authenticated
         if (currentUser.IsAuthenticated && currentUser.UserId is not null)
@@ -75,6 +80,10 @@ public sealed class CollectionService(
         if (collection is null) return null;
 
         var response = mapper.Map<CollectionResponse>(collection);
+        
+        // Get question count for this collection
+        var questionCount = await repository.GetQuestionsByCollectionAsync(collection.Id, 1, 1, cancellationToken);
+        response = response with { TotalQuestions = questionCount.TotalCount };
 
         // Add user progress if authenticated
         if (currentUser.IsAuthenticated && currentUser.UserId is not null)

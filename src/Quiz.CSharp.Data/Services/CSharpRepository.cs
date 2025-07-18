@@ -15,6 +15,19 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<CollectionWithQuestionCount>> GetCollectionsWithQuestionCountAsync(CancellationToken cancellationToken = default)
+    {
+        return await context.Collections
+            .Where(c => c.IsActive)
+            .OrderBy(c => c.SortOrder)
+            .Select(c => new CollectionWithQuestionCount
+            {
+                Collection = c,
+                QuestionCount = context.Questions.Count(q => q.CollectionId == c.Id && q.IsActive)
+            })
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Collection?> GetCollectionByIdAsync(int collectionId, CancellationToken cancellationToken = default)
     {
         return await context.Collections
@@ -97,4 +110,10 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
 
         return (lastAttempt?.AttemptNumber ?? 0) + 1;
     }
+}
+
+public sealed class CollectionWithQuestionCount
+{
+    public required Collection Collection { get; init; }
+    public int QuestionCount { get; init; }
 } 

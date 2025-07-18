@@ -10,5 +10,6 @@ public sealed record CollectionResponse
     public int SortOrder { get; init; }
     public DateTime CreatedAt { get; init; }
     public DateTime UpdatedAt { get; init; }
+    public int TotalQuestions { get; init; }
     public UserProgressResponse? UserProgress { get; init; }
 } 

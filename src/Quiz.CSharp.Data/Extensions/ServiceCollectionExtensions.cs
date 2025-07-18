@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ICSharpRepository, CSharpRepository>();
         services.AddHostedService<DatabaseMigrationService>();
-        services.AddHostedService<DataSeedingService>();
+        // services.AddHostedService<DataSeedingService>();
 
         return services;
     }
