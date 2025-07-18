@@ -13,7 +13,8 @@ public sealed class QuestionProfile : Profile
             .ForMember(dest => dest.Metadata, opt => opt.MapFrom(src => src))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src))
             .ForMember(dest => dest.Options, opt => opt.MapFrom(src => GetMCQOptions(src)))
-            .ForMember(dest => dest.Hints, opt => opt.MapFrom(src => src.Hints.OrderBy(h => h.OrderIndex).Select(h => h.Hint)));
+            .ForMember(dest => dest.Hints, opt => opt.MapFrom(src => src.Hints.OrderBy(h => h.OrderIndex).Select(h => h.Hint)))
+            .ForMember(dest => dest.Explanation, opt => opt.MapFrom(src => GetExplanation(src)));
 
         CreateMap<Question, QuestionMetadata>()
             .ForMember(dest => dest.CollectionId, opt => opt.MapFrom(src => src.CollectionId))
@@ -50,5 +51,11 @@ public sealed class QuestionProfile : Profile
     private static ICollection<TestCase>? GetTestCases(Question question)
     {
         return question is CodeWritingQuestion codeWritingQuestion ? codeWritingQuestion.TestCases : null;
+    }
+
+    private static string? GetExplanation(Question question)
+    {
+        var firstHint = question.Hints.OrderBy(h => h.OrderIndex).FirstOrDefault();
+        return firstHint?.Hint;
     }
 } 

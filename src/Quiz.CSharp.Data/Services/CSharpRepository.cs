@@ -48,7 +48,10 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     {
         var query = context.Questions
             .Where(q => q.CollectionId == collectionId && q.IsActive)
-            .Include(q => q.Hints);
+            .Include(q => q.Collection)
+            .Include(q => q.Hints)
+            .Include(q => q.Options)
+            .Include(q => q.TestCases);
 
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
@@ -63,6 +66,10 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     {
         return await context.Questions
             .Where(q => q.CollectionId == collectionId && q.IsActive)
+            .Include(q => q.Collection)
+            .Include(q => q.Hints)
+            .Include(q => q.Options)
+            .Include(q => q.TestCases)
             .OrderBy(q => Guid.NewGuid())
             .Take(2)
             .ToListAsync(cancellationToken);
@@ -71,7 +78,10 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     public async Task<Question?> GetQuestionByIdAsync(int questionId, CancellationToken cancellationToken = default)
     {
         return await context.Questions
+            .Include(q => q.Collection)
             .Include(q => q.Hints)
+            .Include(q => q.Options)
+            .Include(q => q.TestCases)
             .FirstOrDefaultAsync(q => q.Id == questionId && q.IsActive, cancellationToken);
     }
 
