@@ -1,0 +1,249 @@
+{
+  "metadata": {
+    "categoryId": 5,
+    "id": "exception-handling",
+    "title": "Exception Handling",
+    "description": "C# da try-catch bloklari, maxsus exceptionlar va xatolarni boshqarish bo'yicha eng yaxshi amaliyotlar yordamida xatolarni qanday hal qilishni o'rganing.",
+    "icon": "🛡️"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "try-catch basics"
+      },
+      "codeBefore": "```csharp\ntry\n{\n    int result = int.Parse(\"abc\");\n    Console.WriteLine(result);\n}\ncatch (FormatException ex)\n{\n    Console.WriteLine(\"Format error\");\n}\ncatch (Exception ex)\n{\n    Console.WriteLine(\"General error\");\n}\n```",
+      "codeAfter": "",
+      "prompt": "Yuqoridagi kodda qaysi catch block ishlaydi?",
+      "options": [
+        {
+          "id": "A",
+          "option": "FormatException catch block"
+        },
+        {
+          "id": "B",
+          "option": "Exception catch block"
+        },
+        {
+          "id": "C",
+          "option": "Ikkala catch block ham"
+        },
+        {
+          "id": "D",
+          "option": "Hech qaysi catch block"
+        }
+      ],
+      "answer": [
+        "A"
+      ],
+      "explanation": "int.Parse(\"abc\") FormatException tashlay, va FormatException uchun aniq catch block mavjud bo'lgani uchun u ishlatiladi."
+    },
+    {
+      "id": 2,
+      "type": "true_false",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "exception best practices"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "Exception handling performance overhead yaratadi va ularni oddiy control flow uchun ishlatmaslik kerak.",
+      "answer": "true",
+      "explanation": "Exception lar expensive operatsiya hisoblanadi va faqat haqiqiy error holatlar uchun ishlatilishi kerak, oddiy control flow uchun emas."
+    },
+    {
+      "id": 3,
+      "type": "fill",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "try-catch syntax"
+      },
+      "codeWithBlank": "try\n{\n    int.Parse(\"invalid\");\n}\n______ (FormatException ex)\n{\n    Console.WriteLine(\"Format error: \" + ex.Message);\n}\n______ (Exception ex)\n{\n    Console.WriteLine(\"General error: \" + ex.Message);\n}",
+      "prompt": "Try-catch strukturasini to'ldiring. Exception larni catch qilish uchun kerakli kalit so'zni yozing.",
+      "answer": "try\n{\n    int.Parse(\"invalid\");\n}\ncatch (FormatException ex)\n{\n    Console.WriteLine(\"Format error: \" + ex.Message);\n}\ncatch (Exception ex)\n{\n    Console.WriteLine(\"General error: \" + ex.Message);\n}",
+      "explanation": "Catch kalit so'zi exception larni ushlash uchun ishlatiladi. Har bir catch block ma'lum exception turini handle qiladi."
+    },
+    {
+      "id": 4,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "catch block order"
+      },
+      "codeWithError": "try\n{\n    int.Parse(\"abc\");\n}\ncatch (Exception ex)  // General exception first\n{\n    Console.WriteLine(\"General error\");\n}\ncatch (FormatException ex)  // Specific exception after - ERROR!\n{\n    Console.WriteLine(\"Format error\");\n}",
+      "prompt": "Catch block tartibida xato bor. Compiler error beradi. Tuzating.",
+      "answer": "try\n{\n    int.Parse(\"abc\");\n}\ncatch (FormatException ex)  // Specific exception first\n{\n    Console.WriteLine(\"Format error\");\n}\ncatch (Exception ex)  // General exception after\n{\n    Console.WriteLine(\"General error\");\n}",
+      "explanation": "Aniq exception turlar umumiy turlardan oldin kelishi kerak. Exception eng umumiy tur bo'lgani uchun oxirida bo'lishi kerak."
+    },
+    {
+      "id": 5,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "exception flow"
+      },
+      "snippet": "try\n{\n    throw new ArgumentNullException(\"param\");\n}\ncatch (ArgumentException ex)\n{\n    Console.Write(\"Argument\");\n}\ncatch (ArgumentNullException ex)\n{\n    Console.Write(\"Null\");\n}\ncatch (Exception ex)\n{\n    Console.Write(\"General\");\n}\nConsole.Write(\"End\");",
+      "prompt": "ArgumentNullException inheritance hierarchy: Exception > SystemException > ArgumentException > ArgumentNullException. Qaysi natija?",
+      "answer": "ArgumentEnd",
+      "explanation": "ArgumentNullException ArgumentException dan inherit qilgani uchun birinchi ArgumentException catch ishlaydi (first-match rule). Keyin \"End\" chiqadi."
+    },
+    {
+      "id": 6,
+      "type": "mcq",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Custom Exceptions"
+      },
+      "prompt": "C# da custom exception class yaratganda nima sodir bo'ladi?",
+      "options": [
+        {
+          "id": "a",
+          "option": "U System.Exception yoki uning subclasslaridan meros olishi kerak"
+        },
+        {
+          "id": "b",
+          "option": "U avtomatik ravishda stack trace ma'lumotlarini o'z ichiga oladi"
+        },
+        {
+          "id": "c",
+          "option": "U generic Exception handlerlar tomonidan ushlana oladi"
+        },
+        {
+          "id": "d",
+          "option": "Barchasi to'g'ri"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Custom exceptionlar Exception yoki uning subclasslaridan meros olishi kerak, avtomatik ravishda stack trace ma'lumotlarini o'z ichiga oladi va meros tufayli generic Exception handlerlar tomonidan ushlana oladi."
+    },
+    {
+      "id": 7,
+      "type": "true_false",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Finally Blocks"
+      },
+      "prompt": "Finally blok doimo bajariladi, hatto try blokda return statement bo'lsa ham.",
+      "answer": "true",
+      "explanation": "Finally blok try blok qanday chiqishidan qat'i nazar bajariladi - oddiy, return orqali yoki exception orqali. U tozalash maqsadlari uchun bajarilishi kafolatlanadi."
+    },
+    {
+      "id": 8,
+      "type": "fill",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Exception Filtering"
+      },
+      "codeWithBlank": "try\n{\n    // xavfli operatsiya\n}\ncatch (ArgumentException ex) _____ (ex.ParamName == \"userId\")\n{\n    // maxsus parametr exceptionni boshqarish\n}",
+      "prompt": "Exception filtering uchun kerakli kalit so'zni kiriting:",
+      "answer": "when",
+      "explanation": "C# da exception filtering uchun 'when' kalit so'zi ishlatiladi. U catch blok bajarilishi uchun qo'shimcha shartlarni belgilash imkonini beradi."
+    },
+    {
+      "id": 9,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Exception Re-throwing"
+      },
+      "codeWithError": "try\n{\n    SomeRiskyOperation();\n}\ncatch (Exception ex)\n{\n    LogError(ex);\n    throw ex;\n}",
+      "prompt": "Ushbu exception *re-throw* kodida xatoni toping:",
+      "answer": "Stack trace ni saqlab qolish uchun 'throw ex;' o'rniga 'throw;' ishlatish kerak",
+      "explanation": "'throw ex;' ishlatish stack trace ni qayta o'rnatadi, asl call stack ma'lumotlarini yo'qotadi. Asl stack trace ni saqlab qolish uchun 'throw;' ishlatish kerak."
+    },
+    {
+      "id": 10,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Exception Propagation"
+      },
+      "snippet": "try\n{\n    try\n    {\n        throw new ArgumentException(\"Inner\");\n    }\n    finally\n    {\n        Console.WriteLine(\"Inner finally\");\n    }\n}\ncatch (Exception ex)\n{\n    Console.WriteLine($\"Caught: {ex.Message}\");\n}\nfinally\n{\n    Console.WriteLine(\"Outer finally\");\n}",
+      "prompt": "Ushbu kodning natijasi nima bo'ladi?",
+      "answer": "Inner finally\nCaught: Inner\nOuter finally",
+      "explanation": "Exception tashlanganida ichki finally blok birinchi bajariladi, keyin tashqi catch blok exception ni boshqaradi va nihoyat tashqi finally blok bajariladi."
+    },
+    {
+      "id": 11,
+      "type": "mcq",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Exception Hierarchy"
+      },
+      "prompt": "Quyidagi catch bloklardan qaysi biri to'g'ri tartibda joylashgan?",
+      "options": [
+        {
+          "id": "a",
+          "option": "catch (Exception) → catch (ArgumentException) → catch (ArgumentNullException)"
+        },
+        {
+          "id": "b",
+          "option": "catch (ArgumentNullException) → catch (ArgumentException) → catch (Exception)"
+        },
+        {
+          "id": "c",
+          "option": "catch (ArgumentException) → catch (Exception) → catch (ArgumentNullException)"
+        },
+        {
+          "id": "d",
+          "option": "Tartib muhim emas"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Catch bloklar eng maxsus (specific) dan eng umumiy (general) ga qarab tartiblanishi kerak. ArgumentNullException → ArgumentException → Exception to'g'ri tartibdir, chunki har biri keyingisining subclass'i."
+    },
+    {
+      "id": 12,
+      "type": "true_false",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Performance"
+      },
+      "prompt": "Exception'lar performance jihatdan qimmat operatsiyalar bo'lib, ular odatiy flow control uchun ishlatilmasligi kerak.",
+      "answer": "true",
+      "explanation": "Exception'lar stack trace yaratish va call stack'ni unwinding qilish tufayli performance jihatdan qimmat. Ular faqat haqiqiy xato holatlar uchun ishlatilishi kerak, oddiy flow control uchun emas."
+    },
+    {
+      "id": 13,
+      "type": "fill",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Custom Exception Constructors"
+      },
+      "codeWithBlank": "public class CustomException : Exception\n{\n    public CustomException(string message, Exception innerException)\n        : _____(message, innerException)\n    {\n    }\n}",
+      "prompt": "Custom exception constructor'ida base class constructor'ini to'g'ri chaqiring:",
+      "answer": "base",
+      "explanation": "Custom exception'larda base class (Exception) constructor'ini chaqirish uchun 'base' kalit so'zi ishlatiladi. Bu message va inner exception'ni base class'ga o'tkazadi."
+    },
+    {
+      "id": 14,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Exception Filtering Errors"
+      },
+      "codeWithError": "try\n{\n    ProcessData();\n}\ncatch (Exception ex) when (LogException(ex))\n{\n    // handle exception\n}\n\nbool LogException(Exception ex)\n{\n    Console.WriteLine($\"Error: {ex.Message}\");\n    return true;\n}",
+      "prompt": "Ushbu exception filtering kodida qanday muammo bor?",
+      "answer": "When clause'da side effect'li funksiyalar ishlatilmasligi kerak, LogException har doim chaqiriladi",
+      "explanation": "When clause'da side effect'li operatsiyalar (logging, file yozish) ishlatilmasligi kerak. Bu holda LogException har doim chaqiriladi va exception handle qilinadi, bu kutilmagan behavior'ga olib keladi."
+    },
+    {
+      "id": 15,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "exception-handling",
+        "subcategory": "Using Statement Exception Handling"
+      },
+      "snippet": "public class TestResource : IDisposable\n{\n    public string Name { get; set; }\n    public void Dispose()\n    {\n        Console.WriteLine($\"Disposing {Name}\");\n    }\n}\n\ntry\n{\n    using (var resource = new TestResource { Name = \"Resource1\" })\n    {\n        Console.WriteLine(\"Using resource\");\n        throw new InvalidOperationException(\"Test error\");\n    }\n}\ncatch (Exception ex)\n{\n    Console.WriteLine($\"Caught: {ex.Message}\");\n}",
+      "prompt": "Ushbu kodning natijasi nima bo'ladi?",
+      "answer": "Using resource\nDisposing Resource1\nCaught: Test error",
+      "explanation": "Using statement exception tashlanganida ham resurs dispose qilinishini kafolatlaydi. Avval 'Using resource' chop etiladi, keyin exception tashlanadi, using blok chiqishida 'Disposing Resource1' chop etiladi, va nihoyat catch blok exception'ni ushlaydi."
+    }
+  ]
+}

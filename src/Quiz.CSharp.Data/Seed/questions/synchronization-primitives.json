@@ -1,0 +1,289 @@
+{
+  "metadata": {
+    "categoryId": 9,
+    "id": "synchronization-primitives",
+    "title": "Synchronization Primitives",
+    "description": "Sinxronizatsiya mexanizmlari: lock, Monitor, Mutex, Semaphore, SemaphoreSlim, va boshqa thread synchronization usullari.",
+    "icon": "🔐"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "lock statement"
+      },
+      "codeBefore": "```csharp\nprivate readonly object lockObject = new object();\n\npublic void CriticalSection()\n{\n    lock (lockObject)\n    {\n        // Critical code\n    }\n}\n```",
+      "codeAfter": "",
+      "prompt": "`lock` statement qanday ishlaydi?\n\n**Texnik tafsilot:** Lock statement qaysi underlying mechanism dan foydalanadi?",
+      "options": [
+        {"id": "A", "option": "Monitor.Enter va Monitor.Exit ishlatadi"},
+        {"id": "B", "option": "Mutex yaratadi"},
+        {"id": "C", "option": "Semaphore ishlatadi"},
+        {"id": "D", "option": "Thread.Sleep chaqiradi"}
+      ],
+      "answer": ["A"],
+      "explanation": "`lock` statement `Monitor.Enter` va `Monitor.Exit` ning syntactic sugar hisoblanadi. Try-finally block ichida Monitor ishlatadi."
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "semaphore"
+      },
+      "codeBefore": "```csharp\nvar semaphore = new Semaphore(2, 2);\n\nsemaphore.WaitOne();\n// Critical work\nsemaphore.Release();\n```",
+      "codeAfter": "",
+      "prompt": "Yuqoridagi **Semaphore** nechta thread ni bir vaqtda kirishiga ruxsat beradi?\n\n*Constructor parametrlari: `Semaphore(initialCount, maximumCount)`*",
+      "options": [
+        {"id": "A", "option": "1 ta"},
+        {"id": "B", "option": "2 ta"},
+        {"id": "C", "option": "Cheksiz"},
+        {"id": "D", "option": "0 ta"}
+      ],
+      "answer": ["B"],
+      "explanation": "Semaphore(2, 2) 2 ta thread ni bir vaqtda critical section ga kirishiga ruxsat beradi. Birinchi parameter initial count, ikkinchisi maximum count."
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "mutex vs lock"
+      },
+      "codeBefore": "```csharp\nvar mutex = new Mutex();\n\nmutex.WaitOne();\n// Critical work\nmutex.ReleaseMutex();\n```",
+      "codeAfter": "",
+      "prompt": "Mutex va lock orasidagi asosiy farq nima?",
+      "options": [
+        {"id": "A", "option": "Mutex process orasida ishlaydi"},
+        {"id": "B", "option": "Lock tezroq"},
+        {"id": "C", "option": "Mutex named bo'lishi mumkin"},
+        {"id": "D", "option": "Barcha yuqoridagilar"}
+      ],
+      "answer": ["D"],
+      "explanation": "Mutex process orasida ishlaydi, named bo'lishi mumkin, lekin lock tezroq va faqat bir process ichida ishlaydi."
+    },
+    {
+      "id": 4,
+      "type": "true_false",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "monitor"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`Monitor.Wait()` va `Monitor.Pulse()` **producer-consumer pattern** uchun ishlatiladi.\n\n*Mechanism: Wait() thread ni uyquga yuboradi, Pulse() uyg'otadi.*",
+      "answer": "true",
+      "explanation": "To'g'ri. `Monitor.Wait()` thread ni wait holatiga o'tkazadi, `Monitor.Pulse()` kutayotgan thread ni uyg'otadi. Bu producer-consumer pattern uchun foydali."
+    },
+    {
+      "id": 5,
+      "type": "true_false",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "semaphore slim"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`SemaphoreSlim` `Semaphore` dan tezroq va async/await bilan ishlaydi.",
+      "answer": "true",
+      "explanation": "To'g'ri. `SemaphoreSlim` lightweight versiya bo'lib, async/await pattern bilan ishlaydi va `WaitAsync()` method ni qo'llab-quvvatlaydi."
+    },
+    {
+      "id": 6,
+      "type": "true_false",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "reader writer lock"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`ReaderWriterLockSlim` bir vaqtda bir nechta reader ga ruxsat beradi.",
+      "answer": "true",
+      "explanation": "To'g'ri. `ReaderWriterLockSlim` concurrent read access ga ruxsat beradi, lekin write access exclusive bo'ladi."
+    },
+    {
+      "id": 7,
+      "type": "fill",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "monitor enter"
+      },
+      "codeWithBlank": "```csharp\nvar lockObject = new object();\nbool taken = false;\n\nMonitor._____(lockObject, ref taken);\ntry\n{\n    // Critical section\n}\nfinally\n{\n    if (taken) Monitor.Exit(lockObject);\n}\n```",
+      "prompt": "**Monitor** lock olish uchun to'g'ri method nomini kiriting.\n\n*Pattern: Monitor._____ - lock olish, Monitor.Exit - lock chiqarish*",
+      "answer": "```csharp\nvar lockObject = new object();\nbool taken = false;\n\nMonitor.Enter(lockObject, ref taken);\ntry\n{\n    // Critical section\n}\nfinally\n{\n    if (taken) Monitor.Exit(lockObject);\n}\n```",
+      "explanation": "`Monitor.Enter` lock olish uchun ishlatiladi. `ref taken` parameter lock olinganligini ko'rsatadi."
+    },
+    {
+      "id": 8,
+      "type": "fill",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "semaphore slim async"
+      },
+      "codeWithBlank": "```csharp\nvar semaphore = new SemaphoreSlim(1, 1);\n\nawait semaphore._____(cancellationToken);\ntry\n{\n    // Critical work\n}\nfinally\n{\n    semaphore.Release();\n}\n```",
+      "prompt": "SemaphoreSlim async wait uchun to'g'ri method nomini kiriting.",
+      "answer": "```csharp\nvar semaphore = new SemaphoreSlim(1, 1);\n\nawait semaphore.WaitAsync(cancellationToken);\ntry\n{\n    // Critical work\n}\nfinally\n{\n    semaphore.Release();\n}\n```",
+      "explanation": "`SemaphoreSlim.WaitAsync()` async/await pattern bilan ishlaydi va CancellationToken qo'llab-quvvatlaydi."
+    },
+    {
+      "id": 9,
+      "type": "fill",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "reader writer lock"
+      },
+      "codeWithBlank": "```csharp\nvar rwLock = new ReaderWriterLockSlim();\n\nrwLock.EnterReadLock();\ntry\n{\n    // Read operation\n}\nfinally\n{\n    rwLock._____();\n}\n```",
+      "prompt": "ReaderWriterLockSlim read lock chiqarish uchun to'g'ri method nomini kiriting.",
+      "answer": "```csharp\nvar rwLock = new ReaderWriterLockSlim();\n\nrwLock.EnterReadLock();\ntry\n{\n    // Read operation\n}\nfinally\n{\n    rwLock.ExitReadLock();\n}\n```",
+      "explanation": "`ExitReadLock()` read lock ni chiqarish uchun ishlatiladi. Har doim finally block da chaqirilishi kerak."
+    },
+    {
+      "id": 10,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "deadlock"
+      },
+      "codeWithError": "```csharp\nclass DeadlockExample\n{\n    private readonly object lock1 = new object();\n    private readonly object lock2 = new object();\n    \n    public void Method1()\n    {\n        lock (lock1)\n        {\n            Thread.Sleep(100);\n            lock (lock2)\n            {\n                // Work\n            }\n        }\n    }\n    \n    public void Method2()\n    {\n        lock (lock2)\n        {\n            Thread.Sleep(100);\n            lock (lock1)\n            {\n                // Work\n            }\n        }\n    }\n}\n```",
+      "prompt": "**Deadlock** xatoligini toping va to'g'rilang.\n\n**Deadlock sharoiti:**\n1. Method1: `lock1` → `lock2` tartibida\n2. Method2: `lock2` → `lock1` tartibida\n3. Ikki method parallel bajarilganda circular wait yuz beradi\n\n*Yechim: Lock ordering - barcha joylarda bir xil tartibda lock olish.*",
+      "answer": "```csharp\nclass DeadlockExample\n{\n    private readonly object lock1 = new object();\n    private readonly object lock2 = new object();\n    \n    public void Method1()\n    {\n        lock (lock1)\n        {\n            Thread.Sleep(100);\n            lock (lock2)\n            {\n                // Work\n            }\n        }\n    }\n    \n    public void Method2()\n    {\n        lock (lock1) // Same order as Method1\n        {\n            Thread.Sleep(100);\n            lock (lock2)\n            {\n                // Work\n            }\n        }\n    }\n}\n```",
+      "explanation": "Deadlock oldini olish uchun barcha method larda lock larni bir xil tartibda olish kerak. Yoki timeout ishlatish mumkin."
+    },
+    {
+      "id": 11,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "monitor misuse"
+      },
+      "codeWithError": "```csharp\nclass MonitorExample\n{\n    private readonly object lockObject = new object();\n    \n    public void ProducerConsumer()\n    {\n        lock (lockObject)\n        {\n            Monitor.Wait(lockObject);\n            // This will never execute\n            Console.WriteLine(\"Woke up\");\n        }\n    }\n}\n```",
+      "prompt": "Monitor.Wait ishlatishda xatolikni toping va to'g'rilang.",
+      "answer": "```csharp\nclass MonitorExample\n{\n    private readonly object lockObject = new object();\n    \n    public void Consumer()\n    {\n        lock (lockObject)\n        {\n            while (/* condition not met */)\n            {\n                Monitor.Wait(lockObject);\n            }\n            Console.WriteLine(\"Condition met, processing\");\n        }\n    }\n    \n    public void Producer()\n    {\n        lock (lockObject)\n        {\n            // Produce something\n            Monitor.Pulse(lockObject);\n        }\n    }\n}\n```",
+      "explanation": "Monitor.Wait faqat condition check qilish uchun ishlatiladi. Producer thread Monitor.Pulse chaqirib, waiting thread ni uyg'otishi kerak."
+    },
+    {
+      "id": 12,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "semaphore resource leak"
+      },
+      "codeWithError": "```csharp\npublic async Task ProcessAsync()\n{\n    var semaphore = new SemaphoreSlim(1, 1);\n    \n    await semaphore.WaitAsync();\n    \n    if (someCondition)\n    {\n        return; // Resource leak!\n    }\n    \n    // Process\n    semaphore.Release();\n}\n```",
+      "prompt": "Semaphore resource leak xatoligini toping va to'g'rilang.",
+      "answer": "```csharp\npublic async Task ProcessAsync()\n{\n    var semaphore = new SemaphoreSlim(1, 1);\n    \n    await semaphore.WaitAsync();\n    \n    try\n    {\n        if (someCondition)\n        {\n            return;\n        }\n        \n        // Process\n    }\n    finally\n    {\n        semaphore.Release();\n    }\n}\n```",
+      "explanation": "Semaphore.Release() har doim chaqirilishi kerak. Try-finally block ishlatib resource leak oldini olish mumkin."
+    },
+    {
+      "id": 13,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "lock behavior"
+      },
+      "snippet": "```csharp\nusing System;\nusing System.Threading;\nusing System.Threading.Tasks;\n\nclass Program\n{\n    private static readonly object lockObject = new object();\n    \n    static void Main()\n    {\n        Task.Run(() => Method(\"A\"));\n        Task.Run(() => Method(\"B\"));\n        \n        Thread.Sleep(1000);\n    }\n    \n    static void Method(string name)\n    {\n        lock (lockObject)\n        {\n            Console.WriteLine($\"{name} entered\");\n            Thread.Sleep(500);\n            Console.WriteLine($\"{name} exited\");\n        }\n    }\n}\n```",
+      "prompt": "Yuqoridagi kod qanday tartibda output beradi?",
+      "answer": "A entered, A exited, B entered, B exited (yoki aksincha)",
+      "explanation": "Lock mutual exclusion ta'minlaydi. Birinchi kirgan thread lock ni ushlab turadi, ikkinchisi kutadi. Tartib thread scheduler ga bog'liq."
+    },
+    {
+      "id": 14,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "semaphore count"
+      },
+      "snippet": "```csharp\nusing System;\nusing System.Threading;\nusing System.Threading.Tasks;\n\nclass Program\n{\n    static void Main()\n    {\n        var semaphore = new Semaphore(2, 2);\n        \n        for (int i = 0; i < 4; i++)\n        {\n            int taskId = i;\n            Task.Run(() => \n            {\n                semaphore.WaitOne();\n                Console.WriteLine($\"Task {taskId} started\");\n                Thread.Sleep(1000);\n                Console.WriteLine($\"Task {taskId} finished\");\n                semaphore.Release();\n            });\n        }\n        \n        Thread.Sleep(3000);\n    }\n}\n```",
+      "prompt": "Bir vaqtda nechta task 'started' message chiqaradi?",
+      "answer": "2 ta task",
+      "explanation": "Semaphore(2, 2) maksimal 2 ta thread ni bir vaqtda kirishiga ruxsat beradi. Qolgan 2 ta task kutadi."
+    },
+    {
+      "id": 15,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "reader writer lock"
+      },
+      "snippet": "```csharp\nusing System;\nusing System.Threading;\nusing System.Threading.Tasks;\n\nclass Program\n{\n    private static readonly ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();\n    \n    static void Main()\n    {\n        Task.Run(() => ReadMethod(\"Reader1\"));\n        Task.Run(() => ReadMethod(\"Reader2\"));\n        Task.Run(() => WriteMethod(\"Writer1\"));\n        \n        Thread.Sleep(2000);\n    }\n    \n    static void ReadMethod(string name)\n    {\n        rwLock.EnterReadLock();\n        try\n        {\n            Console.WriteLine($\"{name} reading\");\n            Thread.Sleep(500);\n        }\n        finally\n        {\n            rwLock.ExitReadLock();\n        }\n    }\n    \n    static void WriteMethod(string name)\n    {\n        rwLock.EnterWriteLock();\n        try\n        {\n            Console.WriteLine($\"{name} writing\");\n            Thread.Sleep(500);\n        }\n        finally\n        {\n            rwLock.ExitWriteLock();\n        }\n    }\n}\n```",
+      "prompt": "Reader1 va Reader2 bir vaqtda 'reading' message chiqara oladimi?",
+      "answer": "Yes, readers can execute concurrently",
+      "explanation": "ReaderWriterLockSlim bir nechta reader ga concurrent access beradi, lekin writer exclusive access oladi."
+    },
+    {
+      "id": 16,
+      "type": "code_writing",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "thread-safe cache implementation"
+      },
+      "prompt": "## **Thread-Safe Cache Implementation**\n\n**Vazifa:** High-performance thread-safe cache class yarating TTL va size limit bilan.\n\n### **Class Structure:**\n```csharp\npublic class ThreadSafeCache<TKey, TValue> : IDisposable\n{\n    public ThreadSafeCache(int maxSize = 1000, TimeSpan? ttl = null)\n    public bool TryGet(TKey key, out TValue value)\n    public void Set(TKey key, TValue value, TimeSpan? ttl = null)\n    public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory, TimeSpan? ttl = null)\n    public bool Remove(TKey key)\n    public int Count { get; }\n}\n```\n\n### **Talablar:**\n- **✅ ReaderWriterLockSlim** - concurrent read, exclusive write\n- **✅ TTL support** - item-level va global TTL\n- **✅ Size limit** - LRU eviction policy\n- **✅ Auto-cleanup** - expired item larni avtomatik o'chirish\n- **✅ Thread-safe operations** - barcha public method lar thread-safe\n- **✅ Proper disposal** - `IDisposable` implementation\n- **✅ Performance optimization** - minimal lock contention\n\n### **Constraints:**\n- `Dictionary<TKey, CacheItem<TValue>>` internal storage\n- `Timer` background cleanup uchun\n- `DateTime.UtcNow` expiration check uchun\n- `GetOrAdd` double-checked locking pattern\n- Memory leak prevention",
+      "codeAfter": "```csharp\n// Usage example:\nvar cache = new ThreadSafeCache<string, User>(\n    maxSize: 1000, \n    ttl: TimeSpan.FromMinutes(5));\n\n// Multiple threads can safely use these operations\nvar tasks = new List<Task>();\n\n// Reader threads\nfor (int i = 0; i < 5; i++)\n{\n    int threadId = i;\n    tasks.Add(Task.Run(() =>\n    {\n        for (int j = 0; j < 100; j++)\n        {\n            var user = cache.GetOrAdd($\"user{j}\", \n                key => LoadUserFromDatabase(key));\n            Console.WriteLine($\"Thread {threadId}: {user.Name}\");\n        }\n    }));\n}\n\n// Writer threads\nfor (int i = 0; i < 2; i++)\n{\n    int threadId = i;\n    tasks.Add(Task.Run(() =>\n    {\n        for (int j = 0; j < 50; j++)\n        {\n            cache.Set($\"temp{threadId}_{j}\", \n                new User($\"TempUser{j}\"),\n                TimeSpan.FromSeconds(30));\n        }\n    }));\n}\n\nawait Task.WhenAll(tasks);\nConsole.WriteLine($\"Final cache size: {cache.Count}\");\n```",
+      "examples": [
+        "Multiple threads reading/writing\nResult: No data corruption, all operations successful",
+        "Cache reaches 1000 items limit\nResult: Oldest items evicted, size maintained",
+        "Items expire after 5 minutes\nResult: Expired items not returned, auto-cleanup"
+      ],
+      "solution": "```csharp\npublic class ThreadSafeCache<TKey, TValue>\n{\n    private readonly Dictionary<TKey, CacheItem<TValue>> _cache;\n    private readonly ReaderWriterLockSlim _lock;\n    private readonly int _maxSize;\n    private readonly TimeSpan _defaultTtl;\n    private readonly Timer _cleanupTimer;\n\n    public ThreadSafeCache(int maxSize = 1000, TimeSpan? ttl = null)\n    {\n        _cache = new Dictionary<TKey, CacheItem<TValue>>();\n        _lock = new ReaderWriterLockSlim();\n        _maxSize = maxSize;\n        _defaultTtl = ttl ?? TimeSpan.FromMinutes(30);\n        \n        // Cleanup expired items every minute\n        _cleanupTimer = new Timer(CleanupExpiredItems, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));\n    }\n\n    public bool TryGet(TKey key, out TValue value)\n    {\n        _lock.EnterReadLock();\n        try\n        {\n            if (_cache.TryGetValue(key, out var item) && !item.IsExpired)\n            {\n                item.LastAccessed = DateTime.UtcNow;\n                value = item.Value;\n                return true;\n            }\n            \n            value = default(TValue);\n            return false;\n        }\n        finally\n        {\n            _lock.ExitReadLock();\n        }\n    }\n\n    public void Set(TKey key, TValue value, TimeSpan? ttl = null)\n    {\n        var expiry = DateTime.UtcNow.Add(ttl ?? _defaultTtl);\n        var item = new CacheItem<TValue>(value, expiry);\n\n        _lock.EnterWriteLock();\n        try\n        {\n            // Remove oldest items if cache is full\n            if (_cache.Count >= _maxSize && !_cache.ContainsKey(key))\n            {\n                EvictOldestItem();\n            }\n\n            _cache[key] = item;\n        }\n        finally\n        {\n            _lock.ExitWriteLock();\n        }\n    }\n\n    public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory, TimeSpan? ttl = null)\n    {\n        // First try to get existing value\n        if (TryGet(key, out TValue existingValue))\n        {\n            return existingValue;\n        }\n\n        // Need to create new value\n        _lock.EnterWriteLock();\n        try\n        {\n            // Double-check after acquiring write lock\n            if (_cache.TryGetValue(key, out var item) && !item.IsExpired)\n            {\n                item.LastAccessed = DateTime.UtcNow;\n                return item.Value;\n            }\n\n            // Create new value\n            var newValue = valueFactory(key);\n            var expiry = DateTime.UtcNow.Add(ttl ?? _defaultTtl);\n            var newItem = new CacheItem<TValue>(newValue, expiry);\n\n            // Remove oldest items if cache is full\n            if (_cache.Count >= _maxSize)\n            {\n                EvictOldestItem();\n            }\n\n            _cache[key] = newItem;\n            return newValue;\n        }\n        finally\n        {\n            _lock.ExitWriteLock();\n        }\n    }\n\n    public bool Remove(TKey key)\n    {\n        _lock.EnterWriteLock();\n        try\n        {\n            return _cache.Remove(key);\n        }\n        finally\n        {\n            _lock.ExitWriteLock();\n        }\n    }\n\n    private void EvictOldestItem()\n    {\n        if (_cache.Count == 0) return;\n\n        var oldestKey = _cache\n            .OrderBy(kvp => kvp.Value.LastAccessed)\n            .First().Key;\n        \n        _cache.Remove(oldestKey);\n    }\n\n    private void CleanupExpiredItems(object state)\n    {\n        _lock.EnterWriteLock();\n        try\n        {\n            var expiredKeys = _cache\n                .Where(kvp => kvp.Value.IsExpired)\n                .Select(kvp => kvp.Key)\n                .ToList();\n\n            foreach (var key in expiredKeys)\n            {\n                _cache.Remove(key);\n            }\n        }\n        finally\n        {\n            _lock.ExitWriteLock();\n        }\n    }\n\n    public int Count\n    {\n        get\n        {\n            _lock.EnterReadLock();\n            try\n            {\n                return _cache.Count;\n            }\n            finally\n            {\n                _lock.ExitReadLock();\n            }\n        }\n    }\n\n    public void Dispose()\n    {\n        _cleanupTimer?.Dispose();\n        _lock?.Dispose();\n    }\n\n    private class CacheItem<T>\n    {\n        public T Value { get; }\n        public DateTime ExpiryTime { get; }\n        public DateTime LastAccessed { get; set; }\n        public bool IsExpired => DateTime.UtcNow > ExpiryTime;\n\n        public CacheItem(T value, DateTime expiryTime)\n        {\n            Value = value;\n            ExpiryTime = expiryTime;\n            LastAccessed = DateTime.UtcNow;\n        }\n    }\n}\n```",
+      "testCases": [
+        {
+          "input": "Multiple threads reading and writing simultaneously",
+          "expectedOutput": "No data corruption, all operations complete successfully"
+        },
+        {
+          "input": "Cache reaches max size limit",
+          "expectedOutput": "Oldest items are evicted, cache size remains within limit"
+        },
+        {
+          "input": "Items expire after TTL",
+          "expectedOutput": "Expired items are not returned and are cleaned up automatically"
+        }
+      ],
+      "rubric": [
+        "Uses ReaderWriterLockSlim for concurrent read/write access",
+        "Implements proper TTL and expiration logic",
+        "Handles cache size limits with LRU eviction",
+        "Provides thread-safe operations for all methods",
+        "Implements automatic cleanup of expired items"
+      ]
+    },
+    {
+      "id": 17,
+      "type": "code_writing",
+      "metadata": {
+        "category": "synchronization-primitives",
+        "subcategory": "resource pool with semaphore"
+      },
+      "prompt": "## **Resource Pool with Semaphore**\n\n**Vazifa:** Expensive resource larni manage qiladigan thread-safe pool system yarating.\n\n### **Class Structure:**\n```csharp\npublic class ResourcePool<T> : IDisposable where T : class\n{\n    public ResourcePool(int maxSize, Func<T> factory, \n                       Func<T, bool> validator = null, \n                       Action<T> cleanup = null)\n    public async Task<PooledResource<T>> AcquireAsync(TimeSpan timeout = default, \n                                                     CancellationToken cancellationToken = default)\n    public PooledResource<T> Acquire(TimeSpan timeout = default)\n    public int AvailableCount { get; }\n    public int TotalCount { get; }\n}\n\npublic class PooledResource<T> : IDisposable where T : class\n{\n    public T Value { get; }\n}\n```\n\n### **Talablar:**\n- **✅ SemaphoreSlim** - concurrent access control\n- **✅ Resource validation** - invalid resource larni cleanup qilish\n- **✅ Factory pattern** - lazy resource creation\n- **✅ Timeout support** - `TimeoutException` throw qilish\n- **✅ Proper disposal** - `using` statement support\n- **✅ Thread-safe operations** - concurrent acquire/release\n- **✅ Resource lifecycle** - creation, validation, cleanup\n\n### **Constraints:**\n- `ConcurrentQueue<T>` internal storage\n- `SemaphoreSlim` access control uchun\n- `PooledResource<T>` auto-return via `IDisposable`\n- Thread-safe counters va properties\n- Memory leak prevention\n- Generic constraint `where T : class`",
+      "codeAfter": "```csharp\n// Usage example:\nvar connectionPool = new ResourcePool<DatabaseConnection>(\n    maxSize: 10,\n    factory: () => new DatabaseConnection(connectionString),\n    validator: conn => conn.IsConnected,\n    cleanup: conn => conn.Dispose()\n);\n\n// Multiple threads acquiring resources\nvar tasks = new List<Task>();\n\nfor (int i = 0; i < 20; i++)\n{\n    int threadId = i;\n    tasks.Add(Task.Run(async () =>\n    {\n        try\n        {\n            using (var resource = await connectionPool.AcquireAsync(\n                timeout: TimeSpan.FromSeconds(30)))\n            {\n                var connection = resource.Value;\n                Console.WriteLine($\"Thread {threadId}: Got connection {connection.Id}\");\n                \n                // Simulate work\n                await connection.ExecuteQueryAsync(\"SELECT COUNT(*) FROM Users\");\n                await Task.Delay(1000);\n                \n                Console.WriteLine($\"Thread {threadId}: Releasing connection\");\n            } // Resource automatically returned here\n        }\n        catch (TimeoutException)\n        {\n            Console.WriteLine($\"Thread {threadId}: Timeout waiting for resource\");\n        }\n    }));\n}\n\nawait Task.WhenAll(tasks);\nConsole.WriteLine($\"Available: {connectionPool.AvailableCount}, Total: {connectionPool.TotalCount}\");\n```",
+      "examples": [
+        "10 threads, 5 resources, all valid\nResult: All threads get resources, no blocking",
+        "Resource validation fails\nResult: Invalid resource cleaned up, new one created",
+        "Pool exhausted, 30 second timeout\nResult: TimeoutException after 30 seconds"
+      ],
+      "solution": "```csharp\npublic class ResourcePool<T> : IDisposable where T : class\n{\n    private readonly ConcurrentQueue<T> _resources;\n    private readonly SemaphoreSlim _semaphore;\n    private readonly Func<T> _factory;\n    private readonly Func<T, bool> _validator;\n    private readonly Action<T> _cleanup;\n    private readonly int _maxSize;\n    private volatile bool _disposed;\n    private readonly object _lockObject = new object();\n    private int _currentSize;\n\n    public ResourcePool(\n        int maxSize,\n        Func<T> factory,\n        Func<T, bool> validator = null,\n        Action<T> cleanup = null)\n    {\n        _maxSize = maxSize;\n        _factory = factory ?? throw new ArgumentNullException(nameof(factory));\n        _validator = validator ?? (resource => true);\n        _cleanup = cleanup ?? (resource => { });\n        \n        _resources = new ConcurrentQueue<T>();\n        _semaphore = new SemaphoreSlim(maxSize, maxSize);\n        _currentSize = 0;\n    }\n\n    public async Task<PooledResource<T>> AcquireAsync(TimeSpan timeout = default, CancellationToken cancellationToken = default)\n    {\n        if (_disposed)\n            throw new ObjectDisposedException(nameof(ResourcePool<T>));\n\n        var actualTimeout = timeout == default ? TimeSpan.FromSeconds(30) : timeout;\n        \n        if (!await _semaphore.WaitAsync(actualTimeout, cancellationToken))\n        {\n            throw new TimeoutException($\"Failed to acquire resource within {actualTimeout}\");\n        }\n\n        try\n        {\n            T resource = null;\n            \n            // Try to get existing resource from pool\n            while (_resources.TryDequeue(out resource))\n            {\n                if (_validator(resource))\n                {\n                    return new PooledResource<T>(resource, this);\n                }\n                else\n                {\n                    // Resource is invalid, clean it up\n                    _cleanup(resource);\n                    lock (_lockObject)\n                    {\n                        _currentSize--;\n                    }\n                }\n            }\n\n            // Create new resource if needed\n            lock (_lockObject)\n            {\n                if (_currentSize < _maxSize)\n                {\n                    resource = _factory();\n                    _currentSize++;\n                    return new PooledResource<T>(resource, this);\n                }\n            }\n\n            // This shouldn't happen due to semaphore, but handle it gracefully\n            throw new InvalidOperationException(\"Unable to create or acquire resource\");\n        }\n        catch\n        {\n            _semaphore.Release();\n            throw;\n        }\n    }\n\n    public PooledResource<T> Acquire(TimeSpan timeout = default)\n    {\n        return AcquireAsync(timeout).GetAwaiter().GetResult();\n    }\n\n    internal void Return(T resource)\n    {\n        if (_disposed)\n        {\n            _cleanup(resource);\n            return;\n        }\n\n        try\n        {\n            if (_validator(resource))\n            {\n                _resources.Enqueue(resource);\n            }\n            else\n            {\n                _cleanup(resource);\n                lock (_lockObject)\n                {\n                    _currentSize--;\n                }\n            }\n        }\n        finally\n        {\n            _semaphore.Release();\n        }\n    }\n\n    public int AvailableCount => _semaphore.CurrentCount;\n    public int TotalCount => _currentSize;\n\n    public void Dispose()\n    {\n        if (_disposed) return;\n        \n        _disposed = true;\n        \n        // Clean up all resources\n        while (_resources.TryDequeue(out T resource))\n        {\n            _cleanup(resource);\n        }\n        \n        _semaphore?.Dispose();\n    }\n}\n\npublic class PooledResource<T> : IDisposable where T : class\n{\n    private readonly ResourcePool<T> _pool;\n    private T _resource;\n    private bool _disposed;\n\n    internal PooledResource(T resource, ResourcePool<T> pool)\n    {\n        _resource = resource;\n        _pool = pool;\n    }\n\n    public T Value\n    {\n        get\n        {\n            if (_disposed)\n                throw new ObjectDisposedException(nameof(PooledResource<T>));\n            return _resource;\n        }\n    }\n\n    public void Dispose()\n    {\n        if (_disposed) return;\n        \n        _disposed = true;\n        \n        if (_resource != null)\n        {\n            _pool.Return(_resource);\n            _resource = null;\n        }\n    }\n}\n```",
+      "testCases": [
+        {
+          "input": "Multiple threads acquiring resources simultaneously",
+          "expectedOutput": "All threads get resources within pool limits, no resource leaks"
+        },
+        {
+          "input": "Resource validation fails",
+          "expectedOutput": "Invalid resources are cleaned up, new resources created as needed"
+        },
+        {
+          "input": "Timeout occurs when pool is exhausted",
+          "expectedOutput": "TimeoutException thrown after specified timeout period"
+        }
+      ],
+      "rubric": [
+        "Uses SemaphoreSlim to limit concurrent access",
+        "Implements proper resource lifecycle management",
+        "Supports resource validation and cleanup",
+        "Handles timeout scenarios gracefully",
+        "Provides proper disposal pattern for resources"
+      ]
+    }
+  ]
+} 

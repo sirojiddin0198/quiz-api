@@ -1,0 +1,248 @@
+{
+  "metadata": {
+    "categoryId": 3,
+    "id": "tip-tizimi-oop",
+    "title": "Tip Tizimi Oop",
+    "description": "Ob'ektga yo'naltirilgan dasturlash: klasslar, meros olish, polimorfizm, va inkapsulyatsiya.",
+    "icon": "🏗️"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "generics-constraints"
+      },
+      "codeBefore": "```csharp\npublic static TResult Combine<TSource, TResult>(TSource a, TSource b)\n    where TSource : ________, IComparable<TSource>\n    where TResult : TSource, new()\n{\n    // Arifmetik operatorlar ishlatiladi: +, -, *, /\n    return new TResult();\n}\n```",
+      "codeAfter": "",
+      "prompt": "**Generic math** (.NET 7+) da `TSource` type uchun **arifmetik operatorlar** (`+`, `-`, `*`, `/`) ishlatish uchun qaysi **generic constraint** kerak?\n\n**Eslatma:** C# 11+ da static abstract interface memberlar orqali operator overloading mumkin.",
+      "options": [
+        {
+          "id": "A",
+          "option": "`INumber<TSource>` - .NET 7+ generic math interface"
+        },
+        {
+          "id": "B",
+          "option": "`struct` - value type constraint"
+        },
+        {
+          "id": "C",
+          "option": "`IArithmetic<TSource>` - custom arithmetic interface"
+        },
+        {
+          "id": "D",
+          "option": "`class` - reference type constraint"
+        }
+      ],
+      "answer": [
+        "A"
+      ],
+      "explanation": "INumber<T> .NET 7+ da arifmetik operatorlar uchun asosiy interface. Static abstract interface memberlar orqali +, -, *, / operatorlarini ta'minlaydi. B: struct constraint arifmetik operator bermaydi ✗, C: IArithmetic<T> mavjud emas ✗, D: class constraint arifmetik operator bermaydi ✗."
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "value-types"
+      },
+      "codeBefore": "```csharp\npublic struct DataPoint\n{\n    public readonly int X;\n    public readonly int Y;\n    public DataPoint(int x, int y) => (X, Y) = (x, y);\n}\n\nvar d1 = new DataPoint(1, 2);\nvar d2 = d1;  // struct assignment\n\nd2 = new DataPoint(3, 4);  // d2 ga yangi qiymat\nConsole.WriteLine(d1.X + \",\" + d1.Y);\n```",
+      "codeAfter": "",
+      "prompt": "**Struct value semantics** tufayli `Console.WriteLine` natijasi nima bo'ladi?\n\n**Value type xususiyatlari:**\n- Assignment copy by value yaratadi\n- Har bir variable mustaqil copy\n- Reference semantics yo'q",
+      "options": [
+        {
+          "id": "A",
+          "option": "**`1,2`** - struct value type, d2 ni o'zgartirish d1 ga ta'sir qilmaydi"
+        },
+        {
+          "id": "B",
+          "option": "**`3,4`** - d2 o'zgartirilsa, d1 ham o'zgaradi (reference semantics)"
+        },
+        {
+          "id": "C",
+          "option": "**`1,2`** - readonly fieldlar o'zgarmaydi, assignment bo'lmaydi"
+        },
+        {
+          "id": "D",
+          "option": "**Compilation error** - readonly struct assignment mumkin emas"
+        }
+      ],
+      "answer": [
+        "A"
+      ],
+      "explanation": "Struct value semantics: assignment copy by value yaratadi. d1 va d2 mustaqil copieslar. d2 ga yangi qiymat berilganda d1 o'zgarishsiz qoladi. A: Value semantics ✓, B: Reference semantics emas ✗, C: readonly field, readonly struct emas ✗, D: Assignment valid ✓."
+    },
+    {
+      "id": 3,
+      "type": "true_false",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "structs"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**C# 10+** da `struct` uchun **parametersiz constructor** e'lon qilish va **default initialization** xatti-harakatni o'zgartirish mumkin.\n\n**Eslatma:** Oldingi versiyalarda struct uchun faqat parametrli constructorlar ruxsat etilgan edi.\n\n**Masalan:** `public MyStruct() { Value = 42; }`",
+      "answer": "true",
+      "explanation": "C# 10+ da struct uchun parametersiz constructor e'lon qilish mumkin. Bu default initialization logic ni override qilish imkonini beradi. Oldingi versiyalarda bu cheklangan edi - faqat parametrli constructorlar ruxsat etilgan edi."
+    },
+    {
+      "id": 4,
+      "type": "true_false",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "inheritance"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`sealed` bilan belgilangan **virtual method** ni boshqa **derived classes** da **override** qilib bo'lmaydi.\n\n**Sealed override pattern:**\n- Base class virtual method\n- Derived class override sealed method\n- Further derived classes override qila olmaydi\n\n**Eslatma:** Sealed method override chain ni to'xtatadi.",
+      "answer": "true",
+      "explanation": "Sealed virtual method override chain ni to'xtatadi. Sealed method ni further derived classes da override qilib bo'lmaydi, lekin base class implementation dan foydalanish mumkin. Bu method ni \"finalize\" qilish uchun ishlatiladi."
+    },
+    {
+      "id": 5,
+      "type": "fill",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "generic math"
+      },
+      "codeWithBlank": "public static T AddAll<T>(T[] values)\n    where T : ________, ________\n{\n    T sum = default!;\n    foreach (var v in values)\n    {\n        sum += v;\n    }\n    return sum;\n}",
+      "prompt": "**Generic math** (.NET 7+) da `T` type uchun **`+` operatori** va **`default` literal** ishlatish imkonini beruvchi **ikki interface** ni to'ldiring.\n\n**Eslatma:** \n- Birinchi interface: asosiy numeric type interface\n- Ikkinchi interface: addition operator interface\n\n**Generic math constraint** larni vergul bilan ajrating.",
+      "answer": "public static T AddAll<T>(T[] values)\n    where T : INumber<T>, IAdditionOperators<T, T, T>\n{\n    T sum = default!;\n    foreach (var v in values)\n    {\n        sum += v;\n    }\n    return sum;\n}",
+      "explanation": "INumber<T> - .NET 7+ da asosiy numeric type interface, barcha raqamli operatorlar uchun base interface. IAdditionOperators<T, T, T> - + operatorini ta'minlaydi (TLeft + TRight = TResult pattern). Ikkalasi ham static abstract interface memberlar orqali matematik operatorlarni qo'llab-quvvatlaydi."
+    },
+    {
+      "id": 6,
+      "type": "fill",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "interfaces"
+      },
+      "codeWithBlank": "public interface IRepository<T>\n{\n    void Add(T item);\n    T? Get(int id);\n}\n\npublic class Repo<T> : ______\n{\n    void IRepository<T>.Add(T item) { /*...*/ }\n    T? IRepository<T>.Get(int id) { /*...*/ }\n}",
+      "prompt": "**Explicit interface implementation** qilish uchun **inheritance** qismini to'ldiring.\n\n**Explicit interface implementation xususiyatlari:**\n- Methodlar public emas\n- Faqat interface orqali accessible\n- Interface name fully qualified bo'ladi\n\n**Generic interface** ni implement qilish syntax ni yozing.",
+      "answer": "public interface IRepository<T>\n{\n    void Add(T item);\n    T? Get(int id);\n}\n\npublic class Repo<T> : IRepository<T>\n{\n    void IRepository<T>.Add(T item) { /*...*/ }\n    T? IRepository<T>.Get(int id) { /*...*/ }\n}",
+      "explanation": "Generic interface IRepository<T> ni implement qilish uchun class inheritance da to'liq nom ko'rsatilishi kerak. Explicit interface implementation da methodlar interface name bilan fully qualified bo'ladi va faqat interface reference orqali accessible."
+    },
+    {
+      "id": 7,
+      "type": "fill",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "default implementation"
+      },
+      "codeWithBlank": "public interface ILogger\n{\n    void Log(string message);\n    void LogError(Exception ex) => ______;\n}",
+      "prompt": "**Default interface implementation** (C# 8+): `LogError` method **exception** ni **string format** da `Log` methodiga uzatsin.\n\n**Default interface implementation xususiyatlari:**\n- Interface da method implementation berish\n- Implementing class override qilmasligi mumkin\n- Interface methodlarini ichkaridan call qilish mumkin\n\n**Exception** ni string ga aylantirish method ni yozing.",
+      "answer": "public interface ILogger\n{\n    void Log(string message);\n    void LogError(Exception ex) => Log(ex.ToString());\n}",
+      "explanation": "Default interface implementation da boshqa interface methodlarini chaqirish mumkin. Exception ni ToString() orqali string formatga aylantirib Log() methodiga uzatish. Bu implementing classlar uchun LogError() ni override qilish ixtiyoriy qiladi."
+    },
+    {
+      "id": 8,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "generic math"
+      },
+      "codeWithError": "public class Calculator\n{\n    public static T Subtract<T>(T a, T b) where T : IComparable<T>\n    {\n        return a - b;  // Bu yerda xato\n    }\n}",
+      "prompt": "**Generic math** (.NET 7+) da **subtraction operatori** (`-`) uchun **noto'g'ri constraint** ishlatilgan.\n\n**Muammo:** `IComparable<T>` constraint matematik operatorlarni qo'llab-quvvatlamaydi.\n\n**Vazifa:** To'g'ri **generic math interface** bilan tuzating.",
+      "answer": "public class Calculator\n{\n    public static T Subtract<T>(T a, T b)\n        where T : ISubtractionOperators<T, T, T>\n    {\n        return a - b;\n    }\n}",
+      "explanation": "IComparable<T> faqat comparison uchun, matematik operatorlar uchun emas. Subtraction operatori (-) uchun ISubtractionOperators<T, T, T> interfeysi kerak. Bu .NET 7+ generic math systemining qismi bo'lib, static abstract interface memberlar orqali matematik operatorlarni ta'minlaydi."
+    },
+    {
+      "id": 9,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "interfaces"
+      },
+      "codeWithError": "interface IShape\n{\n    double Area();  // Capital A\n}\n\npublic class Circle : IShape\n{\n    private readonly double radius;\n    public Circle(double radius) => this.radius = radius;\n    public double area() => Math.PI * radius * radius;  // kichik a\n}",
+      "prompt": "**Interface implementation** da **method name case sensitivity** xatosi bor.\n\n**Muammo:** Interface da `Area()` (capital A) e'lon qilingan, lekin class da `area()` (lowercase a) implement qilingan.\n\n**Eslatma:** C# **case-sensitive** programming language.\n\n**Vazifa:** Method name ni to'g'ri case bilan tuzating.",
+      "answer": "interface IShape\n{\n    double Area();\n}\n\npublic class Circle : IShape\n{\n    private readonly double radius;\n    public Circle(double radius) => this.radius = radius;\n    public double Area() => Math.PI * radius * radius;\n}",
+      "explanation": "C# case-sensitive programming language. Interface da Area() (capital A) deb e'lon qilingan method aynan Area() nomli bo'lishi kerak, area() (lowercase a) emas. Method signature exactly match bo'lishi shart."
+    },
+    {
+      "id": 10,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "structs"
+      },
+      "codeWithError": "public struct Rectangle\n{\n    public int Width { get; set; }\n    public int Height { get; set; }\n    public Rectangle(int width, int height)\n    {\n        Width = width;\n        // Height initsializatsiya qilinmagan!\n    }\n}",
+      "prompt": "**Struct constructor** da **barcha fields/properties** **initialization** qilinishi kerak.\n\n**Muammo:** `Height` property initialization qilinmagan.\n\n**Struct constructor qoidasi:** Barcha fields va properties constructor da initialize qilinishi majburiy.\n\n**Vazifa:** Etishmayotgan initialization ni qo'shing.",
+      "answer": "public struct Rectangle\n{\n    public int Width { get; set; }\n    public int Height { get; set; }\n    public Rectangle(int width, int height)\n    {\n        Width = width;\n        Height = height;\n    }\n}",
+      "explanation": "Struct constructor da barcha fields va properties initialize qilinishi majburiy. Compiler struct ning completely initialized bo'lishini talab qiladi. Height property ga height parameter qiymatini assign qilish kerak."
+    },
+    {
+      "id": 11,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "inheritance"
+      },
+      "codeWithError": "public abstract class Base\n{\n    public abstract void Save(string data);\n}\n\npublic class FileSaver : Base\n{\n    public void Save(string data)  // override kalit so'zi yo'q\n    {\n        File.WriteAllText(\"out.txt\", data);\n    }\n}",
+      "prompt": "**Abstract method implementation** da **`override` keyword** etishmayapti.\n\n**Muammo:** Derived class da abstract method ni implement qilishda `override` keyword ishlatilmagan.\n\n**Abstract method qoidasi:** Abstract base class dan inherit qilingan method ni implement qilishda `override` keyword majburiy.\n\n**Vazifa:** Etishmayotgan `override` keyword ni qo'shing.",
+      "answer": "public abstract class Base\n{\n    public abstract void Save(string data);\n}\n\npublic class FileSaver : Base\n{\n    public override void Save(string data)\n    {\n        File.WriteAllText(\"out.txt\", data);\n    }\n}",
+      "explanation": "Abstract method ni implement qilishda `override` keyword majburiy. Bu compiler ga abstract contract ni fulfill qilayotganingizni bildiradi. `override` keyword ni ishlatmaslik compilation error ga olib keladi."
+    },
+    {
+      "id": 12,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "generic constraints"
+      },
+      "codeWithError": "public interface ICalc<T>\n{\n    T Add(T a, T b);\n}\n\npublic class Calculator : ICalc<int>  // Konkret tip bilan cheklangan\n{\n    public int Add(int a, int b)\n    {\n        return a + b;\n    }\n}",
+      "prompt": "**Generic interface** ni faqat konkret type bilan implement qilish o'rniga **generic class** ishlatish va **constraint** qo'shish kerak.\n\n**Muammo:** \n- Interface generic, lekin class konkret type bilan implement qilingan\n- Matematik operatorlar uchun constraint yo'q\n\n**Generic math (C# 11+):** `IAdditionOperators<T, T, T>` constraint matematik operatorlarni ta'minlaydi.\n\n**Vazifa:** Class ni generic qiling va matematik constraint qo'shing.",
+      "answer": "public interface ICalc<T>\n{\n    T Add(T a, T b);\n}\n\npublic class Calculator<T> : ICalc<T>\n    where T : IAdditionOperators<T, T, T>\n{\n    public T Add(T a, T b)\n    {\n        return a + b;\n    }\n}",
+      "explanation": "Generic interface ni generic class bilan implement qilish type flexibility beradi. `IAdditionOperators<T, T, T>` constraint matematik operatorni ta'minlaydi va compile-time da `+` operatorini ishlatishga imkon beradi."
+    },
+    {
+      "id": 13,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "method hiding"
+      },
+      "snippet": "class A\n{\n    public virtual string F() => \"A\";\n}\nclass B : A\n{\n    public override string F() => base.F() + \"B\";  // \"AB\"\n}\nclass C : B\n{\n    public new string F() => base.F() + \"C\";  // \"ABC\" lekin virtual dispatch yo'q\n}\n\nA obj = new C();\nConsole.WriteLine(obj.F());  // A reference orqali chaqirilmoqda",
+      "prompt": "**Method hiding** vs **virtual dispatch** farqi nima?\n\n**Kod tahlili:**\n- `A.F()` - virtual method \n- `B.F()` - override (virtual dispatch continues)\n- `C.F()` - **new** keyword (virtual dispatch breaks)\n- `obj` - `A` reference, `C` instance\n\n**Savol:** `obj.F()` chaqirilganda qanday natija chiqadi?",
+      "answer": "AB",
+      "explanation": "✓ **Virtual dispatch qoidasi:** `new` keyword virtual dispatch ni to'xtatadi\n\n✓ **Method resolution:**\n- `A` reference orqali chaqirilmoqda\n- `C.F()` da `new` keyword ishlatilgan\n- Virtual chain: `A.F()` → `B.F()` (override)\n- `C.F()` virtual chain dan tashqarida\n\n✓ **Natija:** `B.F()` chaqiriladi → `base.F()` + \"B\" → \"A\" + \"B\" = \"AB\""
+    },
+    {
+      "id": 14,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "default interface implementation"
+      },
+      "snippet": "interface ILog\n{\n    void Log(string msg) => Console.Write(\"DefaultLog:\");  // Default implementation\n}\nclass Logger : ILog { }  // O'z implementatsiyasi yo'q\n\nvar logger = new Logger();\n((ILog)logger).Log(\"Hello\");",
+      "prompt": "**Default interface implementation** (C# 8+) qanday ishlaydi?\n\n**Kod tahlili:**\n- `ILog` interface da default implementation bor\n- `Logger` class hech qanday implementation bermagan\n- `((ILog)logger).Log()` - interface cast orqali chaqirilmoqda\n\n**Savol:** Console ga qanday matn chiqadi?",
+      "answer": "DefaultLog:",
+      "explanation": "✓ **Default interface implementation qoidasi:** Class o'z implementation bermasa, default implementation ishlatiladi\n\n✓ **Interface cast:**\n- `Logger` class `Log` metodini implement qilmagan\n- `((ILog)logger)` - interface reference ga cast\n- Interface ning default implementation chaqiriladi\n\n✓ **Natija:** `Console.Write(\"DefaultLog:\")` ishga tushadi"
+    },
+    {
+      "id": 15,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "method resolution"
+      },
+      "snippet": "class Base\n{\n    public void Show() => Console.Write(\"Base\");  // Virtual emas\n    public virtual void Display() => Console.Write(\"BaseDisplay\");\n}\nclass Derived : Base\n{\n    public new void Show() => Console.Write(\"Derived\");  // Hiding\n    public override void Display() => Console.Write(\"DerivedDisplay\");  // Override\n}\n\nBase b = new Derived();\nb.Show();     // Base reference -> Base.Show()\nb.Display();  // Virtual dispatch -> Derived.Display()",
+      "prompt": "**Method hiding** (`new`) vs **method overriding** (`override`) farqini ko'rsatuvchi misol.\n\n**Kod tahlili:**\n- `Show()` - non-virtual, `new` bilan hide qilingan\n- `Display()` - virtual, `override` qilingan\n- `b` - `Base` reference, `Derived` instance\n\n**Savol:** `b.Show()` va `b.Display()` ning birga chiqishi qanday?",
+      "answer": "BaseDerivedDisplay",
+      "explanation": "✓ **Method hiding vs Override:**\n- `Show()` non-virtual → `new` hiding → `Base.Show()` chaqiriladi\n- `Display()` virtual → `override` → `Derived.Display()` chaqiriladi\n\n✓ **Method resolution:**\n- `b.Show()` → \"Base\" (hiding)\n- `b.Display()` → \"DerivedDisplay\" (virtual dispatch)\n\n✓ **Natija:** \"Base\" + \"DerivedDisplay\" = \"BaseDerivedDisplay\""
+    },
+    {
+      "id": 16,
+      "type": "code_writing",
+      "metadata": {
+        "category": "tip-tizimi-oop",
+        "subcategory": "polimorfizm"
+      },
+      "prompt": "**Polimorfizm** bilan shakllar yuzasini hisoblash.\n\n**Talablar:**\n- `abstract class Shape` va `abstract double GetArea()` metodi\n- `Circle` (radius) va `Rectangle` (width, height) voris classlar\n- `GetArea()` ni har birida `override` qiling\n- `switch` expression bilan shakl tanlash\n- Polimorfizm orqali yuzani hisoblash",
+      "examples": [
+        "Shakl: circle\nRadius: 2.5\nYuza: 19.63",
+        "Shakl: rectangle\nEni: 4\nBoyi: 3\nYuza: 12"
+      ]
+    }
+  ]
+}

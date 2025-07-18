@@ -1,0 +1,379 @@
+{
+  "metadata": {
+    "categoryId": 1,
+    "id": "asosiy-til-xususiyatlari",
+    "title": "Asosiy Til Xususiyatlari",
+    "description": "C# tilining asosiy xususiyatlari: o'zgaruvchilar, ma'lumot turlari, operatorlar, va dasturlash asoslari.",
+    "icon": "🔤"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "pattern matching"
+      },
+      "codeBefore": "```csharp\nbool IsLong(string? s) => s switch\n{\n    null                  => false,\n    { Length: > 5 and < 10 } => true,\n    _                     => false\n};\n```",
+      "codeAfter": "",
+      "prompt": "Yuqoridagi **pattern matching** kodida qaysi method chaqiruvi `true` natija qaytaradi?\n\n**Eslatma:** Property pattern `{ Length: > 5 and < 10 }` string uzunligi 5 dan **katta** va 10 dan **kichik** bo'lgan holatlarda `true` qaytaradi.",
+      "options": [
+        {
+          "id": "A",
+          "option": "`IsLong(\"123456\")` - string uzunligi 6"
+        },
+        {
+          "id": "B",
+          "option": "`IsLong(\"1234567890\")` - string uzunligi 10"
+        },
+        {
+          "id": "C",
+          "option": "`IsLong(null!)` - null qiymat"
+        },
+        {
+          "id": "D",
+          "option": "`IsLong(\"abcd\")` - string uzunligi 4"
+        }
+      ],
+      "answer": [
+        "A"
+      ],
+      "explanation": "Property pattern `{ Length: > 5 and < 10 }` uzunligi 6-9 orasidagi stringlarni tanlaydi. A variant: string uzunligi 6 (5 < 6 < 10 ✓), B variant: uzunlik 10 (10 >= 10 ✗), C variant: null (false ✗), D variant: uzunlik 4 (4 <= 5 ✗)."
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "records"
+      },
+      "codeBefore": "```csharp\npublic record Point(int X, int Y);\nvar p = new Point(1,2) with { Y = 3 };\n```",
+      "codeAfter": "",
+      "prompt": "Yuqoridagi **positional record** `Point` haqida qaysi gap **noto'g'ri**?\n\n**Eslatma:** Positional recordlar avtomatik property, constructor, equality comparison va `with` expression support beradi.",
+      "options": [
+        {
+          "id": "A",
+          "option": "Agar ikki `Point` objectining `X` va `Y` qiymatlari bir xil bo'lsa, ular **value equality** asosida teng hisoblanadi"
+        },
+        {
+          "id": "B",
+          "option": "Record typeda `ToString()` methodini **override** qilib, custom string representation yaratish mumkin"
+        },
+        {
+          "id": "C",
+          "option": "`with` expression orqali mavjud recorddan **copy** yaratib, ba'zi propertylarini o'zgartirish mumkin"
+        },
+        {
+          "id": "D",
+          "option": "Positional record ga qo'shimcha **parameterless constructor** qo'shish mumkin va primary constructorni bypass qilish mumkin"
+        }
+      ],
+      "answer": [
+        "D"
+      ],
+      "explanation": "Positional recordlarga qo'shimcha parameterless constructor qo'shib bo'lmaydi. Primary constructor - yagona yaratish usuli. A: recordlar value-based equality ga ega ✓, B: ToString() override qilish mumkin ✓, C: with expression copy-with-modifications pattern ✓."
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "file-scoped-types"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "C# da **type modifierlar** haqida qaysi gap **to'g'ri**?\n\n**Modifier turlari:**\n- `partial` - type ni bir nechta fayllarga bo'lish uchun\n- `file` - type ni faqat joriy faylda ko'rinish uchun",
+      "options": [
+        {
+          "id": "A",
+          "option": "`partial class` ni **bir nechta fayl** bo'ylab bo'lib, har qismini alohida faylda yozish mumkin"
+        },
+        {
+          "id": "B",
+          "option": "`file struct` ni **boshqa fayldan** access qilib, instance yaratish mumkin"
+        },
+        {
+          "id": "C",
+          "option": "Bir typeni **bir vaqtning o'zida** ham `partial` ham `file` modifier bilan e'lon qilish mumkin"
+        },
+        {
+          "id": "D",
+          "option": "`file class` da **private protected** access modifier ishlatib, member yaratish mumkin"
+        }
+      ],
+      "answer": [
+        "A"
+      ],
+      "explanation": "Partial classlar bir assemblydagi bir nechta faylga bo'linishi mumkin, kodni organize qilish va modularity uchun foydali. B: file types faqat joriy faylda visible ✗, C: partial va file modifierlarni birga ishlatib bo'lmaydi ✗, D: file classda private protected member bo'lishi mumkin emas ✗."
+    },
+    {
+      "id": 4,
+      "type": "mcq",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "file-scoped-types"
+      },
+      "codeBefore": "```csharp\n// File1.cs\nfile interface IHelper\n{\n    void Help();\n}\n\n// File2.cs\nclass HelperImpl : IHelper { ... }  // Bu mumkinmi?\n```",
+      "codeAfter": "",
+      "prompt": "**File-scoped types** (C# 11+) haqida: `file` modifier bilan e'lon qilingan `IHelper` interface ni **boshqa fayldan** ishlatish mumkinmi?\n\n**File-scoped types xususiyatlari:**\n- Faqat e'lon qilingan file ichida ko'rinadi\n- Boshqa filelar uchun invisible\n- Assembly-level visibility yo'q",
+      "options": [
+        {
+          "id": "A",
+          "option": "**Ha** - `IHelper` faqat shu file ichida ko'rinadi va implement qilish mumkin"
+        },
+        {
+          "id": "B",
+          "option": "**Yo'q** - `IHelper` butun assembly bo'ylab `public` hisoblanadi"
+        },
+        {
+          "id": "C",
+          "option": "**Yo'q** - `IHelper` ni bir nechta filedan implement qilish mumkin"
+        },
+        {
+          "id": "D",
+          "option": "**Yo'q** - `file interface` noto'g'ri syntax"
+        }
+      ],
+      "answer": [
+        "A"
+      ],
+      "explanation": "File-scoped types (file interface, file class, file struct) faqat e'lon qilingan file ichida ko'rinadi. Boshqa filelar bu typelarga access qila olmaydi. A: Faqat o'sha file ichida ✓, B: Assembly-level visibility yo'q ✗, C: Boshqa filelardan access yo'q ✗, D: C# 11+ da valid syntax ✓."
+    },
+    {
+      "id": 5,
+      "type": "mcq",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "pattern-matching"
+      },
+      "codeBefore": "```csharp\nint Classify(int x) => x switch\n{\n    < 0 => -1,  // manfiy\n    > 0 => 1,   // musbat\n    _   => 0    // default case\n};\n\nvar result = Classify(0);\n```",
+      "codeAfter": "",
+      "prompt": "**Switch expression** da `Classify(0)` qiymatini hisoblash: `0` qiymati qaysi **pattern** ga mos keladi?\n\n**Pattern matching tartibi:**\n- Patterns yuqoridan pastga tekshiriladi\n- Birinchi mos kelgan pattern execute bo'ladi\n- `_` - default pattern (catch-all)",
+      "options": [
+        {
+          "id": "A",
+          "option": "**`-1`** - chunki `< 0` pattern ga mos keladi"
+        },
+        {
+          "id": "B",
+          "option": "**`0`** - chunki `_` (default) pattern ga mos keladi"
+        },
+        {
+          "id": "C",
+          "option": "**`1`** - chunki `> 0` pattern ga mos keladi"
+        },
+        {
+          "id": "D",
+          "option": "**Compilation error** - exhaustive pattern matching yo'q"
+        }
+      ],
+      "answer": [
+        "B"
+      ],
+      "explanation": "Switch expression da patterns yuqoridan pastga tekshiriladi. 0 qiymat uchun: `< 0` false ✗, `> 0` false ✗, `_` (default) true ✓ - natija 0. A: 0 < 0 emas ✗, B: Default pattern ✓, C: 0 > 0 emas ✗, D: `_` pattern bilan exhaustive ✓."
+    },
+    {
+      "id": 6,
+      "type": "true_false",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "file-scoped-namespaces"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**File-scoped namespace** (`namespace MyApp;`) faqat kodni **tashkillashtirish** uchun ishlatiladi va **access modifierlar** yoki **visibility** ga ta'sir qilmaydi.\n\n**Eslatma:** File-scoped namespace C# 10+ da kiritilgan feature bo'lib, traditional namespace syntaxni soddalashtiradi.",
+      "answer": "true",
+      "explanation": "File-scoped namespace faqat code organization uchun. Access modifierlar (public, private, internal) va visibility rules bir xil qoladi. Faqat indentation va braces kamayadi. Traditional namespace: { } blok kerak, file-scoped: semicolon (;) yetarli."
+    },
+    {
+      "id": 7,
+      "type": "true_false",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "record-structs"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**C# 10+** da `record struct` uchun foydalanuvchi tomonidan yaratilgan **parametersiz constructor** e'lon qilish mumkin.\n\n**Eslatma:** Oldingi versiyalarda struct va record structlarda faqat parametrli constructorlar ruxsat etilgan edi.",
+      "answer": "true",
+      "explanation": "C# 10+ da record struct uchun parametersiz constructor e'lon qilish mumkin. Bu C# 9 da cheklangan edi. Parametersiz constructor explicit yozish mumkin va default initialization logic ni override qilish mumkin."
+    },
+    {
+      "id": 8,
+      "type": "true_false",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "expression-bodied-members"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**Expression-bodied member** (`=>`) ichida **exception throw** qilish va **kompleks mantiq** yozish mumkin.\n\n**Masalan:** `string GetValue() => condition ? \"value\" : throw new Exception(\"Error\");`\n\n**Eslatma:** Expression-bodied memberlar faqat single expression bilan cheklangan.",
+      "answer": "true",
+      "explanation": "Expression-bodied memberlar single expression bilan cheklangan, lekin bu expression kompleks bo'lishi mumkin. Exception throw, conditional expressions (?:), method calls, va boshqa expressionlar mumkin. Faqat statements (if, for, while) mumkin emas."
+    },
+    {
+      "id": 9,
+      "type": "true_false",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "pattern-matching"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**C# switch pattern** da bir **case** ichida **type pattern** va **qo'shimcha shart** birga yozilishi mumkin.\n\n**Masalan:** `case string s when s.Length > 0:`\n\n**Pattern guard (when clause)** orqali type patternni boolean condition bilan birlashtirish.",
+      "answer": "true",
+      "explanation": "Pattern guard (when clause) orqali type pattern va boolean condition birgalikda ishlatiladi. `case string s when s.Length > 0:` - bu s ni string sifatida cast qiladi va s.Length > 0 shartini tekshiradi. Ikki shart ham true bo'lishi kerak."
+    },
+    {
+      "id": 10,
+      "type": "true_false",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "switch expressions"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**C# switch expressions** da barcha mumkin bo'lgan **input patterns** ni kompilyatsiya vaqtida qamrab olish shart (**exhaustive** bo'lishi kerak), **default case** (`_`) bo'lmasa ham.\n\n**Eslatma:** Compiler static analysis orqali barcha caseslar qamrab olinganligini tekshiradi.",
+      "answer": "false",
+      "explanation": "Switch expression exhaustive bo'lishi kerak, lekin compiler ba'zi hollarda barcha mumkin bo'lgan input patterns ni automatic aniqlay olmaydi. Complex types yoki open-ended patterns uchun default case (_) talab qilinadi. Enum kabi finite types uchun compiler barcha values ni track qiladi."
+    },
+    {
+      "id": 11,
+      "type": "true_false",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "record class"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**C#** da `record` (record class) **default** bo'yicha **reference type** hisoblanadi.\n\n**Record types:**\n- `record` = `record class` (reference type)\n- `record struct` (value type)\n\n**Eslatma:** Record class default equality, ToString(), va with expressions ni ta'minlaydi.",
+      "answer": "true",
+      "explanation": "C# da `record` keyword default bo'yicha record class yaratadi va u reference type hisoblanadi. Value type uchun aniq `record struct` yozish kerak. Record class heap da saqlanadi, reference semantics, va immutable pattern uchun optimized."
+    },
+    {
+      "id": 12,
+      "type": "fill",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "file-scoped types"
+      },
+      "codeWithBlank": "file struct Point(int X, int Y)\n{\n    public void Deconstruct(out int x, out int y) => (x, y) = (______, ______);\n}",
+      "prompt": "**File-scoped positional struct** da **Deconstruct method** primary constructor **parametrlarini qaytarishi** uchun bo'sh joylarni to'ldiring.\n\n**Eslatma:** \n- Primary constructor parametrlari automatically properties sifatida mavjud\n- Deconstruct method tuple deconstruction ni ta'minlaydi\n- `var (x, y) = point;` syntax uchun kerak",
+      "answer": "file struct Point(int X, int Y)\n{\n    public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);\n}",
+      "explanation": "Primary constructor parametrlari X va Y automatically properties sifatida mavjud bo'ladi. Deconstruct method da ularni to'g'ridan-to'g'ri ishlatish mumkin. Bu tuple deconstruction syntax ni qo'llab-quvvatlaydi: var (x, y) = point;"
+    },
+    {
+      "id": 13,
+      "type": "fill",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "pattern matching"
+      },
+      "codeWithBlank": "int Classify(object o) => o switch\n{\n    string s when ______ => 1,\n    int i when i % 2 == 0 => 2,\n    null                  => 0,\n    _                     => 3\n};",
+      "prompt": "**Pattern matching** da **bo'sh bo'lmagan** (non-empty) **string** ni tekshiruvchi **when clause** shart yozing.\n\n**Pattern guard (when clause) xususiyatlari:**\n- Type pattern bilan birga ishlatiladi\n- Boolean expression bo'lishi kerak\n- Pattern variable ga access beradi\n\n**String** ning bo'sh emasligini tekshirish condition ni yozing.",
+      "answer": "int Classify(object o) => o switch\n{\n    string s when s.Length > 0 => 1,\n    int i when i % 2 == 0 => 2,\n    null                  => 0,\n    _                     => 3\n};",
+      "explanation": "String type pattern da s variable orqali string ga access qilish mumkin. s.Length > 0 sharti bo'sh bo'lmagan stringlarni aniqlaydi. null case already handled bo'lgani uchun null check kerak emas - type pattern null safety beradi."
+    },
+    {
+      "id": 14,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "records"
+      },
+      "codeWithError": "public record Person(string FirstName, string LastName)\n{\n    public string FullName => FirstName + \" \" + LastName;\n    public Person() {}  // Primary constructor chaqirilmagan\n}",
+      "prompt": "**Positional record** da **parametersiz constructor** **primary constructor** ni chaqirishi kerak.\n\n**Muammo:** Qo'shimcha constructor primary constructor ni chaqirmayapti.\n\n**Positional record qoidasi:** Barcha constructorlar primary constructor ni `this()` orqali chaqirishi majburiy.\n\n**Vazifa:** Constructor chaining qo'shing.",
+      "answer": "public record Person(string FirstName, string LastName)\n{\n    public string FullName => FirstName + \" \" + LastName;\n    public Person() : this(string.Empty, string.Empty) {}\n}",
+      "explanation": "Positional record da qo'shimcha constructor primary constructor ni `: this()` syntax orqali chaqirishi majburiy. Bu record ning positional parameters ni to'g'ri initialize qilish uchun kerak. Primary constructor ning signature ga mos keluvchi argumentlar berish shart."
+    },
+    {
+      "id": 15,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "nullable reference types"
+      },
+      "codeWithError": "public class Utils\n{\n    public static void LogMessage(string? msg!)  // ? va ! birga ishlatilgan\n    {\n        Console.WriteLine(msg);\n    }\n}",
+      "prompt": "**Nullable annotation syntax** da xato bor.\n\n**Muammo:** Parameter declaration da `?` (nullable) va `!` (null-forgiving) operatorlari birga ishlatilgan.\n\n**Nullable annotation qoidalari:**\n- `string?` - nullable reference type\n- `string!` - null-forgiving operator (usage da)\n- Ikkalasini birga ishlatib bo'lmaydi\n\n**Vazifa:** To'g'ri nullable annotation qo'shing.",
+      "answer": "public class Utils\n{\n    public static void LogMessage(string? msg)\n    {\n        Console.WriteLine(msg);\n    }\n}",
+      "explanation": "Parameter declaration da `?` (nullable) va `!` (null-forgiving) operatorlari birga ishlatilmaydi. `?` type declaration uchun, `!` expression da null warning suppress qilish uchun. Parameter uchun faqat `string?` (nullable) yoki `string` (non-nullable) ishlatish mumkin."
+    },
+    {
+      "id": 16,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "init properties"
+      },
+      "codeWithError": "struct Configuration\n{\n    public string Url { get; init; }\n    public Configuration() { Url = \"\"; }  // C# 11+ da ruxsat etilgan, lekin init-only property bilan muammo\n}",
+      "prompt": "**Init-only property** ni constructor da initialization qilish o'rniga **property initializer** ishlatish yaxshiroq.\n\n**Muammo:** Constructor ichida init-only property ni set qilish mumkin, lekin property initializer ishlatish idiomatic C# style.\n\n**Property initializer afzalligi:** \n- Ko'proq declarative\n- Property ning default value ini aniq ko'rsatadi\n- Kod qisqaroq va tushunarli\n\n**Vazifa:** Constructor ni olib tashlang va property initializer ishlatib qiymat bering.",
+      "answer": "struct Configuration\n{\n    public string Url { get; init; } = string.Empty;\n}",
+      "explanation": "Init-only property uchun property initializer ishlatish yaxshiroq. Bu property ning immutable nature ni ta'kidlaydi va default value ni aniq ko'rsatadi. Constructor o'rniga property initializer ishlatish idiomatic C# style hisoblanadi."
+    },
+    {
+      "id": 17,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "records"
+      },
+      "codeWithError": "public record Person(string FirstName, string LastName)\n{\n    public Person() { }  // Primary constructor chaqirilmagan\n}",
+      "prompt": "**Positional record** da qo'shimcha constructor **primary constructor** ni chaqirishi kerak.\n\n**Muammo:** Parametrsiz constructor primary constructor ga chain qilmayapti.\n\n**Record constructor chaining:**\n- Positional record primary constructor bilan keladi\n- Qo'shimcha constructor `: this(...)` syntax bilan chain qilishi kerak\n- Primary constructor parametrlar uchun default value lar berish kerak\n\n**Vazifa:** `: this(...)` syntax bilan primary constructor ni chaqiring.",
+      "answer": "public record Person(string FirstName, string LastName)\n{\n    public Person() : this(string.Empty, string.Empty) { }\n}",
+      "explanation": "Positional record da qo'shimcha constructor primary constructor ni `: this()` syntax orqali chaqirishi kerak. Bu record ning positional nature ni saqlaydi va primary constructor orqali property initialization ni ta'minlaydi."
+    },
+    {
+      "id": 18,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "ref readonly"
+      },
+      "snippet": "var numbers = new[] { 1, 2, 3 };\nint sum = 0;\nforeach (ref readonly var n in numbers)  // Reference by readonly\n{\n    sum += n;  // 1+2+3\n}\nConsole.WriteLine(sum);",
+      "prompt": "**Ref readonly** (C# 7.2+) performance optimization qanday ishlaydi?\n\n**Kod tahlili:**\n- `foreach (ref readonly var n in numbers)` - copy o'rniga reference\n- `sum += n` - oddiy hisoblash\n- `numbers` = `[1, 2, 3]`\n\n**Savol:** `Console.WriteLine(sum)` natijasi nima?",
+      "answer": "6",
+      "explanation": "✓ **Ref readonly xususiyati:** Performance optimization, mantiq o'zgarmaydi\n\n✓ **Hisoblash jarayoni:**\n- `n` har bir element uchun readonly reference\n- `sum += 1` → sum = 1\n- `sum += 2` → sum = 3  \n- `sum += 3` → sum = 6\n\n✓ **Afzallik:** Katta struct lar uchun copy overhead kamaytiradi"
+    },
+    {
+      "id": 19,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "records"
+      },
+      "snippet": "record R(int X)\n{\n    public override string ToString() => $\"R:{X}\";  // Custom ToString\n}\n\nvar r1 = new R(5);\nvar r2 = r1 with { X = 7 };  // Copy with modification\nConsole.WriteLine(r1);\nConsole.WriteLine(r2);",
+      "prompt": "**Record** da **custom ToString** va **with expression** qanday ishlaydi?\n\n**Kod tahlili:**\n- `record R(int X)` - positional record\n- `ToString()` custom implementation\n- `r1 = new R(5)` - original record\n- `r2 = r1 with { X = 7 }` - copy with modification\n\n**Savol:** Ikki `Console.WriteLine` ning natijasi qanday?",
+      "answer": "R:5\nR:7",
+      "explanation": "✓ **With expression immutability:** Original record o'zgarishsiz qoladi\n\n✓ **Custom ToString ishlashi:**\n- `r1.ToString()` → `$\"R:{X}\"` → `\"R:5\"`\n- `r2.ToString()` → `$\"R:{X}\"` → `\"R:7\"`\n\n✓ **Record copy semantics:** `with` expression yangi instance yaratadi, original o'zgarmaydi"
+    },
+    {
+      "id": 20,
+      "type": "code_writing",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "konsol dasturlari"
+      },
+      "prompt": "**Kontaktlar kitobi** konsol dasturi yarating.\n\n**Talablar:**\n- `record Contact(string Name, string PhoneNumber, string Email)` \n- `List<Contact>` da saqlash\n- `switch` expression bilan buyruqlar: `add`, `list`, `exit`\n- `while` loop bilan davom etish\n\n**Buyruqlar:**\n- `add` - yangi kontakt qo'shish\n- `list` - barcha kontaktlarni ko'rsatish  \n- `exit` - dasturdan chiqish",
+      "examples": [
+        "Buyruq: add\nIsm: Alice\nTelefon: 998901234567\nEmail: alice@mail.com\nKontakt qo'shildi!",
+        "Buyruq: list\nAlice - 998901234567 - alice@mail.com\nBob - 998987654321 - bob@mail.com",
+        "Buyruq: exit\nDastur yakunlandi."
+      ]
+    },
+    {
+      "id": 21,
+      "type": "code_writing",
+      "metadata": {
+        "category": "asosiy-til-xususiyatlari",
+        "subcategory": "record structs"
+      },
+      "prompt": "**Record struct** bilan koordinata tahlili.\n\n**Talablar:**\n- `record struct Point(int X, int Y)` yarating\n- `Classify(Point p)` metodini yozing\n- **Pattern matching** va **switch expression** ishlating\n\n**Classification qoidalari:**\n- `X = 0, Y = 0` → `\"Origin\"`\n- `X ≠ 0, Y = 0` → `\"X-axis\"`\n- `X = 0, Y ≠ 0` → `\"Y-axis\"`\n- Boshqa → `\"Quadrant\"`",
+      "examples": [
+        "X: 0, Y: 0\nJoylashuv: Origin",
+        "X: 5, Y: 0\nJoylashuv: X-axis",
+        "X: 0, Y: 3\nJoylashuv: Y-axis",
+        "X: 2, Y: 4\nJoylashuv: Quadrant"
+      ]
+    }
+  ]
+}

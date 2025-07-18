@@ -1,0 +1,289 @@
+{
+  "metadata": {
+    "categoryId": 8,
+    "id": "multithreading-concurrency",
+    "title": "Multithreading & Concurrency",
+    "description": "Ko'p threadli dasturlash: Thread, ThreadPool, Parallel, concurrent collections, va thread safety.",
+    "icon": "🧵"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "thread basics"
+      },
+      "codeBefore": "```csharp\nvar thread = new Thread(() => Console.WriteLine(\"Hello\"));\nthread.Start();\nthread.Join();\n```",
+      "codeAfter": "",
+      "prompt": "`thread.Join()` method nima qiladi?\n\n**Scenario:** Asosiy thread boshqa thread tugashini kutishi kerak bo'lgan vaziyatda qanday method ishlatiladi?",
+      "options": [
+        {"id": "A", "option": "Thread ni to'xtatadi"},
+        {"id": "B", "option": "Thread tugashini kutadi"},
+        {"id": "C", "option": "Thread ni pause qiladi"},
+        {"id": "D", "option": "Thread ni restart qiladi"}
+      ],
+      "answer": ["B"],
+      "explanation": "`thread.Join()` calling thread ni blocking qilib, berilgan thread tugashini kutadi. Bu thread synchronization uchun ishlatiladi."
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "thread pool"
+      },
+      "codeBefore": "```csharp\nThreadPool.QueueUserWorkItem(state => \n{\n    Console.WriteLine($\"Thread ID: {Thread.CurrentThread.ManagedThreadId}\");\n});\n```",
+      "codeAfter": "",
+      "prompt": "**ThreadPool** dan foydalanishning asosiy afzalligi nima?\n\n*Taqqoslash: `new Thread()` bilan ThreadPool orasidagi farq nimada?*",
+      "options": [
+        {"id": "A", "option": "Thread yaratish tezroq"},
+        {"id": "B", "option": "Thread lar reuse qilinadi"},
+        {"id": "C", "option": "Memory kam ishlatiladi"},
+        {"id": "D", "option": "Barcha yuqoridagilar"}
+      ],
+      "answer": ["D"],
+      "explanation": "**To'g'ri javob: D) Barcha yuqoridagilar**\n\nThreadPool ning afzalliklari:\n\n1. **Thread yaratish tezroq** - Thread lar oldindan yaratilgan va pool da saqlanadi\n2. **Thread lar reuse qilinadi** - Yangi thread yaratish o'rniga mavjud thread dan foydalanadi\n3. **Memory kam ishlatiladi** - Thread stack memory reuse qilinadi\n\n*Qo'shimcha: ThreadPool optimal thread count ni avtomatik boshqaradi va system resource larini samarali ishlatadi.*"
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "parallel processing"
+      },
+      "codeBefore": "```csharp\nvar numbers = Enumerable.Range(1, 1000000);\nvar result = numbers.AsParallel().Where(x => x % 2 == 0).Sum();\n```",
+      "codeAfter": "",
+      "prompt": "`AsParallel()` nima qiladi?",
+      "options": [
+        {"id": "A", "option": "LINQ query ni parallel bajaradi"},
+        {"id": "B", "option": "Collection ni sort qiladi"},
+        {"id": "C", "option": "Memory usage ni optimizatsiya qiladi"},
+        {"id": "D", "option": "Exception handling qo'shadi"}
+      ],
+      "answer": ["A"],
+      "explanation": "`AsParallel()` LINQ query ni PLINQ (Parallel LINQ) ga aylantiradi va bir nechta thread da parallel bajaradi."
+    },
+    {
+      "id": 4,
+      "type": "true_false",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "thread safety"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`List<T>` **thread-safe** emas va concurrent access da problem bo'lishi mumkin.\n\n*Xavfli vaziyat: Bir nechta thread bir vaqtda List ga yozish yoki o'qish.*",
+      "answer": "true",
+      "explanation": "To'g'ri. `List<T>` thread-safe emas. Concurrent access uchun `ConcurrentBag<T>` yoki synchronization mechanism ishlatish kerak."
+    },
+    {
+      "id": 5,
+      "type": "true_false",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "task vs thread"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`Task` `Thread` dan yuqori darajali abstraction hisoblanadi.",
+      "answer": "true",
+      "explanation": "To'g'ri. `Task` yuqori darajali abstraction bo'lib, ThreadPool dan foydalanadi va exception handling, cancellation kabi qo'shimcha imkoniyatlar beradi."
+    },
+    {
+      "id": 6,
+      "type": "true_false",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "concurrent collections"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`ConcurrentQueue<T>` FIFO (First In, First Out) tartibida ishlaydi.",
+      "answer": "true",
+      "explanation": "To'g'ri. `ConcurrentQueue<T>` thread-safe FIFO queue bo'lib, `Enqueue` va `TryDequeue` method lari orqali ishlaydi."
+    },
+    {
+      "id": 7,
+      "type": "fill",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "thread creation"
+      },
+      "codeWithBlank": "```csharp\nvar thread = new _____(DoWork);\nthread.Start();\n```",
+      "prompt": "**Thread yaratish** uchun to'g'ri class nomini kiriting.\n\n*Masala: Yangi thread yaratish va ishga tushirish uchun qanday class ishlatiladi?*",
+      "answer": "```csharp\nvar thread = new Thread(DoWork);\nthread.Start();\n```",
+      "explanation": "`Thread` class yangi thread yaratish uchun ishlatiladi. Constructor da delegate yoki lambda expression qabul qiladi."
+    },
+    {
+      "id": 8,
+      "type": "fill",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "parallel for"
+      },
+      "codeWithBlank": "```csharp\nParallel._____(0, 100, i => \n{\n    Console.WriteLine($\"Processing {i}\");\n});\n```",
+      "prompt": "Parallel for loop uchun to'g'ri method nomini kiriting.",
+      "answer": "```csharp\nParallel.For(0, 100, i => \n{\n    Console.WriteLine($\"Processing {i}\");\n});\n```",
+      "explanation": "`Parallel.For` loop ni parallel ravishda bajaradi va automatic load balancing qiladi."
+    },
+    {
+      "id": 9,
+      "type": "fill",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "concurrent dictionary"
+      },
+      "codeWithBlank": "```csharp\nvar dict = new _____<string, int>();\ndict.TryAdd(\"key\", 1);\n```",
+      "prompt": "Thread-safe dictionary uchun to'g'ri class nomini kiriting.",
+      "answer": "```csharp\nvar dict = new ConcurrentDictionary<string, int>();\ndict.TryAdd(\"key\", 1);\n```",
+      "explanation": "`ConcurrentDictionary<TKey, TValue>` thread-safe dictionary bo'lib, concurrent read/write operations uchun optimizatsiya qilingan."
+    },
+    {
+      "id": 10,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "race condition"
+      },
+      "codeWithError": "```csharp\nclass Counter\n{\n    private int count = 0;\n    \n    public void Increment()\n    {\n        count++;\n    }\n    \n    public int GetCount() => count;\n}\n\n// Usage\nvar counter = new Counter();\nParallel.For(0, 1000, i => counter.Increment());\nConsole.WriteLine(counter.GetCount());\n```",
+      "prompt": "Yuqoridagi kodda **race condition** xatoligini toping va to'g'rilang.\n\n**Muammo:** \n- `count++` thread-safe operatsiya emas\n- Bir nechta thread bir vaqtda count o'zgartirayotganda data corruption yuz beradi\n- Natija har doim 1000 bo'lmasligi mumkin\n\n*Yechim: Synchronization mechanism ishlatish kerak.*",
+      "answer": "```csharp\nclass Counter\n{\n    private int count = 0;\n    private readonly object lockObject = new object();\n    \n    public void Increment()\n    {\n        lock (lockObject)\n        {\n            count++;\n        }\n    }\n    \n    public int GetCount() \n    {\n        lock (lockObject)\n        {\n            return count;\n        }\n    }\n}\n```",
+      "explanation": "Race condition oldini olish uchun lock statement ishlatish kerak. Yoki `Interlocked.Increment` ishlatish mumkin."
+    },
+    {
+      "id": 11,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "thread join"
+      },
+      "codeWithError": "```csharp\nvar threads = new Thread[5];\nfor (int i = 0; i < 5; i++)\n{\n    threads[i] = new Thread(() => Console.WriteLine($\"Thread {i}\"));\n    threads[i].Start();\n}\n\nforeach (var thread in threads)\n{\n    thread.Join();\n}\n```",
+      "prompt": "Yuqoridagi kodda closure xatoligini toping va to'g'rilang.",
+      "answer": "```csharp\nvar threads = new Thread[5];\nfor (int i = 0; i < 5; i++)\n{\n    int threadIndex = i;\n    threads[i] = new Thread(() => Console.WriteLine($\"Thread {threadIndex}\"));\n    threads[i].Start();\n}\n\nforeach (var thread in threads)\n{\n    thread.Join();\n}\n```",
+      "explanation": "Closure variable capture muammosi. Loop variable `i` ni local variable ga copy qilish kerak, aks holda barcha thread lar oxirgi qiymatni ko'radi."
+    },
+    {
+      "id": 12,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "thread pool misuse"
+      },
+      "codeWithError": "```csharp\nfor (int i = 0; i < 1000; i++)\n{\n    ThreadPool.QueueUserWorkItem(state => \n    {\n        Thread.Sleep(10000); // Long running task\n        Console.WriteLine(\"Work done\");\n    });\n}\n```",
+      "prompt": "ThreadPool noto'g'ri ishlatish xatoligini toping va to'g'rilang.",
+      "answer": "```csharp\nvar tasks = new Task[1000];\nfor (int i = 0; i < 1000; i++)\n{\n    tasks[i] = Task.Run(() => \n    {\n        Thread.Sleep(10000); // Long running task\n        Console.WriteLine(\"Work done\");\n    });\n}\n\nTask.WaitAll(tasks);\n```",
+      "explanation": "ThreadPool long-running task lar uchun mos emas. `Task.Run` yoki `Task.Factory.StartNew` ishlatish kerak."
+    },
+    {
+      "id": 13,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "thread execution order"
+      },
+      "snippet": "```csharp\nusing System;\nusing System.Threading;\n\nclass Program\n{\n    static void Main()\n    {\n        var t1 = new Thread(() => Console.WriteLine(\"Thread 1\"));\n        var t2 = new Thread(() => Console.WriteLine(\"Thread 2\"));\n        \n        t1.Start();\n        t2.Start();\n        \n        t1.Join();\n        t2.Join();\n        \n        Console.WriteLine(\"Main thread\");\n    }\n}\n```",
+      "prompt": "Yuqoridagi kodda qaysi tartibda output chiqadi?",
+      "answer": "Thread 1 va Thread 2 tartibsiz, keyin Main thread",
+      "explanation": "Thread lar parallel bajariladi, shuning uchun Thread 1 va Thread 2 tartibsiz chiqadi. Join() lar tufayli Main thread oxirida chiqadi."
+    },
+    {
+      "id": 14,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "parallel foreach"
+      },
+      "snippet": "```csharp\nusing System;\nusing System.Linq;\nusing System.Threading.Tasks;\n\nclass Program\n{\n    static void Main()\n    {\n        var numbers = new[] { 1, 2, 3, 4, 5 };\n        \n        Parallel.ForEach(numbers, number => \n        {\n            Console.WriteLine($\"Processing {number} on thread {Thread.CurrentThread.ManagedThreadId}\");\n        });\n    }\n}\n```",
+      "prompt": "Thread ID lar bir xil bo'ladimi?",
+      "answer": "No, thread IDs will likely be different",
+      "explanation": "Parallel.ForEach har xil thread larda bajariladi, shuning uchun thread ID lar odatda har xil bo'ladi."
+    },
+    {
+      "id": 15,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "concurrent bag"
+      },
+      "snippet": "```csharp\nusing System;\nusing System.Collections.Concurrent;\nusing System.Threading.Tasks;\n\nclass Program\n{\n    static void Main()\n    {\n        var bag = new ConcurrentBag<int>();\n        \n        Parallel.For(0, 5, i => \n        {\n            bag.Add(i);\n        });\n        \n        Console.WriteLine($\"Count: {bag.Count}\");\n        foreach (var item in bag)\n        {\n            Console.Write($\"{item} \");\n        }\n    }\n}\n```",
+      "prompt": "ConcurrentBag dagi elementlar tartibli bo'ladimi?",
+      "answer": "No, elements will be in random order",
+      "explanation": "ConcurrentBag thread-safe collection bo'lib, elementlar tartibsiz saqlanadi. Count 5 bo'ladi lekin elementlar random tartibda."
+    },
+    {
+      "id": 16,
+      "type": "code_writing",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "producer-consumer pattern"
+      },
+      "prompt": "## **Producer-Consumer Pattern Implementation**\n\n**Vazifa:** Classic Producer-Consumer pattern ni thread-safe tarzda implement qiling.\n\n### **Class Structure:**\n```csharp\npublic class ProducerConsumer<T>\n{\n    public ProducerConsumer(int maxQueueSize = 1000)\n    public void StartProducer(Func<int, IEnumerable<T>> producer)\n    public void StartConsumer(Action<T> consumer)\n    public void Stop()\n    public int QueueCount { get; }\n    public bool IsRunning { get; }\n}\n```\n\n### **Talablar:**\n- **✅ Thread-safe collections** - `ConcurrentQueue<T>` ishlatish\n- **✅ Synchronization** - `SemaphoreSlim` yoki `ManualResetEvent` ishlatish\n- **✅ Queue size limit** - producer lar kutishi kerak queue to'lganda\n- **✅ Multiple producers/consumers** - bir nechta thread lar parallel ishlashi\n- **✅ Graceful shutdown** - `Stop()` chaqirilganda barcha thread lar to'xtatilishi\n- **✅ Remaining items processing** - queue dagi qolgan item lar process qilinishi\n\n### **Constraints:**\n- `CancellationToken` ishlatib thread larni to'xtatish\n- Producer thread lar background thread bo'lishi kerak\n- Consumer thread lar queue bo'sh bo'lganda kutishi kerak\n- Memory leak bo'lmasligi uchun proper cleanup\n- Thread-safe property lar (`volatile` yoki `lock`)",
+      "codeAfter": "```csharp\n// Usage example:\nvar producerConsumer = new ProducerConsumer<int>(maxQueueSize: 100);\n\n// Start multiple producers\nfor (int i = 0; i < 3; i++)\n{\n    int producerId = i;\n    producerConsumer.StartProducer(id => \n        Enumerable.Range(id * 100, 50)); // Generate 50 items\n}\n\n// Start multiple consumers\nfor (int i = 0; i < 2; i++)\n{\n    int consumerId = i;\n    producerConsumer.StartConsumer(item => \n    {\n        Console.WriteLine($\"Consumer {consumerId} processed: {item}\");\n        Thread.Sleep(10); // Simulate work\n    });\n}\n\n// Let it run for 5 seconds\nThread.Sleep(5000);\n\n// Graceful shutdown\nproducerConsumer.Stop();\nConsole.WriteLine($\"Final queue count: {producerConsumer.QueueCount}\");\n```",
+      "examples": [
+        "3 producers, 2 consumers, 5 seconds\nResult: All items produced and consumed",
+        "Queue size limit reached\nResult: Producers wait, no overflow",
+        "Stop() called during processing\nResult: Graceful shutdown, remaining items processed"
+      ],
+      "solution": "```csharp\npublic class ProducerConsumer<T>\n{\n    private readonly ConcurrentQueue<T> _queue;\n    private readonly SemaphoreSlim _semaphore;\n    private readonly CancellationTokenSource _cancellationTokenSource;\n    private readonly List<Thread> _threads;\n    private readonly int _maxQueueSize;\n    private volatile bool _isRunning;\n\n    public ProducerConsumer(int maxQueueSize = 1000)\n    {\n        _queue = new ConcurrentQueue<T>();\n        _semaphore = new SemaphoreSlim(0);\n        _cancellationTokenSource = new CancellationTokenSource();\n        _threads = new List<Thread>();\n        _maxQueueSize = maxQueueSize;\n        _isRunning = true;\n    }\n\n    public void StartProducer(Func<int, IEnumerable<T>> producer)\n    {\n        var producerId = _threads.Count;\n        var thread = new Thread(() =>\n        {\n            try\n            {\n                foreach (var item in producer(producerId))\n                {\n                    if (_cancellationTokenSource.Token.IsCancellationRequested)\n                        break;\n\n                    // Wait if queue is full\n                    while (_queue.Count >= _maxQueueSize && _isRunning)\n                    {\n                        Thread.Sleep(10);\n                    }\n\n                    if (!_isRunning) break;\n\n                    _queue.Enqueue(item);\n                    _semaphore.Release();\n                }\n            }\n            catch (OperationCanceledException)\n            {\n                // Expected when stopping\n            }\n        })\n        {\n            IsBackground = true,\n            Name = $\"Producer-{producerId}\"\n        };\n\n        _threads.Add(thread);\n        thread.Start();\n    }\n\n    public void StartConsumer(Action<T> consumer)\n    {\n        var consumerId = _threads.Count;\n        var thread = new Thread(async () =>\n        {\n            try\n            {\n                while (_isRunning || !_queue.IsEmpty)\n                {\n                    if (await _semaphore.WaitAsync(100, _cancellationTokenSource.Token))\n                    {\n                        if (_queue.TryDequeue(out T item))\n                        {\n                            consumer(item);\n                        }\n                    }\n                }\n            }\n            catch (OperationCanceledException)\n            {\n                // Expected when stopping\n            }\n        })\n        {\n            IsBackground = true,\n            Name = $\"Consumer-{consumerId}\"\n        };\n\n        _threads.Add(thread);\n        thread.Start();\n    }\n\n    public void Stop()\n    {\n        _isRunning = false;\n        _cancellationTokenSource.Cancel();\n\n        // Wait for all threads to complete\n        foreach (var thread in _threads)\n        {\n            thread.Join(TimeSpan.FromSeconds(2));\n        }\n    }\n\n    public int QueueCount => _queue.Count;\n    public bool IsRunning => _isRunning;\n}\n```",
+      "testCases": [
+        {
+          "input": "3 producers, 2 consumers, normal operation",
+          "expectedOutput": "All produced items are consumed, no data loss"
+        },
+        {
+          "input": "Queue reaches max capacity",
+          "expectedOutput": "Producers wait until queue has space, no overflow"
+        },
+        {
+          "input": "Stop() called during operation",
+          "expectedOutput": "Graceful shutdown, remaining items in queue are processed"
+        }
+      ],
+      "rubric": [
+        "Uses thread-safe collections (ConcurrentQueue)",
+        "Implements proper synchronization (SemaphoreSlim)",
+        "Supports multiple producers and consumers",
+        "Handles queue size limits",
+        "Implements graceful shutdown mechanism"
+      ]
+    },
+    {
+      "id": 17,
+      "type": "code_writing",
+      "metadata": {
+        "category": "multithreading-concurrency",
+        "subcategory": "parallel data processing"
+      },
+      "prompt": "## **Parallel Data Processing System**\n\n**Vazifa:** Katta ma'lumotlar to'plamini parallel tarzda process qiladigan system yarating.\n\n### **Method Signature:**\n```csharp\npublic async Task<TOutput[]> ProcessAsync<TInput, TOutput>(\n    TInput[] data,\n    Func<TInput, TOutput> processor,\n    int chunkSize = 1000,\n    int maxDegreeOfParallelism = -1,\n    IProgress<double> progress = null,\n    CancellationToken cancellationToken = default)\n```\n\n### **Talablar:**\n- **✅ Chunking strategy** - ma'lumotlarni optimal chunk larga bo'lish\n- **✅ Parallel.ForEach** - har bir chunk ni parallel process qilish\n- **✅ Progress tracking** - `IProgress<double>` orqali 0.0-1.0 progress\n- **✅ Error aggregation** - barcha exception larni `AggregateException` da to'plash\n- **✅ Cancellation support** - `CancellationToken` orqali to'xtatish\n- **✅ Dynamic load balancing** - `ParallelOptions.MaxDegreeOfParallelism` ishlatish\n- **✅ Memory efficiency** - katta array larni copy qilmaslik\n\n### **Constraints:**\n- Generic method bo'lishi kerak (`<TInput, TOutput>`)\n- Original array tartibini saqlab qolish\n- Thread-safe progress reporting\n- Empty array uchun ham ishlashi\n- `maxDegreeOfParallelism = -1` da `Environment.ProcessorCount` ishlatish",
+      "codeAfter": "```csharp\n// Usage example:\nvar processor = new ParallelDataProcessor<int, string>();\nvar data = Enumerable.Range(1, 10000).ToArray();\n\nvar progress = new Progress<double>(p => \n    Console.WriteLine($\"Progress: {p:P}\"));\n\ntry\n{\n    var results = await processor.ProcessAsync(\n        data,\n        item => $\"Processed: {item * 2}\", // Transform function\n        chunkSize: 100,\n        maxDegreeOfParallelism: Environment.ProcessorCount,\n        progress: progress,\n        cancellationToken: CancellationToken.None\n    );\n    \n    Console.WriteLine($\"Processed {results.Length} items\");\n    Console.WriteLine($\"First result: {results[0]}\");\n    Console.WriteLine($\"Last result: {results[^1]}\");\n}\ncatch (AggregateException ex)\n{\n    Console.WriteLine($\"Processing failed: {ex.InnerExceptions.Count} errors\");\n}\n```",
+      "examples": [
+        "10000 items, chunkSize=100, 4 cores\nResult: All items processed, progress 100%",
+        "Some items throw exceptions\nResult: AggregateException with all errors",
+        "Processing cancelled midway\nResult: OperationCanceledException thrown"
+      ],
+      "solution": "```csharp\npublic class ParallelDataProcessor<TInput, TOutput>\n{\n    public async Task<TOutput[]> ProcessAsync<TInput, TOutput>(\n        TInput[] data,\n        Func<TInput, TOutput> processor,\n        int chunkSize = 1000,\n        int maxDegreeOfParallelism = -1,\n        IProgress<double> progress = null,\n        CancellationToken cancellationToken = default)\n    {\n        if (data == null || data.Length == 0)\n            return new TOutput[0];\n\n        if (maxDegreeOfParallelism == -1)\n            maxDegreeOfParallelism = Environment.ProcessorCount;\n\n        var results = new TOutput[data.Length];\n        var chunks = CreateChunks(data, chunkSize);\n        var completedItems = 0;\n        var lockObject = new object();\n        var exceptions = new ConcurrentBag<Exception>();\n\n        var parallelOptions = new ParallelOptions\n        {\n            MaxDegreeOfParallelism = maxDegreeOfParallelism,\n            CancellationToken = cancellationToken\n        };\n\n        try\n        {\n            await Task.Run(() =>\n            {\n                Parallel.ForEach(chunks, parallelOptions, chunk =>\n                {\n                    try\n                    {\n                        ProcessChunk(chunk, processor, results, ref completedItems, data.Length, progress, lockObject);\n                    }\n                    catch (Exception ex)\n                    {\n                        exceptions.Add(ex);\n                    }\n                });\n            }, cancellationToken);\n        }\n        catch (OperationCanceledException)\n        {\n            throw;\n        }\n\n        if (!exceptions.IsEmpty)\n        {\n            throw new AggregateException(\"Errors occurred during parallel processing\", exceptions);\n        }\n\n        return results;\n    }\n\n    private void ProcessChunk<TInput, TOutput>(\n        ChunkInfo<TInput> chunk,\n        Func<TInput, TOutput> processor,\n        TOutput[] results,\n        ref int completedItems,\n        int totalItems,\n        IProgress<double> progress,\n        object lockObject)\n    {\n        for (int i = 0; i < chunk.Data.Length; i++)\n        {\n            var result = processor(chunk.Data[i]);\n            results[chunk.StartIndex + i] = result;\n\n            // Update progress\n            if (progress != null)\n            {\n                int currentCompleted;\n                lock (lockObject)\n                {\n                    currentCompleted = ++completedItems;\n                }\n\n                if (currentCompleted % 100 == 0 || currentCompleted == totalItems)\n                {\n                    progress.Report((double)currentCompleted / totalItems);\n                }\n            }\n        }\n    }\n\n    private List<ChunkInfo<TInput>> CreateChunks<TInput>(TInput[] data, int chunkSize)\n    {\n        var chunks = new List<ChunkInfo<TInput>>();\n        \n        for (int i = 0; i < data.Length; i += chunkSize)\n        {\n            var actualChunkSize = Math.Min(chunkSize, data.Length - i);\n            var chunkData = new TInput[actualChunkSize];\n            Array.Copy(data, i, chunkData, 0, actualChunkSize);\n            \n            chunks.Add(new ChunkInfo<TInput>\n            {\n                Data = chunkData,\n                StartIndex = i\n            });\n        }\n        \n        return chunks;\n    }\n\n    private class ChunkInfo<T>\n    {\n        public T[] Data { get; set; }\n        public int StartIndex { get; set; }\n    }\n}\n```",
+      "testCases": [
+        {
+          "input": "Array of 10000 integers, chunkSize=100, process each item",
+          "expectedOutput": "All items processed correctly, progress reported, results in correct order"
+        },
+        {
+          "input": "Processing throws exception for some items",
+          "expectedOutput": "AggregateException thrown with all individual exceptions"
+        },
+        {
+          "input": "Cancellation token cancelled during processing",
+          "expectedOutput": "OperationCanceledException thrown, processing stops"
+        }
+      ],
+      "rubric": [
+        "Uses Parallel.ForEach for parallel processing",
+        "Implements proper chunking strategy",
+        "Provides accurate progress reporting",
+        "Handles exceptions from individual processors",
+        "Supports cancellation and maintains result order"
+      ]
+    }
+  ]
+} 

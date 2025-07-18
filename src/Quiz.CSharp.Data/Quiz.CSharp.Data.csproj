@@ -21,4 +21,10 @@
     <ProjectReference Include="../Quiz.Shared/Quiz.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Seed\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

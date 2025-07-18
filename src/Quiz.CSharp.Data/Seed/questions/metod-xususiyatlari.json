@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "categoryId": 2,
+    "id": "metod-xususiyatlari",
+    "title": "Metod Xususiyatlari",
+    "description": "Metodlar, xususiyatlar, parametrlar, va funksiyalar bilan ishlash.",
+    "icon": "⚙️"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "metadata": {
+        "category": "metod-xususiyatlari",
+        "subcategory": "parametrlar"
+      },
+      "codeBefore": "```csharp\nvoid M(in int x, out int y, params object[] rest) { }\n```",
+      "codeAfter": "",
+      "prompt": "Yuqoridagi method da turli **parameter** turlari mavjud:\n- `in` - **readonly** parameter (o'qish uchun)\n- `out` - **write-only** parameter (yozish uchun)\n- `params` - **variable argument** list\n\nQaysi method chaqiruvi **noto'g'ri** va **compilation error** beradi?",
+      "options": [
+        {
+          "id": "A",
+          "option": "`M(5, out var y)` - literal qiymat `in` parameter uchun"
+        },
+        {
+          "id": "B",
+          "option": "`int a = 1; M(a, out a)` - bir xil variable ni `in` va `out` uchun ishlatish"
+        },
+        {
+          "id": "C",
+          "option": "`M(in 5, out _, 1, 2)` - explicit `in` keyword va discard pattern"
+        },
+        {
+          "id": "D",
+          "option": "`M(5, out var y, \"x\", 3)` - `params` bilan qo'shimcha argumentlar"
+        }
+      ],
+      "answer": [
+        "B"
+      ],
+      "explanation": "Bir xil variable ni bir method chaqiruvida ham `in` (readonly) ham `out` (write-only) parameter sifatida ishlatib bo'lmaydi. Bu logik contradiction yaratadi va compiler error beradi. A: literal `in` ga valid ✓, C: explicit `in` keyword valid ✓, D: `params` qo'shimcha argumentlar qabul qiladi ✓."
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "metadata": {
+        "category": "metod-xususiyatlari",
+        "subcategory": "params-arrays"
+      },
+      "codeBefore": "```csharp\nvoid F(params int[] nums) { }\n```",
+      "codeAfter": "",
+      "prompt": "Yuqoridagi methodga `F(1, 2, new[]{3,4})` **chaqiruvi** amalga oshirilganda nima bo'ladi?\n\n**Eslatma:** `params` parameter ikki xil usulda ishlatiladi:\n- Individual argumentlar: `F(1, 2, 3, 4)`\n- Bitta array: `F(new[]{1, 2, 3, 4})`",
+      "options": [
+        {
+          "id": "A",
+          "option": "Barcha argumentlar **combine** bo'lib, bitta `[1,2,3,4]` array yaratiladi"
+        },
+        {
+          "id": "B",
+          "option": "**Uch argument** uzatiladi: `1`, `2` va `int[]` array object"
+        },
+        {
+          "id": "C",
+          "option": "**Compilation error** - individual values va array ni aralashtirib bo'lmaydi"
+        },
+        {
+          "id": "D",
+          "option": "**Runtime exception** - argument type conversion muammosi"
+        }
+      ],
+      "answer": [
+        "C"
+      ],
+      "explanation": "params parameter bilan faqat ikki variant mumkin: yoki faqat individual values (F(1,2,3,4)) yoki faqat bitta array (F(new[]{1,2,3,4})). Individual values (1,2) va array (new[]{3,4}) ni aralashtirib bo'lmaydi - compilation error beradi."
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "metadata": {
+        "category": "metod-xususiyatlari",
+        "subcategory": "extension-methods"
+      },
+      "codeBefore": "```csharp\npublic static class Extensions\n{\n    public static bool IsEven(this int number)\n    {\n        return (number % 2) == 0;\n    }\n\n    public bool IsOdd(int number)\n    {\n        return (number % 2) != 0;\n    }\n}\n```",
+      "codeAfter": "",
+      "prompt": "Yuqoridagi **extension method** kodida qaysi **compilation error** bor?\n\n**Extension method talablari:**\n- Static class ichida bo'lishi kerak\n- Method o'zi ham static bo'lishi kerak\n- Birinchi parameter `this` keyword bilan belgilanadi",
+      "options": [
+        {
+          "id": "A",
+          "option": "`IsEven` **extension method**, `IsOdd` esa **instance method** sifatida yaratilgan"
+        },
+        {
+          "id": "B",
+          "option": "`IsEven` va `IsOdd` ikkalasi ham **extension method** bo'lishi kerak"
+        },
+        {
+          "id": "C",
+          "option": "`IsOdd` methodida **static** keyword etishmayapti - compilation error"
+        },
+        {
+          "id": "D",
+          "option": "`this int` keyword **extension method** uchun majburiy emas"
+        }
+      ],
+      "answer": [
+        "C"
+      ],
+      "explanation": "Static class ichidagi barcha methodlar static bo'lishi majburiy. IsOdd methodida static keyword etishmayapti, bu compilation error ga olib keladi. A: IsOdd instance method emas ✗, B: ikkalasi ham extension bo'lishi shart emas ✗, D: this keyword extension method uchun majburiy ✓."
+    },
+    {
+      "id": 4,
+      "type": "true_false",
+      "metadata": {
+        "category": "metod-xususiyatlari",
+        "subcategory": "extension metodlar"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**Extension methods** faqat **static class** ichida e'lon qilinadi va o'zi ham **static** bo'lishi kerak.\n\n**Extension method talablari:**\n- Static class ichida\n- Method o'zi static\n- Birinchi parameter `this` keyword bilan\n\n**Masalan:** `public static void MyMethod(this string str)`",
+      "answer": "true",
+      "explanation": "Extension methodlar qat'iy qoidalar asosida yaratiladi: 1) Faqat static class ichida, 2) Method o'zi static, 3) Birinchi parameter this keyword bilan. Bu syntactic sugar bo'lib, compiler method call ni static method call ga aylantirishadi."
+    },
+    {
+      "id": 5,
+      "type": "true_false",
+      "metadata": {
+        "category": "metod-xususiyatlari",
+        "subcategory": "named arguments"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**Named arguments** dan foydalanganda method chaqirishda **optional parameters** ni **required parameters** dan oldin yozish mumkin.\n\n**Named arguments imkoniyatlari:**\n- Parametrlar tartibini o'zgartirish\n- Optional parametrlarni skip qilish\n- Code readability yaxshilash\n\n**Masalan:** `Method(optional: 10, required: \"text\")`",
+      "answer": "true",
+      "explanation": "Named arguments parametrlar tartibini o'zgartirish imkonini beradi. Optional parametrlarni required parametrlardan oldin yozish, ba'zi parametrlarni skip qilish va code readability ni yaxshilash mumkin. Compiler parametrlarni to'g'ri joylarga assign qiladi."
+    },
+    {
+      "id": 6,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "metod-xususiyatlari",
+        "subcategory": "extension methods"
+      },
+      "codeWithError": "public static class StringUtils\n{\n    public static bool IsPalindrome(string s)\n    {\n        return s == new string(s.Reverse().ToArray());\n    }\n\n    public bool IsAnagram(this string s, string t)  // static emas\n    {\n        return s.OrderBy(c => c).SequenceEqual(t.OrderBy(c => c));\n    }\n}",
+      "prompt": "**Extension method** da **`static` keyword** etishmayapti.\n\n**Muammo:** Static class ichida extension method `static` keyword siz e'lon qilingan.\n\n**Extension method qoidalari:**\n- Faqat static class ichida bo'lishi mumkin\n- Extension method ham `static` bo'lishi kerak\n- Birinchi parameter `this` keyword bilan\n\n**Vazifa:** Extension method ni `static` qiling.",
+      "answer": "public static class StringUtils\n{\n    public static bool IsPalindrome(string s)\n    {\n        return s == new string(s.Reverse().ToArray());\n    }\n\n    public static bool IsAnagram(this string s, string t)\n    {\n        return s.OrderBy(c => c).SequenceEqual(t.OrderBy(c => c));\n    }\n}",
+      "explanation": "Extension method static class ichida static method bo'lishi kerak. `IsAnagram` method ni `static` qilish orqali extension method syntax ishlaydi va string instance larida chaqirish mumkin bo'ladi."
+    },
+    {
+      "id": 7,
+      "type": "code_writing",
+      "metadata": {
+        "category": "metod-xususiyatlari",
+        "subcategory": "extension methods"
+      },
+      "prompt": "**Extension method** bilan telefon raqamini tekshirish.\n\n**Talablar:**\n- `static class PhoneValidator` yarating\n- `IsValidUzPhone(this string phone)` extension metodi\n- `998` bilan boshlanishi, 12 ta raqam, faqat raqamlar\n- Konsol dasturida test qiling\n\n**Validation qoidalari:**\n- `998` prefiksi majburiy\n- Jami 12 ta belgi\n- Faqat raqamlar (`char.IsDigit`)",
+      "examples": [
+        "Telefon: 998901234567\nNatija: Valid",
+        "Telefon: 9901234567\nNatija: Invalid",
+        "Telefon: 998abc123456\nNatija: Invalid"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "code_writing",
+      "metadata": {
+        "category": "metod-xususiyatlari",
+        "subcategory": "params arrays"
+      },
+      "prompt": "**Params array** va **switch expression** bilan kalkulyator.\n\n**Talablar:**\n- `Calculate(string operation, params double[] values)` metodi\n- `switch` expression bilan operatsiyalar\n- Edge case handling (bo'sh array, noto'g'ri operatsiya)\n\n**Operatsiyalar:**\n- `\"sum\"` - yig'indi\n- `\"average\"` - o'rtacha\n- `\"max\"` - maksimal\n- `\"min\"` - minimal",
+      "examples": [
+        "Operatsiya: sum\nSonlar: 3 5 2\nNatija: 10",
+        "Operatsiya: average\nSonlar: 4 8\nNatija: 6",
+        "Operatsiya: max\nSonlar: 1 9 5\nNatija: 9"
+      ]
+    }
+  ]
+}

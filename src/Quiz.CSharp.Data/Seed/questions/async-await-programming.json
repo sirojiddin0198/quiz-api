@@ -1,0 +1,289 @@
+{
+  "metadata": {
+    "categoryId": 7,
+    "id": "async-await-programming",
+    "title": "Async/Await Programming",
+    "description": "Asinxron dasturlash: async/await, Task, Task<T>, ConfigureAwait, va asinxron oqimlarni boshqarish.",
+    "icon": "⚡"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "basic async concepts"
+      },
+      "codeBefore": "```csharp\npublic async Task<int> GetDataAsync()\n{\n    await Task.Delay(1000);\n    return 42;\n}\n```",
+      "codeAfter": "",
+      "prompt": "Yuqoridagi `async` method qanday **return type** ga ega?\n\n*Eslatma: Async method lar har doim `Task` yoki `Task<T>` qaytaradi, hatto method ichida oddiy qiymat qaytarilsa ham.*",
+      "options": [
+        {"id": "A", "option": "int"},
+        {"id": "B", "option": "Task<int>"},
+        {"id": "C", "option": "Task"},
+        {"id": "D", "option": "void"}
+      ],
+      "answer": ["B"],
+      "explanation": "**To'g'ri javob: B) Task<int>**\n\nAsync method lar har doim `Task` yoki `Task<T>` return type ga ega bo'ladi. Bu holda:\n- Method ichida `int` qaytariladi (42)\n- Lekin async method signature da `Task<int>` ko'rsatiladi\n- Compiler avtomatik ravishda `int` ni `Task<int>` ga wrap qiladi\n\n*Qoida: async method ning actual return type har doim Task yoki Task<T> bo'ladi.*"
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "task continuation"
+      },
+      "codeBefore": "```csharp\nTask<string> task = GetStringAsync();\nstring result = await task.ConfigureAwait(false);\n```",
+      "codeAfter": "",
+      "prompt": "`ConfigureAwait(false)` nima uchun ishlatiladi?\n\n**Kontekst:** Library kodlarda va performance-critical ilovalarda `ConfigureAwait(false)` ishlatish muhim ahamiyatga ega.",
+      "options": [
+        {"id": "A", "option": "Task ni tezroq bajarish uchun"},
+        {"id": "B", "option": "SynchronizationContext ni capture qilmaslik uchun"},
+        {"id": "C", "option": "Exception handling uchun"},
+        {"id": "D", "option": "Memory leak oldini olish uchun"}
+      ],
+      "answer": ["B"],
+      "explanation": "`ConfigureAwait(false)` SynchronizationContext ni capture qilmaslik uchun ishlatiladi. Bu library kodda deadlock oldini olish uchun muhim."
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "task parallel"
+      },
+      "codeBefore": "```csharp\nTask task1 = DoWorkAsync();\nTask task2 = DoWorkAsync();\nTask task3 = DoWorkAsync();\n\nawait Task.WhenAll(task1, task2, task3);\n```",
+      "codeAfter": "",
+      "prompt": "`Task.WhenAll` method nima qiladi?\n\n**Scenario:** Bir nechta async operation larni **parallel** ravishda bajarishda qanday method ishlatiladi?",
+      "options": [
+        {"id": "A", "option": "Tasklar ni ketma-ket bajaradi"},
+        {"id": "B", "option": "Birinchi tugagan task ni qaytaradi"},
+        {"id": "C", "option": "Barcha tasklar tugashini kutadi"},
+        {"id": "D", "option": "Eng tez tugagan task ni qaytaradi"}
+      ],
+      "answer": ["C"],
+      "explanation": "`Task.WhenAll` barcha tasklar tugashini kutadi va parallel ravishda bajaradi. Agar birontasi exception tashlasa, barcha exception lar aggregate bo'ladi."
+    },
+    {
+      "id": 4,
+      "type": "true_false",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "async void"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`async void` method lar faqat **event handler** larda ishlatilishi kerak.\n\n*Sabab: `async void` method larni await qilish mumkin emas va exception handling qiyin.*",
+      "answer": "true",
+      "explanation": "To'g'ri. `async void` method lar exception handling va awaiting qiyin bo'lgani uchun faqat event handler larda ishlatilishi kerak. Boshqa hollarda `async Task` ishlatiladi."
+    },
+    {
+      "id": 5,
+      "type": "true_false",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "task result"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`Task<T>.Result` property ga access qilish **deadlock** ga olib kelishi mumkin.\n\n*Xavfli scenario: UI thread da yoki SynchronizationContext mavjud bo'lgan joylarda.*",
+      "answer": "true",
+      "explanation": "To'g'ri. `Task<T>.Result` blocking call bo'lib, UI thread da yoki SynchronizationContext bor joyda deadlock ga olib kelishi mumkin. `await` ishlatish kerak."
+    },
+    {
+      "id": 6,
+      "type": "true_false",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "task completion"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`Task.Run` UI thread da CPU-intensive work uchun ishlatiladi.",
+      "answer": "true",
+      "explanation": "To'g'ri. `Task.Run` CPU-intensive work ni background thread da bajarish uchun ishlatiladi, bu UI thread ni block qilmaydi."
+    },
+    {
+      "id": 7,
+      "type": "fill",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "async method signature"
+      },
+      "codeWithBlank": "```csharp\npublic _____ Task<string> GetDataAsync()\n{\n    await Task.Delay(1000);\n    return \"Hello\";\n}\n```",
+      "prompt": "Async method uchun to'g'ri **keyword** ni kiriting.\n\n**Masala:** Method ichida `await` ishlatish uchun method qanday belgilanishi kerak?",
+      "answer": "```csharp\npublic async Task<string> GetDataAsync()\n{\n    await Task.Delay(1000);\n    return \"Hello\";\n}\n```",
+      "explanation": "Async method uchun `async` keyword ishlatiladi. Bu method ichida `await` ishlatishga imkon beradi."
+    },
+    {
+      "id": 8,
+      "type": "fill",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "cancellation token"
+      },
+      "codeWithBlank": "```csharp\npublic async Task ProcessAsync(_____ token)\n{\n    for (int i = 0; i < 100; i++)\n    {\n        token.ThrowIfCancellationRequested();\n        await Task.Delay(10);\n    }\n}\n```",
+      "prompt": "**Cancellation** uchun to'g'ri parameter type ni kiriting.\n\n*Hint: Async operation larni bekor qilish uchun maxsus token ishlatiladi.*",
+      "answer": "```csharp\npublic async Task ProcessAsync(CancellationToken token)\n{\n    for (int i = 0; i < 100; i++)\n    {\n        token.ThrowIfCancellationRequested();\n        await Task.Delay(10);\n    }\n}\n```",
+      "explanation": "`CancellationToken` async operation larni cancel qilish uchun ishlatiladi. Bu cooperative cancellation pattern."
+    },
+    {
+      "id": 9,
+      "type": "fill",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "task when any"
+      },
+      "codeWithBlank": "```csharp\nTask<int> task1 = GetNumberAsync();\nTask<int> task2 = GetNumberAsync();\n\nTask<int> completed = await Task._____([task1, task2]);\n```",
+      "prompt": "Birinchi tugagan task ni olish uchun to'g'ri method nomini kiriting.",
+      "answer": "```csharp\nTask<int> task1 = GetNumberAsync();\nTask<int> task2 = GetNumberAsync();\n\nTask<int> completed = await Task.WhenAny([task1, task2]);\n```",
+      "explanation": "`Task.WhenAny` birinchi tugagan task ni qaytaradi. Bu timeout yoki racing condition lar uchun foydali."
+    },
+    {
+      "id": 10,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "async void error"
+      },
+      "codeWithError": "```csharp\npublic async void ProcessDataAsync()\n{\n    await Task.Delay(1000);\n    throw new InvalidOperationException(\"Error\");\n}\n\npublic void Main()\n{\n    ProcessDataAsync();\n    Console.WriteLine(\"Done\");\n}\n```",
+      "prompt": "Yuqoridagi kodda **async void** ishlatish bilan bog'liq xatolikni toping va to'g'rilang.\n\n**Muammo:** \n- `async void` method larni await qilish mumkin emas\n- Exception handling qiyin\n- Fire-and-forget pattern yaratadi\n\n*Yechim: `async Task` ishlatish kerak.*",
+      "answer": "```csharp\npublic async Task ProcessDataAsync()\n{\n    await Task.Delay(1000);\n    throw new InvalidOperationException(\"Error\");\n}\n\npublic async Task Main()\n{\n    await ProcessDataAsync();\n    Console.WriteLine(\"Done\");\n}\n```",
+      "explanation": "`async void` dan `async Task` ga o'zgartirish kerak. `async void` exception handling va awaiting qiyin. Main method ham async bo'lishi va await ishlatishi kerak."
+    },
+    {
+      "id": 11,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "deadlock prevention"
+      },
+      "codeWithError": "```csharp\npublic string GetDataSync()\n{\n    var task = GetDataAsync();\n    return task.Result;\n}\n\npublic async Task<string> GetDataAsync()\n{\n    await Task.Delay(1000);\n    return \"Hello\";\n}\n```",
+      "prompt": "Yuqoridagi kodda deadlock ga olib kelishi mumkin bo'lgan xatolikni toping va to'g'rilang.",
+      "answer": "```csharp\npublic async Task<string> GetDataAsync()\n{\n    await Task.Delay(1000);\n    return \"Hello\";\n}\n\npublic async Task<string> GetDataSyncAsync()\n{\n    return await GetDataAsync();\n}\n```",
+      "explanation": "`task.Result` blocking call bo'lib deadlock ga olib kelishi mumkin. O'rniga method ni async qilib await ishlatish kerak."
+    },
+    {
+      "id": 12,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "cancellation token usage"
+      },
+      "codeWithError": "```csharp\npublic async Task ProcessAsync(CancellationToken token)\n{\n    for (int i = 0; i < 1000; i++)\n    {\n        await Task.Delay(100);\n        if (token.IsCancellationRequested)\n            return;\n    }\n}\n```",
+      "prompt": "Cancellation token ishlatishda xatolikni toping va to'g'rilang.",
+      "answer": "```csharp\npublic async Task ProcessAsync(CancellationToken token)\n{\n    for (int i = 0; i < 1000; i++)\n    {\n        token.ThrowIfCancellationRequested();\n        await Task.Delay(100, token);\n    }\n}\n```",
+      "explanation": "`ThrowIfCancellationRequested()` ishlatish kerak va `Task.Delay` ga token pass qilish kerak. Bu to'g'ri cancellation pattern."
+    },
+    {
+      "id": 13,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "async execution order"
+      },
+      "snippet": "```csharp\nusing System;\nusing System.Threading.Tasks;\n\nclass Program\n{\n    static async Task Main()\n    {\n        Console.WriteLine(\"1\");\n        await PrintAsync();\n        Console.WriteLine(\"4\");\n    }\n    \n    static async Task PrintAsync()\n    {\n        Console.WriteLine(\"2\");\n        await Task.Delay(1);\n        Console.WriteLine(\"3\");\n    }\n}\n```",
+      "prompt": "Yuqoridagi kod qanday natija beradi?",
+      "answer": "1\n2\n3\n4",
+      "explanation": "Kod ketma-ket bajariladi: 1 - Main boshlanadi, 2 - PrintAsync boshlanadi, 3 - Task.Delay tugaydi, 4 - Main tugaydi."
+    },
+    {
+      "id": 14,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "task when any"
+      },
+      "snippet": "```csharp\nusing System;\nusing System.Threading.Tasks;\n\nclass Program\n{\n    static async Task Main()\n    {\n        var task1 = DelayedPrintAsync(\"A\", 100);\n        var task2 = DelayedPrintAsync(\"B\", 50);\n        \n        var completed = await Task.WhenAny(task1, task2);\n        Console.WriteLine($\"First completed: {await completed}\");\n    }\n    \n    static async Task<string> DelayedPrintAsync(string msg, int delay)\n    {\n        await Task.Delay(delay);\n        return msg;\n    }\n}\n```",
+      "prompt": "Yuqoridagi kod qanday natija beradi?",
+      "answer": "First completed: B",
+      "explanation": "Task.WhenAny birinchi tugagan task ni qaytaradi. task2 (B) 50ms delay bilan tezroq tugaydi."
+    },
+    {
+      "id": 15,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "cancellation token"
+      },
+      "snippet": "```csharp\nusing System;\nusing System.Threading;\nusing System.Threading.Tasks;\n\nclass Program\n{\n    static async Task Main()\n    {\n        var cts = new CancellationTokenSource();\n        cts.CancelAfter(100);\n        \n        try\n        {\n            await ProcessAsync(cts.Token);\n            Console.WriteLine(\"Completed\");\n        }\n        catch (OperationCanceledException)\n        {\n            Console.WriteLine(\"Cancelled\");\n        }\n    }\n    \n    static async Task ProcessAsync(CancellationToken token)\n    {\n        for (int i = 0; i < 10; i++)\n        {\n            token.ThrowIfCancellationRequested();\n            await Task.Delay(50, token);\n        }\n    }\n}\n```",
+      "prompt": "Yuqoridagi kod qanday natija beradi?",
+      "answer": "Cancelled",
+      "explanation": "CancellationTokenSource 100ms dan keyin cancel qiladi. Loop 10 marta 50ms delay qiladi (500ms), lekin 100ms da cancel bo'ladi."
+    },
+    {
+      "id": 16,
+      "type": "code_writing",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "basic async file operations"
+      },
+      "prompt": "## **Async File Processing Task**\n\n**Vazifa:** Async method yozing, fayl mazmunini o'qib, barcha so'zlarni katta harfga aylantirib, yangi faylga yozsin.\n\n### **Method Signature:**\n```csharp\npublic async Task ProcessTextFileAsync(string inputPath, string outputPath, IProgress<int> progress = null)\n```\n\n### **Talablar:**\n- **✅ Async/await pattern** - `File.ReadAllTextAsync()` va `File.WriteAllTextAsync()` ishlatish\n- **✅ Progress reporting** - `IProgress<int>` orqali foiz ko'rsatish (0-100)\n- **✅ Exception handling** - `FileNotFoundException`, `UnauthorizedAccessException` handle qilish\n- **✅ Empty file support** - bo'sh fayllar uchun ham ishlashi\n- **✅ Line-by-line processing** - katta fayllar uchun memory efficient\n\n### **Constraints:**\n- Method `async Task` return type bo'lishi kerak\n- Progress har bir line process qilinganda report qilinishi kerak\n- Exception larni meaningful message bilan re-throw qiling\n- `ConfigureAwait(false)` library code uchun ishlatish shart emas",
+      "codeAfter": "```csharp\n// Usage example:\nstring inputPath = \"input.txt\";\nstring outputPath = \"output.txt\";\nvar progress = new Progress<int>(percent => \n    Console.WriteLine($\"Progress: {percent}%\"));\n\ntry\n{\n    await ProcessTextFileAsync(inputPath, outputPath, progress);\n    Console.WriteLine(\"File processed successfully!\");\n}\ncatch (ArgumentException ex)\n{\n    Console.WriteLine($\"File error: {ex.Message}\");\n}\n```",
+      "examples": [
+        "Input file: hello world\nthis is test\nOutput file: HELLO WORLD\nTHIS IS TEST\nProgress: 100%",
+        "Input file: (empty)\nOutput file: (empty)\nProgress: 100%",
+        "Input file: file.txt (not found)\nResult: ArgumentException thrown"
+      ],
+      "solution": "```csharp\npublic async Task ProcessTextFileAsync(string inputPath, string outputPath, IProgress<int> progress = null)\n{\n    try\n    {\n        // Read file content\n        string content = await File.ReadAllTextAsync(inputPath);\n        \n        if (string.IsNullOrEmpty(content))\n        {\n            progress?.Report(100);\n            await File.WriteAllTextAsync(outputPath, string.Empty);\n            return;\n        }\n        \n        // Process content in chunks for progress reporting\n        var lines = content.Split('\\n');\n        var processedLines = new List<string>();\n        \n        for (int i = 0; i < lines.Length; i++)\n        {\n            // Convert to uppercase\n            processedLines.Add(lines[i].ToUpper());\n            \n            // Report progress\n            int progressPercent = (int)((i + 1) * 100.0 / lines.Length);\n            progress?.Report(progressPercent);\n            \n            // Small delay to show progress (optional)\n            await Task.Delay(1);\n        }\n        \n        // Write processed content\n        string processedContent = string.Join('\\n', processedLines);\n        await File.WriteAllTextAsync(outputPath, processedContent);\n    }\n    catch (FileNotFoundException)\n    {\n        throw new ArgumentException($\"Input file not found: {inputPath}\");\n    }\n    catch (UnauthorizedAccessException)\n    {\n        throw new InvalidOperationException($\"Access denied to file: {inputPath} or {outputPath}\");\n    }\n    catch (Exception ex)\n    {\n        throw new InvalidOperationException($\"Error processing file: {ex.Message}\", ex);\n    }\n}\n```",
+      "testCases": [
+        {
+          "input": "Input file: 'hello world\\nthis is test'",
+          "expectedOutput": "Output file: 'HELLO WORLD\\nTHIS IS TEST'"
+        },
+        {
+          "input": "Empty input file",
+          "expectedOutput": "Empty output file, progress reports 100%"
+        },
+        {
+          "input": "Non-existent input file",
+          "expectedOutput": "Throws ArgumentException with descriptive message"
+        }
+      ],
+      "rubric": [
+        "Uses async/await for file operations",
+        "Implements proper exception handling",
+        "Supports progress reporting",
+        "Handles edge cases (empty files, missing files)",
+        "Processes content correctly (uppercase conversion)"
+      ]
+    },
+    {
+      "id": 17,
+      "type": "code_writing",
+      "metadata": {
+        "category": "async-await-programming",
+        "subcategory": "advanced async coordination"
+      },
+      "prompt": "## **Async URL Race Condition Task**\n\n**Vazifa:** Async method yozing, bir nechta URL lardan parallel ma'lumot yuklab, eng tez javob bergan URL larning natijasini qaytarsin.\n\n### **Method Signature:**\n```csharp\npublic async Task<Dictionary<string, string>> GetFastestResponsesAsync(\n    string[] urls, \n    int maxResults, \n    TimeSpan timeout, \n    CancellationToken cancellationToken = default)\n```\n\n### **Talablar:**\n- **✅ Parallel execution** - barcha URL lar bir vaqtda request qilinishi\n- **✅ Task.WhenAny** - eng tez javob bergan task ni topish\n- **✅ Timeout handling** - `CancellationTokenSource.CreateLinkedTokenSource()` ishlatish\n- **✅ Error resilience** - ba'zi URL lar fail bo'lsa ham davom etish\n- **✅ Resource cleanup** - `HttpClient` proper disposal\n- **✅ Early termination** - kerakli natija topilgach to'xtatish\n\n### **Constraints:**\n- Method `Dictionary<string, string>` qaytarishi kerak (URL → Content)\n- `maxResults` dan ko'p natija qaytarmaslik\n- Failed URL larni natijaga qo'shmaslik\n- Timeout bo'lsa ham mavjud natijalarni qaytarish\n- `ArgumentException` noto'g'ri parametrlar uchun",
+      "codeAfter": "```csharp\n// Usage example:\nvar urls = new[] { \n    \"https://httpbin.org/delay/1\", \n    \"https://httpbin.org/delay/2\", \n    \"https://httpbin.org/delay/3\",\n    \"https://httpbin.org/status/500\",  // This will fail\n    \"https://httpbin.org/delay/0.5\" \n};\n\nvar timeout = TimeSpan.FromSeconds(10);\nusing var cts = new CancellationTokenSource();\n\ntry\n{\n    var results = await GetFastestResponsesAsync(urls, 3, timeout, cts.Token);\n    Console.WriteLine($\"Got {results.Count} responses:\");\n    foreach (var (url, content) in results)\n    {\n        Console.WriteLine($\"{url}: {content.Length} chars\");\n    }\n}\ncatch (OperationCanceledException)\n{\n    Console.WriteLine(\"Operation was cancelled\");\n}\n```",
+      "examples": [
+        "5 URLs, maxResults=3, all succeed\nResult: Dictionary with 3 fastest URLs",
+        "5 URLs, maxResults=3, 2 fail, 3 succeed\nResult: Dictionary with 3 successful URLs",
+        "Timeout after 5 seconds\nResult: Dictionary with URLs that responded before timeout"
+      ],
+      "solution": "```csharp\npublic async Task<Dictionary<string, string>> GetFastestResponsesAsync(\n    string[] urls, \n    int maxResults, \n    TimeSpan timeout, \n    CancellationToken cancellationToken = default)\n{\n    if (urls == null || urls.Length == 0)\n        throw new ArgumentException(\"URLs array cannot be null or empty\");\n    \n    if (maxResults <= 0 || maxResults > urls.Length)\n        throw new ArgumentException(\"maxResults must be between 1 and urls.Length\");\n    \n    var results = new Dictionary<string, string>();\n    var completedTasks = new List<Task<(string Url, string Content, bool Success)>>();\n    \n    // Create timeout cancellation token\n    using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);\n    timeoutCts.CancelAfter(timeout);\n    \n    // Start all HTTP requests\n    var tasks = urls.Select(url => FetchUrlAsync(url, timeoutCts.Token)).ToArray();\n    \n    try\n    {\n        // Wait for fastest responses\n        while (results.Count < maxResults && completedTasks.Count < urls.Length)\n        {\n            var remainingTasks = tasks.Where(t => !completedTasks.Contains(t)).ToArray();\n            if (remainingTasks.Length == 0) break;\n            \n            var completedTask = await Task.WhenAny(remainingTasks);\n            completedTasks.Add(completedTask);\n            \n            var result = await completedTask;\n            if (result.Success)\n            {\n                results[result.Url] = result.Content;\n            }\n        }\n    }\n    catch (OperationCanceledException)\n    {\n        // Return whatever results we have so far\n    }\n    \n    return results;\n}\n\nprivate async Task<(string Url, string Content, bool Success)> FetchUrlAsync(string url, CancellationToken cancellationToken)\n{\n    try\n    {\n        using var client = new HttpClient();\n        var response = await client.GetAsync(url, cancellationToken);\n        response.EnsureSuccessStatusCode();\n        var content = await response.Content.ReadAsStringAsync(cancellationToken);\n        return (url, content, true);\n    }\n    catch\n    {\n        return (url, string.Empty, false);\n    }\n}\n```",
+      "testCases": [
+        {
+          "input": "5 URLs, maxResults=3, all URLs respond successfully",
+          "expectedOutput": "Dictionary with 3 fastest responses"
+        },
+        {
+          "input": "5 URLs, maxResults=3, 2 URLs fail, 3 succeed",
+          "expectedOutput": "Dictionary with 3 successful responses"
+        },
+        {
+          "input": "Timeout occurs before getting maxResults",
+          "expectedOutput": "Dictionary with whatever results obtained before timeout"
+        }
+      ],
+      "rubric": [
+        "Uses Task.WhenAny for fastest response selection",
+        "Implements proper timeout handling",
+        "Supports cancellation token",
+        "Handles HTTP request failures gracefully",
+        "Returns correct number of results or available results"
+      ]
+    }
+  ]
+} 

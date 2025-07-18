@@ -1,0 +1,956 @@
+{
+  "metadata": {
+    "categoryId": 4,
+    "id": "kolleksiyalar-ma-lumot-tuzilmalari",
+    "title": "Kolleksiyalar Ma Lumot Tuzilmalari",
+    "description": "Arrays, Lists, Dictionaries, HashSets va boshqa kolleksiyalar bilan ishlash usullari.",
+    "icon": "📚"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "queue"
+      },
+      "codeBefore": "```csharp\nvar list = new List<int> { 1, 2, 3, 4, 5 };\nvar queue = new Queue<int>(list);\nvar result = queue.Dequeue();\n```",
+      "codeAfter": "",
+      "prompt": "**Queue<T>** FIFO (First In, First Out) tartibda ishlaydi.\n\n**Kod tahlili:**\n- `List<int> {1, 2, 3, 4, 5}` dan queue yaratildi\n- `Dequeue()` birinchi elementni olib tashlaydi va qaytaradi\n\n**Savol:** `result` ning qiymati nima?",
+      "options": [
+        {
+          "id": "A",
+          "option": "`1`"
+        },
+        {
+          "id": "B",
+          "option": "`5`"
+        },
+        {
+          "id": "C",
+          "option": "`0`"
+        },
+        {
+          "id": "D",
+          "option": "Exception"
+        }
+      ],
+      "answer": [
+        "A"
+      ],
+      "explanation": "✓ **Queue<T> FIFO qoidasi:** Birinchi kiritilgan element birinchi chiqadi\n\n✓ **Queue yaratilishi:** `List<int> {1, 2, 3, 4, 5}` dan queue yaratilganda elementlar tartib saqlanadi\n\n✓ **Dequeue() ishlashi:** Birinchi element (1) ni qaytaradi va queue dan olib tashlaydi\n\n✓ **Natija:** `result = 1`"
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "dictionary"
+      },
+      "codeBefore": "```csharp\nvar dict = new Dictionary<string, int>\n{\n    [\"apple\"] = 5,\n    [\"banana\"] = 3\n};\ndict.TryAdd(\"apple\", 10);\nConsole.WriteLine(dict[\"apple\"]);\n```",
+      "codeAfter": "",
+      "prompt": "**Dictionary<TKey, TValue>** da **TryAdd** metodining xususiyati nimada?\n\n**Kod tahlili:**\n- Dictionary da `\"apple\": 5` mavjud\n- `TryAdd(\"apple\", 10)` chaqirilmoqda\n- `dict[\"apple\"]` qiymati chiqarilmoqda\n\n**Savol:** Console ga qanday qiymat chiqadi?",
+      "options": [
+        {
+          "id": "A",
+          "option": "`10` - chunki yangi qiymat qo'shiladi"
+        },
+        {
+          "id": "B",
+          "option": "`5` - chunki mavjud key ni update qilmaydi"
+        },
+        {
+          "id": "C",
+          "option": "Exception - chunki duplicate key"
+        },
+        {
+          "id": "D",
+          "option": "`15` - chunki qiymatlar qo'shiladi"
+        }
+      ],
+      "answer": [
+        "B"
+      ],
+      "explanation": "✓ **TryAdd metodining xususiyati:** Mavjud key uchun hech narsa qilmaydi\n\n✓ **TryAdd vs Add farqi:**\n- `Add()` - mavjud key uchun exception\n- `TryAdd()` - mavjud key uchun `false` qaytaradi, qiymat o'zgarmaydi\n\n✓ **Natija:** `\"apple\"` key allaqachon mavjud, shuning uchun qiymati `5` bo'lib qoladi"
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "indexing slicing"
+      },
+      "codeBefore": "```csharp\nvar numbers = new int[] { 1, 2, 3, 4, 5 };\nvar lastTwo = numbers[^2..];\nConsole.WriteLine(string.Join(\", \", lastTwo));\n```",
+      "codeAfter": "",
+      "prompt": "**Index (`^`) va Range (`..`) operatorlari** (C# 8+) qanday ishlaydi?\n\n**Kod tahlili:**\n- Array: `{1, 2, 3, 4, 5}`\n- `^2` - oxirdan 2-chi element (index 3)\n- `[^2..]` - oxirdan 2-chi elementdan boshlab oxirigacha\n\n**Savol:** `string.Join(\", \", lastTwo)` natijasi?",
+      "options": [
+        {
+          "id": "A",
+          "option": "`4, 5`"
+        },
+        {
+          "id": "B",
+          "option": "`3, 4`"
+        },
+        {
+          "id": "C",
+          "option": "`2, 3, 4, 5`"
+        },
+        {
+          "id": "D",
+          "option": "`5`"
+        }
+      ],
+      "answer": [
+        "A"
+      ],
+      "explanation": "✓ **Index operator (`^`):** Oxirdan sanash\n- `^1` - oxirgi element\n- `^2` - oxirdan 2-chi element (index 3, qiymat 4)\n\n✓ **Range operator (`..`):** Slice operatori\n- `[^2..]` - oxirdan 2-chi elementdan boshlab oxirigacha\n\n✓ **Natija:** `[3..5]` → `{4, 5}` → `\"4, 5\"`"
+    },
+    {
+      "id": 4,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeBefore": "```csharp\nspan<int> span = stackalloc int[3] { 1, 2, 3 };\nReadOnlySpan<int> readOnlySpan = span;\nvar memory = span.ToArray().AsMemory();\n```",
+      "codeAfter": "",
+      "prompt": "**Span<T>** va **Memory<T>** (C# 7.2+) haqida qaysi fikr **to'g'ri**?\n\n**Kod tahlili:**\n- `stackalloc` - stack da memory allocation\n- `Span<T>` - ref struct, stack-only\n- `ReadOnlySpan<T>` - immutable span\n- `Memory<T>` - heap va stack, async-safe\n\n**Savol:** Qaysi statement to'g'ri?",
+      "options": [
+        {
+          "id": "A",
+          "option": "`Span<T>` faqat stack da ishlaydi"
+        },
+        {
+          "id": "B",
+          "option": "`Memory<T>` heap va stack ikkalasida ham ishlaydi"
+        },
+        {
+          "id": "C",
+          "option": "`ReadOnlySpan<T>` dan `Span<T>` ga implicit cast mumkin"
+        },
+        {
+          "id": "D",
+          "option": "`Memory<T>` ref struct hisoblanadi"
+        }
+      ],
+      "answer": [
+        "B"
+      ],
+      "explanation": "✓ **Memory<T> xususiyatlari:** Heap va stack ikkalasida ham ishlaydi\n\n✓ **Span<T> vs Memory<T>:**\n- `Span<T>` - ref struct, stack-only, async da ishlatib bo'lmaydi\n- `Memory<T>` - regular struct, heap/stack, async-safe\n\n✓ **Noto'g'ri variantlar:**\n- A: `Span<T>` heap da ham ishlaydi\n- C: ReadOnly dan mutable ga cast mumkin emas\n- D: `Memory<T>` ref struct emas"
+    },
+    {
+      "id": 5,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "set operations"
+      },
+      "codeBefore": "```csharp\nvar hashSet = new HashSet<int> { 1, 2, 3 };\nvar list = new List<int> { 2, 3, 4, 5 };\nhashSet.IntersectWith(list);\n```",
+      "codeAfter": "",
+      "prompt": "**HashSet<T>.IntersectWith()** set intersection operatsiyasi qanday ishlaydi?\n\n**Kod tahlili:**\n- `hashSet = {1, 2, 3}`\n- `list = {2, 3, 4, 5}`\n- `IntersectWith()` - intersection (kesishma) operatsiyasi\n\n**Savol:** `hashSet` da qanday elementlar qoladi?",
+      "options": [
+        {
+          "id": "A",
+          "option": "`{ 1, 2, 3, 4, 5 }`"
+        },
+        {
+          "id": "B",
+          "option": "`{ 2, 3 }`"
+        },
+        {
+          "id": "C",
+          "option": "`{ 1 }`"
+        },
+        {
+          "id": "D",
+          "option": "`{ 4, 5 }`"
+        }
+      ],
+      "answer": [
+        "B"
+      ],
+      "explanation": "✓ **IntersectWith operatsiyasi:** Matematik intersection (kesishma)\n\n✓ **Set operatsiyasi:**\n- `hashSet = {1, 2, 3}`\n- `list = {2, 3, 4, 5}`\n- Intersection = faqat ikkala to'plamda ham mavjud elementlar\n\n✓ **Natija:** `{2, 3}` - faqat umumiy elementlar qoladi"
+    },
+    {
+      "id": 6,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "stack"
+      },
+      "codeBefore": "```csharp\nvar stack = new Stack<string>();\nstack.Push(\"first\");\nstack.Push(\"second\");\nvar result = stack.Peek();\nstack.Pop();\nConsole.WriteLine($\"{result}, {stack.Count}\");\n```",
+      "codeAfter": "",
+      "prompt": "**Stack<T>** LIFO (Last In, First Out) prinsipi bo'yicha ishlaydi.\n\n**Kod tahlili:**\n- `Push(\"first\")` → stack: [\"first\"]\n- `Push(\"second\")` → stack: [\"first\", \"second\"]\n- `Peek()` - oxirgi elementni qaytaradi (olib tashlamaydi)\n- `Pop()` - oxirgi elementni olib tashlaydi\n\n**Savol:** `Console.WriteLine` natijasi nima?",
+      "options": [
+        {
+          "id": "A",
+          "option": "`first, 1`"
+        },
+        {
+          "id": "B",
+          "option": "`second, 1`"
+        },
+        {
+          "id": "C",
+          "option": "`second, 0`"
+        },
+        {
+          "id": "D",
+          "option": "`first, 0`"
+        }
+      ],
+      "answer": [
+        "B"
+      ],
+      "explanation": "✓ **Stack LIFO qoidasi:** Oxirgi qo'shilgan element birinchi chiqadi\n\n✓ **Kod bajarilishi:**\n- `Peek()` → \"second\" (oxirgi element, olib tashlamaydi)\n- `Pop()` → \"second\" ni olib tashlaydi\n- `Count` → 1 (\"first\" qoladi)\n\n✓ **Natija:** `\"second, 1\"`"
+    },
+    {
+      "id": 7,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "indexing slicing"
+      },
+      "codeBefore": "```csharp\nvar numbers = new int[] { 10, 20, 30, 40, 50 };\nvar range = 1..^1;\nvar slice = numbers[range];\n```",
+      "codeAfter": "",
+      "prompt": "**Range operatori** `1..^1` nimani anglatadi?\n\n**Kod tahlili:**\n- Array: `{10, 20, 30, 40, 50}`\n- `1..^1` - 1-index dan oxirgi elementgacha (exclusive)\n- `^1` - oxirgi element pozitsiyasi\n- Range da end exclusive\n\n**Savol:** `slice` da qanday qiymatlar bo'ladi?",
+      "options": [
+        {
+          "id": "A",
+          "option": "1-indexdan oxirgi elementgacha: `{ 20, 30, 40, 50 }`"
+        },
+        {
+          "id": "B",
+          "option": "1-indexdan oxirgi elementni hisobga olmaganda: `{ 20, 30, 40 }`"
+        },
+        {
+          "id": "C",
+          "option": "Faqat 1-index: `{ 20 }`"
+        },
+        {
+          "id": "D",
+          "option": "Kompilyatsiya xatosi"
+        }
+      ],
+      "answer": [
+        "B"
+      ],
+      "explanation": "✓ **Range syntax:** `start..end` (end exclusive)\n\n✓ **Index hisoblash:**\n- `1` → index 1 (qiymat 20)\n- `^1` → oxirgi element pozitsiyasi (index 4)\n- `1..^1` → index 1 dan 4 gacha (exclusive)\n\n✓ **Natija:** `{20, 30, 40}` (index 1, 2, 3)"
+    },
+    {
+      "id": 8,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "lookup"
+      },
+      "codeBefore": "```csharp\nvar lookup = new string[] { \"a\", \"bb\", \"ccc\", \"a\", \"bb\" }\n    .ToLookup(x => x.Length);\nvar result = lookup[2].Count();\n```",
+      "codeAfter": "",
+      "prompt": "**ILookup<TKey, TElement>** one-to-many mapping qanday ishlaydi?\n\n**Kod tahlili:**\n- Array: `{\"a\", \"bb\", \"ccc\", \"a\", \"bb\"}`\n- `ToLookup(x => x.Length)` - string length bo'yicha guruhlash\n- `lookup[2]` - length = 2 bo'lgan elementlar\n- `Count()` - shu group dagi elementlar soni\n\n**Savol:** `result` ning qiymati nima?",
+      "options": [
+        {
+          "id": "A",
+          "option": "Lookup bir key uchun bitta value saqlaydi, result = 1"
+        },
+        {
+          "id": "B",
+          "option": "Lookup bir key uchun ko'p value saqlaydi, result = 2"
+        },
+        {
+          "id": "C",
+          "option": "Lookup faqat unique valuelar saqlaydi, result = 1"
+        },
+        {
+          "id": "D",
+          "option": "Exception - key topilmadi"
+        }
+      ],
+      "answer": [
+        "B"
+      ],
+      "explanation": "✓ **ILookup xususiyati:** One-to-many mapping - bir key uchun ko'p value\n\n✓ **Guruhlanish:**\n- Key = 1: `{\"a\", \"a\"}` (2 ta)\n- Key = 2: `{\"bb\", \"bb\"}` (2 ta)\n- Key = 3: `{\"ccc\"}` (1 ta)\n\n✓ **Natija:** `lookup[2].Count()` = 2 (\"bb\" ikki marta)"
+    },
+    {
+      "id": 9,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeBefore": "```csharp\nSpan<byte> buffer = stackalloc byte[1024];\nvar memory = new Memory<byte>(new byte[1024]);\nvar span1 = buffer.Slice(10, 100);\nvar span2 = memory.Span.Slice(10, 100);\n```",
+      "codeAfter": "",
+      "prompt": "**Span<T>.Slice()** va **Memory<T>.Span** haqida qaysi fikr **noto'g'ri**?\n\n**Kod tahlili:**\n- `stackalloc` - stack da memory allocation\n- `new byte[1024]` - heap da memory allocation\n- `Slice(10, 100)` - 10-indexdan 100 ta element\n- Zero-copy operations\n\n**Savol:** Qaysi statement yolg'on?",
+      "options": [
+        {
+          "id": "A",
+          "option": "`Slice()` yangi Span yaratadi, copy emas"
+        },
+        {
+          "id": "B",
+          "option": "`Memory<T>.Span` property orqali Span olish mumkin"
+        },
+        {
+          "id": "C",
+          "option": "`span1` stack da, `span2` heap da joylashgan"
+        },
+        {
+          "id": "D",
+          "option": "`Slice()` operatsiyasi xotira allocate qiladi"
+        }
+      ],
+      "answer": [
+        "D"
+      ],
+      "explanation": "✓ **Noto'g'ri statement:** `Slice()` operatsiyasi xotira allocate qiladi\n\n✓ **Zero-copy operatsiya:** `Slice()` yangi xotira allocate qilmaydi\n- Faqat mavjud memory ga yangi view (ko'rinish) yaratadi\n- Pointer va length ma'lumotlarini o'zgartiradi\n\n✓ **To'g'ri statements:**\n- A: Slice() yangi Span yaratadi, lekin copy emas\n- B: Memory<T>.Span property mavjud\n- C: span1 stack da, span2 heap da"
+    },
+    {
+      "id": 10,
+      "type": "mcq",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "priority queue"
+      },
+      "codeBefore": "```csharp\nvar priorityQueue = new PriorityQueue<string, int>();\npriorityQueue.Enqueue(\"task1\", 3);\npriorityQueue.Enqueue(\"task2\", 1);\npriorityQueue.Enqueue(\"task3\", 2);\nvar result = priorityQueue.Dequeue();\n```",
+      "codeAfter": "",
+      "prompt": "**PriorityQueue<TElement, TPriority>** (C# 10+) min-heap sifatida ishlaydi.\n\n**Kod tahlili:**\n- `Enqueue(\"task1\", 3)` - priority = 3\n- `Enqueue(\"task2\", 1)` - priority = 1\n- `Enqueue(\"task3\", 2)` - priority = 2\n- `Dequeue()` - eng kichik priority li elementni chiqaradi\n\n**Savol:** `result` ning qiymati nima?",
+      "options": [
+        {
+          "id": "A",
+          "option": "`task1`"
+        },
+        {
+          "id": "B",
+          "option": "`task2`"
+        },
+        {
+          "id": "C",
+          "option": "`task3`"
+        },
+        {
+          "id": "D",
+          "option": "Exception"
+        }
+      ],
+      "answer": [
+        "B"
+      ],
+      "explanation": "✓ **PriorityQueue qoidasi:** Min-heap - eng kichik priority birinchi chiqadi\n\n✓ **Priority tartiblanishi:**\n- task2: priority = 1 (eng kichik)\n- task3: priority = 2\n- task1: priority = 3\n\n✓ **Natija:** `Dequeue()` → \"task2\" (eng kichik priority)"
+    },
+    {
+      "id": 11,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "dictionary"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**Dictionary<TKey, TValue>** da key uchun `null` qiymat qo'yish mumkin, agar `TKey` nullable type bo'lsa.\n\n**Nullable reference types (C# 8+):**\n- `string?` - nullable reference type\n- `int?` - nullable value type\n- Dictionary null key qabul qilish mumkinmi?",
+      "answer": "true",
+      "explanation": "✓ **To'g'ri statement**\n\n✓ **Nullable key qo'llab-quvvatlash:**\n- `Dictionary<string?, int>` - null key qabul qiladi\n- `Dictionary<int?, string>` - null key qabul qiladi\n- `Dictionary<string, int>` - null key qabul qilmaydi (non-nullable)\n\n✓ **Misol:** `dict[null] = 42` - nullable TKey uchun valid"
+    },
+    {
+      "id": 12,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "set operations"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**HashSet<T>** collection elementlarning unique bo'lishini kafolatlaydi va tartibni saqlaydi.\n\n**HashSet xususiyatlari:**\n- Unique elementlar kafolati\n- Hash table based implementation\n- Tartib saqlash haqida gap\n- SortedSet alternative",
+      "answer": "false",
+      "explanation": "✗ **Yolg'on statement**\n\n✓ **HashSet xususiyatlari:**\n- Uniqueness kafolatlaydi ✓\n- Insertion tartibini saqlamaydi ✗\n- O(1) average time complexity\n- Hash table based\n\n✓ **Tartib uchun alternativalar:**\n- `SortedSet<T>` - sorted order\n- `LinkedHashSet` - insertion order (Java da, C# da yo'q)"
+    },
+    {
+      "id": 13,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "indexing slicing"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**Index operator** `^0` massivning oxirgi elementini anglatadi.\n\n**Index operator (C# 8+):**\n- `^1` - oxirgi element\n- `^2` - oxirdan ikkinchi element\n- `^0` - nima demakchi?\n- Array bounds checking",
+      "answer": "false",
+      "explanation": "✗ **Yolg'on statement**\n\n✓ **Index operator qoidalari:**\n- `^0` - array length ni bildiradi (bounds dan tashqarida)\n- `^1` - oxirgi element (length - 1)\n- `^2` - oxirdan ikkinchi element (length - 2)\n\n✓ **Misol:** `arr[^0]` → `IndexOutOfRangeException`"
+    },
+    {
+      "id": 14,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "indexing slicing"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**Range operator** `..` faqat array va string uchun ishlatiladi, boshqa collectionlar uchun emas.\n\n**Range operator (C# 8+):**\n- Array da `arr[1..3]`\n- String da `str[2..5]`\n- List<T> da ishlatish mumkinmi?\n- Span<T> da ishlatish mumkinmi?",
+      "answer": "false",
+      "explanation": "✗ **Yolg'on statement**\n\n✓ **Range operator qo'llab-quvvatlash:**\n- Array ✓\n- String ✓\n- List<T> ✓\n- Span<T> ✓\n- ReadOnlySpan<T> ✓\n- Memory<T> ✓\n\n✓ **Shart:** Indexer va Length/Count property ni qo'llab-quvvatlaydigan barcha collection lar"
+    },
+    {
+      "id": 15,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**Span<T>** ref struct bo'lgani uchun heap da saqlanishi mumkin emas.\n\n**Ref struct limitations (C# 7.2+):**\n- Stack-only allocation\n- Heap da saqlash mumkin emasmi?\n- Class field sifatida ishlatish mumkin emasmi?\n- Boxing mumkin emasmi?",
+      "answer": "true",
+      "explanation": "✓ **To'g'ri statement**\n\n✓ **Ref struct limitations:**\n- Heap da saqlash mumkin emas ✓\n- Class field bo'la olmaydi ✓\n- Boxing mumkin emas ✓\n- Async method da ishlatish mumkin emas ✓\n\n✓ **Heap uchun alternativ:** `Memory<T>` - heap va stack ikkalasida ham ishlaydi"
+    },
+    {
+      "id": 16,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "**Memory<T>** async metodlarda ishlatish mumkin, lekin **Span<T>** ishlatib bo'lmaydi.\n\n**Async/await compatibility:**\n- Memory<T> async method da ishlatish mumkinmi?\n- Span<T> async method da ishlatish mumkinmi?\n- Ref struct limitations\n- Async state machine requirements",
+      "answer": "true",
+      "explanation": "✓ **To'g'ri statement**\n\n✓ **Async compatibility:**\n- `Memory<T>` async method da ishlatish mumkin ✓\n- `Span<T>` async method da ishlatish mumkin emas ✗\n\n✓ **Sababi:** Ref struct lar async state machine da saqlanishi mumkin emas\n\n✓ **Yechim:** Async uchun `Memory<T>` ishlatish, keyin `Memory<T>.Span` orqali `Span<T>` ga o'tish"
+    },
+    {
+      "id": 17,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "thread safety"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`Queue<T>` va `Stack<T>` ikkalasi ham generic collection bo'lib, thread-safe emas.",
+      "answer": "true",
+      "explanation": "To'g'ri. Queue<T> va Stack<T> thread-safe emas. Multi-threading uchun ConcurrentQueue<T> va ConcurrentStack<T> ishlatiladi."
+    },
+    {
+      "id": 18,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "sorted collections"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`SortedDictionary<TKey, TValue>` elementlarni key bo'yicha tartiblab saqlaydi.",
+      "answer": "true",
+      "explanation": "To'g'ri. SortedDictionary elementlarni key bo'yicha avtomatik tartiblab saqlaydi, insertion order ga qaramay."
+    },
+    {
+      "id": 19,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "indexing slicing"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "Range operator `numbers[2..]` 2-indexdan boshlab oxirigacha bo'lgan elementlarni oladi.",
+      "answer": "true",
+      "explanation": "To'g'ri. [2..] degani 2-indexdan boshlab oxirigacha bo'lgan barcha elementlar (2-index ham kiritiladi)."
+    },
+    {
+      "id": 20,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "list types"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`LinkedList<T>` collection random access ni qo'llab-quvvatlaydi va indexer operator `[]` ga ega.",
+      "answer": "false",
+      "explanation": "Yolg'on. LinkedList<T> sequential access collection bo'lib, indexer operator [] ga ega emas. Random access uchun List<T> ishlatiladi."
+    },
+    {
+      "id": 21,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`ReadOnlySpan<T>` dan `Span<T>` ga implicit conversion mumkin.",
+      "answer": "false",
+      "explanation": "Yolg'on. ReadOnlySpan<T> immutable, Span<T> mutable. Readonly dan writable ga implicit conversion mumkin emas."
+    },
+    {
+      "id": 22,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`CollectionsMarshal.AsSpan()` metodi `List<T>` ni `Span<T>` ga xavfsiz tarzda convert qiladi.",
+      "answer": "true",
+      "explanation": "To'g'ri. CollectionsMarshal.AsSpan() List<T> ning ichki array ga xavfsiz access beradi va Span<T> sifatida qaytaradi."
+    },
+    {
+      "id": 23,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "collection expressions"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "Spread operator `..` C# 12 da collection expressions uchun ishlatiladi.",
+      "answer": "true",
+      "explanation": "To'g'ri. C# 12 da spread operator (..) collection expressions ichida existing collections ni spread qilish uchun ishlatiladi."
+    },
+    {
+      "id": 24,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "thread safety"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`ConcurrentDictionary<TKey, TValue>` thread-safe bo'lib, lock-free operatsiyalarni qo'llab-quvvatlaydi.",
+      "answer": "true",
+      "explanation": "To'g'ri. ConcurrentDictionary internal lock-free algorithm ishlatib, thread-safe operatsiyalarni ta'minlaydi."
+    },
+    {
+      "id": 25,
+      "type": "true_false",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeBefore": "",
+      "codeAfter": "",
+      "prompt": "`Memory<T>` va `ReadOnlyMemory<T>` ikkalasi ham ref struct hisoblanadi.",
+      "answer": "false",
+      "explanation": "Yolg'on. Memory<T> va ReadOnlyMemory<T> oddiy struct lar. Faqat Span<T> va ReadOnlySpan<T> ref struct hisoblanadi."
+    },
+    {
+      "id": 26,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "list operations"
+      },
+      "codeWithBlank": "var numbers = new List<int> { 1, 2, 3, 4, 5 };\nvar result = numbers.GetRange(______, ______);\n// result should be { 2, 3, 4 }",
+      "prompt": "`List<T>.GetRange(int index, int count)` metodida bo'sh joylarni to'ldiring, shunda natija `{ 2, 3, 4 }` bo'lsin.",
+      "answer": "var numbers = new List<int> { 1, 2, 3, 4, 5 };\nvar result = numbers.GetRange(1, 3);\n// result should be { 2, 3, 4 }",
+      "explanation": "Elements 2, 3, 4 index 1 dan boshlanadi va 3 ta element kerak: GetRange(1, 3)."
+    },
+    {
+      "id": 27,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "dictionary"
+      },
+      "codeWithBlank": "var dict = new Dictionary<string, int> { [\"a\"] = 1, [\"b\"] = 2 };\nvar success = dict.________(\"c\", ______);\n// Agar key mavjud bo'lmasa, default qiymat qaytarsin",
+      "prompt": "`Dictionary<TKey, TValue>` da key mavjud bo'lmasa default qiymat qaytaradigan metod va qiymatni yozing.",
+      "answer": "var dict = new Dictionary<string, int> { [\"a\"] = 1, [\"b\"] = 2 };\nvar success = dict.TryGetValue(\"c\", out var value);\n// Agar key mavjud bo'lmasa, default qiymat qaytarsin",
+      "explanation": "TryGetValue metodі safe access ta'minlaydi: success false, value default qiymat bo'ladi."
+    },
+    {
+      "id": 28,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "indexing slicing"
+      },
+      "codeWithBlank": "var text = \"Hello World\";\nvar slice = text[______];\n// slice should be \"World\"",
+      "prompt": "String dan \"World\" so'zini olish uchun Range operatorini yozing.",
+      "answer": "var text = \"Hello World\";\nvar slice = text[6..];\n// slice should be \"World\"",
+      "explanation": "'World' index 6 dan boshlanadi: text[6..] = 'World'."
+    },
+    {
+      "id": 29,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeWithBlank": "Span<int> span = stackalloc int[5];\nspan.Fill(________);\nvar slice = span.Slice(______, ______);\n// Fill with 42, then get middle 3 elements",
+      "prompt": "`Span<T>` ni 42 bilan to'ldiring va o'rtadagi 3 ta elementni oling.",
+      "answer": "Span<int> span = stackalloc int[5];\nspan.Fill(42);\nvar slice = span.Slice(1, 3);\n// Fill with 42, then get middle 3 elements",
+      "explanation": "Fill(42) barcha elementlarni 42 ga o'rnatadi. O'rtadagi 3 element: index 1 dan 3 ta - Slice(1, 3)."
+    },
+    {
+      "id": 30,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "priority queue"
+      },
+      "codeWithBlank": "var queue = new PriorityQueue<string, int>();\nqueue.Enqueue(\"low\", ______);\nqueue.Enqueue(\"high\", ______);\n// \"high\" should be dequeued first",
+      "prompt": "`PriorityQueue` da \"high\" birinchi chiqishi uchun priority qiymatlarini yozing.",
+      "answer": "var queue = new PriorityQueue<string, int>();\nqueue.Enqueue(\"low\", 10);\nqueue.Enqueue(\"high\", 1);\n// \"high\" should be dequeued first",
+      "explanation": "PriorityQueue min-heap: kichik raqam yuqori priority. 'high' birinchi chiqishi uchun 1 (kichik), 'low' uchun 10 (katta)."
+    },
+    {
+      "id": 31,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "set operations"
+      },
+      "codeWithBlank": "var hashSet1 = new HashSet<int> { 1, 2, 3 };\nvar hashSet2 = new HashSet<int> { 3, 4, 5 };\nhashSet1.________(hashSet2);\n// Result: { 1, 2, 3, 4, 5 }",
+      "prompt": "Ikki `HashSet` ni birlashtirib, barcha unique elementlarni olish uchun metod nomini yozing.",
+      "answer": "var hashSet1 = new HashSet<int> { 1, 2, 3 };\nvar hashSet2 = new HashSet<int> { 3, 4, 5 };\nhashSet1.UnionWith(hashSet2);\n// Result: { 1, 2, 3, 4, 5 }",
+      "explanation": "UnionWith matematik union operatsiyasi - ikkala to'plamning barcha unique elementlarini birlashtirib, hashSet1 ni o'zgartiradi."
+    },
+    {
+      "id": 32,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "collection expressions"
+      },
+      "codeWithBlank": "var list1 = new List<int> { 1, 2 };\nvar list2 = new List<int> { 3, 4 };\nvar combined = [______];\n// Use collection expression with spread",
+      "prompt": "C# 12 collection expression da spread operator yordamida ikki listni birlashtiring.",
+      "answer": "var list1 = new List<int> { 1, 2 };\nvar list2 = new List<int> { 3, 4 };\nvar combined = [..list1, ..list2];\n// Use collection expression with spread",
+      "explanation": "Collection expression da .. spread operator existing collection larni expand qiladi: [..list1, ..list2] = [1, 2, 3, 4]."
+    },
+    {
+      "id": 33,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeWithBlank": "var numbers = new int[] { 1, 2, 3, 4, 5 };\nvar memory = numbers.AsMemory();\nvar slice = memory.Slice(______, ______);\n// Get elements 2, 3, 4",
+      "prompt": "`Memory<T>` dan elementlar 2, 3, 4 ni olish uchun `Slice` parametrlarini yozing.",
+      "answer": "var numbers = new int[] { 1, 2, 3, 4, 5 };\nvar memory = numbers.AsMemory();\nvar slice = memory.Slice(1, 3);\n// Get elements 2, 3, 4",
+      "explanation": "Elements 2, 3, 4 index 1 dan boshlanadi va 3 ta element: Memory.Slice(1, 3)."
+    },
+    {
+      "id": 34,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "sorted collections"
+      },
+      "codeWithBlank": "var sortedDict = new SortedDictionary<int, string>();\nsortedDict.Add(3, \"three\");\nsortedDict.Add(1, \"one\");\nsortedDict.Add(2, \"two\");\nvar firstKey = sortedDict.________.________;\n// Get the first key",
+      "prompt": "`SortedDictionary` da birinchi key ni olish uchun property chain ni yozing.",
+      "answer": "var sortedDict = new SortedDictionary<int, string>();\nsortedDict.Add(3, \"three\");\nsortedDict.Add(1, \"one\");\nsortedDict.Add(2, \"two\");\nvar firstKey = sortedDict.Keys.First();\n// Get the first key",
+      "explanation": "SortedDictionary avtomatik tartiblab saqlaydi. Keys property sorted keys collection, First() birinchi key (1) ni qaytaradi."
+    },
+    {
+      "id": 35,
+      "type": "fill",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeWithBlank": "ReadOnlySpan<char> text = \"Hello\";\nvar index = text.IndexOf(________);\nif (index >= 0)\n{\n    var found = text[index];\n}",
+      "prompt": "`ReadOnlySpan<char>` da 'l' harfini qidirish uchun parametrni yozing.",
+      "answer": "ReadOnlySpan<char> text = \"Hello\";\nvar index = text.IndexOf('l');\nif (index >= 0)\n{\n    var found = text[index];\n}",
+      "explanation": "IndexOf() metodi char parameter qabul qiladi. Single quotes bilan character literal 'l' ishlatiladi."
+    },
+    {
+      "id": 36,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeWithError": "var list = new List<int> { 1, 2, 3, 4, 5 };\nvar span = list.AsSpan();\nlist.Add(6);\nConsole.WriteLine(span.Length);",
+      "prompt": "`List<T>` ga element qo'shgandan so'ng `Span<T>` ishlatishda xatolik bor. Xatoni toping va tushuntiring.",
+      "answer": "var list = new List<int> { 1, 2, 3, 4, 5 };\nvar span = CollectionsMarshal.AsSpan(list);\n// list.Add(6); // Bu dangerous - span invalid bo'ladi\nConsole.WriteLine(span.Length);",
+      "explanation": "List ga element qo'shish internal array ni reallocate qilishi mumkin, span invalid bo'ladi. CollectionsMarshal ishlatib, list ni modify qilmaslik kerak."
+    },
+    {
+      "id": 37,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "dictionary"
+      },
+      "codeWithError": "var dict = new Dictionary<string?, int>();\ndict.Add(null, 1);\ndict.Add(null, 2);\nConsole.WriteLine(dict.Count);",
+      "prompt": "`Dictionary` da `null` key bilan bog'liq xatolikni toping va to'g'rilang.",
+      "answer": "var dict = new Dictionary<string?, int>();\ndict.Add(null, 1);\n// dict.Add(null, 2); // Exception - duplicate key\ndict[null] = 2; // Bu to'g'ri - key ni update qiladi\nConsole.WriteLine(dict.Count);",
+      "explanation": "Add() metodi duplicate key uchun exception beradi, null ham key hisoblanadi. Update uchun indexer [] ishlatiladi."
+    },
+    {
+      "id": 38,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "indexing slicing"
+      },
+      "codeWithError": "var numbers = new int[] { 1, 2, 3, 4, 5 };\nvar range = 2..^0;\nvar slice = numbers[range];\nConsole.WriteLine(slice.Length);",
+      "prompt": "Range operatorida xatolik bor. `^0` nima anglatadi va qanday to'g'rilash kerak?",
+      "answer": "var numbers = new int[] { 1, 2, 3, 4, 5 };\nvar range = 2..^1; // ^0 is beyond end, ^1 is last element\nvar slice = numbers[range];\nConsole.WriteLine(slice.Length);",
+      "explanation": "^0 array length pozitsiyasi (bounds dan tashqari). Range uchun ^1 ishlatiladi (oxirgi element, exclusive boundary)."
+    },
+    {
+      "id": 39,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeWithError": "async Task ProcessAsync()\n{\n    Span<byte> buffer = stackalloc byte[1024];\n    await SomeAsyncMethod(buffer);\n}",
+      "prompt": "`Span<T>` ni async metod ichida ishlatishdagi xatolikni toping va to'g'rilang.",
+      "answer": "async Task ProcessAsync()\n{\n    Memory<byte> buffer = new byte[1024];\n    await SomeAsyncMethod(buffer);\n    // Yoki: var buffer = new byte[1024].AsMemory();\n}",
+      "explanation": "Span<T> ref struct bo'lib, async metodlarda ishlatib bo'lmaydi. Memory<T> async-safe alternative hisoblanadi."
+    },
+    {
+      "id": 40,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "queue"
+      },
+      "codeWithError": "var queue = new Queue<int>();\nqueue.Enqueue(1);\nqueue.Enqueue(2);\nvar result = queue.Peek();\nqueue.Clear();\nvar next = queue.Peek();",
+      "prompt": "Bo'sh `Queue` dan element olishdagi xatolikni toping va to'g'rilang.",
+      "answer": "var queue = new Queue<int>();\nqueue.Enqueue(1);\nqueue.Enqueue(2);\nvar result = queue.Peek();\nqueue.Clear();\nvar next = queue.Count > 0 ? queue.Peek() : 0; // Check before peek",
+      "explanation": "Bo'sh Queue dan Peek() InvalidOperationException beradi. Count > 0 check qilib, safe access ta'minlash kerak."
+    },
+    {
+      "id": 41,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "collection expressions"
+      },
+      "codeWithError": "var numbers = new List<int> { 1, 2, 3 };\nvar combined = [numbers, 4, 5];\nConsole.WriteLine(combined.Count);",
+      "prompt": "Collection expression da spread operatorisiz ishlatishdagi xatolikni toping.",
+      "answer": "var numbers = new List<int> { 1, 2, 3 };\nvar combined = [..numbers, 4, 5]; // Need spread operator\nConsole.WriteLine(combined.Count);",
+      "explanation": "Collection expression da existing collection ni spread qilmasdan embed qilib bo'lmaydi. [..numbers, 4, 5] syntax kerak."
+    },
+    {
+      "id": 42,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeWithError": "ReadOnlySpan<int> span = new int[] { 1, 2, 3 };\nspan[0] = 10;\nConsole.WriteLine(span[0]);",
+      "prompt": "`ReadOnlySpan<T>` da elementni o'zgartirishdagi xatolikni toping.",
+      "answer": "Span<int> span = new int[] { 1, 2, 3 }; // Use Span<T> instead\nspan[0] = 10;\nConsole.WriteLine(span[0]);",
+      "explanation": "ReadOnlySpan<T> immutable - elementlarni o'zgartirib bo'lmaydi. Mutable operation uchun Span<T> ishlatiladi."
+    },
+    {
+      "id": 43,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "stack"
+      },
+      "codeWithError": "var stack = new Stack<string>();\nstack.Push(\"first\");\nstack.Push(\"second\");\nvar items = stack.ToArray();\nConsole.WriteLine(items[0]);",
+      "prompt": "`Stack<T>.ToArray()` metodining natijasida elementlar tartibini to'g'ri tushuntiring.",
+      "answer": "var stack = new Stack<string>();\nstack.Push(\"first\");\nstack.Push(\"second\");\nvar items = stack.ToArray();\n// items[0] is \"second\" (LIFO order)\nConsole.WriteLine(items[0]); // Prints \"second\"",
+      "explanation": "ToArray() LIFO tartibni saqlaydi: oxirgi push qilingan element array ning birinchi elementi bo'ladi."
+    },
+    {
+      "id": 44,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "indexing slicing"
+      },
+      "codeWithError": "var text = \"Hello World\";\nvar slice = text[5..^5];\nConsole.WriteLine(slice);",
+      "prompt": "String slicing da index va range xatoligini toping va to'g'rilang.",
+      "answer": "var text = \"Hello World\";\nvar slice = text[6..^0]; // Start from 6 (space after Hello), go to end\n// Or: var slice = text[6..]; for \"World\"\nConsole.WriteLine(slice);",
+      "explanation": "\"Hello World\" uzunligi 11. [5..^5] = [5..6] = \" \" (faqat space). \"World\" uchun [6..] kerak."
+    },
+    {
+      "id": 45,
+      "type": "error_spotting",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "codeWithError": "var memory = new Memory<int>();\nvar span = memory.Span;\nspan[0] = 42;\nConsole.WriteLine(span[0]);",
+      "prompt": "Bo'sh `Memory<T>` dan `Span<T>` olish va ishlatishdagi xatolikni toping.",
+      "answer": "var memory = new Memory<int>(new int[10]); // Initialize with array\nvar span = memory.Span;\nspan[0] = 42;\nConsole.WriteLine(span[0]);",
+      "explanation": "Default Memory<T>() constructor bo'sh memory yaratadi. Array bilan initialize qilish kerak: new Memory<int>(new int[10])."
+    },
+    {
+      "id": 46,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "dictionary"
+      },
+      "snippet": "var dict = new Dictionary<int, string> { [1] = \"one\", [2] = \"two\" };\ndict.TryAdd(1, \"ONE\");\ndict.TryAdd(3, \"three\");\nConsole.WriteLine($\"{dict[1]}, {dict.Count}\");",
+      "prompt": "`Dictionary.TryAdd()` metodi mavjud key uchun qanday ishlaydi?",
+      "answer": "one, 3",
+      "explanation": "TryAdd mavjud key (1) ni update qilmaydi, faqat yangi key (3) ni qo'shadi. dict[1] = \"one\" qoladi, Count = 3."
+    },
+    {
+      "id": 47,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "indexing slicing"
+      },
+      "snippet": "var numbers = new int[] { 10, 20, 30, 40, 50 };\nvar slice1 = numbers[1..4];\nvar slice2 = numbers[^3..^1];\nConsole.WriteLine($\"{slice1.Length}, {slice2.Length}\");",
+      "prompt": "Range operatorlari bilan slice olishda uzunliklar qanday bo'ladi?",
+      "answer": "3, 2",
+      "explanation": "slice1[1..4] = {20,30,40} (length=3), slice2[^3..^1] = {30,40} (index 2..4, length=2)."
+    },
+    {
+      "id": 48,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "set operations"
+      },
+      "snippet": "var hashSet = new HashSet<int> { 1, 2, 3, 1, 2 };\nConsole.WriteLine(hashSet.Count);\nvar list = new List<int> { 1, 2, 3, 1, 2 };\nConsole.WriteLine(list.Count);",
+      "prompt": "`HashSet` va `List` da duplicate elementlar qanday ishlanadi?",
+      "answer": "3\n5",
+      "explanation": "HashSet faqat unique elementlarni saqlaydi (Count=3), List barcha elementlarni saqlaydi including duplicates (Count=5)."
+    },
+    {
+      "id": 49,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "snippet": "Span<int> span = stackalloc int[3] { 1, 2, 3 };\nspan.Reverse();\nvar array = span.ToArray();\nConsole.WriteLine(string.Join(\", \", array));",
+      "prompt": "`Span<T>.Reverse()` metodining natijasi qanday bo'ladi?",
+      "answer": "3, 2, 1",
+      "explanation": "Reverse() span ni in-place reverse qiladi: {1,2,3} → {3,2,1}. ToArray() reversed contentni array ga convert qiladi."
+    },
+    {
+      "id": 50,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "queue"
+      },
+      "snippet": "var queue = new Queue<char>();\nforeach (char c in \"ABC\")\n    queue.Enqueue(c);\nwhile (queue.Count > 0)\n    Console.Write(queue.Dequeue());",
+      "prompt": "`Queue<T>` FIFO tartibda elementlarni qanday chiqaradi?",
+      "answer": "ABC",
+      "explanation": "Queue FIFO: birinchi kiritilgan (A) birinchi chiqadi. Enqueue order: A→B→C, Dequeue order: A→B→C."
+    },
+    {
+      "id": 51,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "stack"
+      },
+      "snippet": "var stack = new Stack<char>();\nforeach (char c in \"ABC\")\n    stack.Push(c);\nwhile (stack.Count > 0)\n    Console.Write(stack.Pop());",
+      "prompt": "`Stack<T>` LIFO tartibda elementlarni qanday chiqaradi?",
+      "answer": "CBA",
+      "explanation": "Stack LIFO: oxirgi kiritilgan (C) birinchi chiqadi. Push order: A→B→C, Pop order: C→B→A."
+    },
+    {
+      "id": 52,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "collection expressions"
+      },
+      "snippet": "var list1 = new List<int> { 1, 2 };\nvar list2 = new List<int> { 3, 4 };\nvar combined = [..list1, 5, ..list2];\nConsole.WriteLine(string.Join(\", \", combined));",
+      "prompt": "Collection expression da spread operator qanday ishlaydi?",
+      "answer": "1, 2, 5, 3, 4",
+      "explanation": "Collection expression left-to-right evaluate: ..list1 (1,2), then 5, then ..list2 (3,4) = [1,2,5,3,4]."
+    },
+    {
+      "id": 53,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "priority queue"
+      },
+      "snippet": "var priorityQueue = new PriorityQueue<string, int>();\npriorityQueue.Enqueue(\"C\", 3);\npriorityQueue.Enqueue(\"A\", 1);\npriorityQueue.Enqueue(\"B\", 2);\nConsole.WriteLine(priorityQueue.Dequeue());",
+      "prompt": "`PriorityQueue` eng kichik priority ni birinchi chiqaradi. Natija nima?",
+      "answer": "A",
+      "explanation": "PriorityQueue min-heap: eng kichik priority (1) birinchi chiqadi. \"A\" ning priority si 1 - eng kichik."
+    },
+    {
+      "id": 54,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "snippet": "ReadOnlySpan<char> text = \"Hello World\";\nvar index = text.LastIndexOf('l');\nConsole.WriteLine($\"{index}, {text[index]}\");",
+      "prompt": "`ReadOnlySpan<char>` da oxirgi 'l' harfining indexi va qiymati?",
+      "answer": "9, l",
+      "explanation": "\"Hello World\" da 'l' lar: index 2, 3, 9. LastIndexOf() oxirgi occurrence (index 9) ni qaytaradi."
+    },
+    {
+      "id": 55,
+      "type": "output_prediction",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory types"
+      },
+      "snippet": "var memory = \"Hello\".AsMemory();\nvar span = memory.Span;\nvar slice = span[1..^1];\nConsole.WriteLine(slice.ToString());",
+      "prompt": "String dan `Memory<T>` va `Span<T>` orqali slice olishda natija?",
+      "answer": "ell",
+      "explanation": "\"Hello\" → Memory → Span → slice[1..^1] = [1..4] = \"ell\" (index 1 dan 4 gacha, oxirgi char ni exclude qilib)."
+    },
+    {
+      "id": 56,
+      "type": "code_writing",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "system design"
+      },
+      "prompt": "### Generic Collection Manager\n\n`CollectionManager<T>` generic klassi yarating. Bu klass quyidagi collectionlarni boshqarsin:\n- `List<T>` - asosiy saqlash uchun\n- `HashSet<T>` - unique elementlar uchun\n- `Queue<T>` - FIFO operatsiyalar uchun\n\nMetodlar:\n- `AddItem(T item)` - barcha collectionlarga qo'shadi\n- `RemoveItem(T item)` - barcha collectionlardan olib tashlaydi\n- `GetUniqueCount()` - unique elementlar sonini qaytaradi\n- `GetNextInQueue()` - queue dan keyingi elementni oladi\n\n`where T : IEquatable<T>` constraint ishlating.",
+      "examples": [
+        "var manager = new CollectionManager<int>();\nmanager.AddItem(1);\nmanager.AddItem(1); // duplicate\nConsole.WriteLine(manager.GetUniqueCount()); // 1"
+      ]
+    },
+    {
+      "id": 57,
+      "type": "code_writing",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "array operations"
+      },
+      "prompt": "### Array Slicer with Range/Index\n\n`ArraySlicer` static klassi yarating. Quyidagi metodlarni implement qiling:\n- `GetSlice<T>(T[] array, Range range)` - Range operatori bilan slice oladi\n- `GetFromEnd<T>(T[] array, Index index)` - Oxiridan sanab index oladi\n- `GetMiddle<T>(T[] array)` - O'rtadagi elementlar (1/4 dan 3/4 gacha)\n- `SplitArray<T>(T[] array, int parts)` - Arrayni teng qismlarga bo'ladi\n\nHar bir metod appropriate range/index operatorlarini ishlating.",
+      "examples": [
+        "var numbers = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };\nvar middle = ArraySlicer.GetMiddle(numbers); // { 3, 4, 5, 6 }\nvar fromEnd = ArraySlicer.GetFromEnd(numbers, ^2); // 7"
+      ]
+    },
+    {
+      "id": 58,
+      "type": "code_writing",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "memory management"
+      },
+      "prompt": "### Memory-Efficient Buffer Processor\n\n`BufferProcessor` klassi yarating. Katta massivlar bilan ishlash uchun `Memory<T>` va `Span<T>` dan foydalaning:\n\n- `ProcessChunks<T>(Memory<T> memory, int chunkSize, Action<Span<T>> processor)`\n- `FindPattern<T>(ReadOnlyMemory<T> memory, ReadOnlySpan<T> pattern) where T : IEquatable<T>`\n- `ReverseInPlace<T>(Memory<T> memory)`\n- `CopyWithTransform<T>(ReadOnlyMemory<T> source, Memory<T> destination, Func<T, T> transform)`\n\nStackalloc va heap allocation ni optimal tarzda ishlating.",
+      "examples": [
+        "var data = new int[1000].AsMemory();\nprocessor.ProcessChunks(data, 100, chunk => {\n    // Process each 100-element chunk\n});"
+      ]
+    },
+    {
+      "id": 59,
+      "type": "code_writing",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "data storage systems"
+      },
+      "prompt": "### Multi-Collection Data Store\n\n`DataStore<T>` klassi yarating, quyidagilarni implement qiling:\n- `Dictionary<string, T>` - key-value storage\n- `SortedDictionary<DateTime, T>` - chronological storage\n- `PriorityQueue<T, int>` - priority-based processing\n\nMetodlar:\n- `Store(string key, T value, int priority = 0)`\n- `GetByKey(string key)` - dictionary dan\n- `GetByTimeRange(DateTime start, DateTime end)` - time range bo'yicha\n- `ProcessNext()` - priority queue dan\n- `GetStatistics()` - har bir collection bo'yicha ma'lumot\n\nTurli collection typelarining xususiyatlarini to'g'ri ishlating.",
+      "examples": [
+        "var store = new DataStore<string>();\nstore.Store(\"task1\", \"Important task\", priority: 1);\nstore.Store(\"task2\", \"Urgent task\", priority: 10);\nvar next = store.ProcessNext(); // \"Important task\" (lower priority first)"
+      ]
+    },
+    {
+      "id": 60,
+      "type": "code_writing",
+      "metadata": {
+        "category": "kolleksiyalar-ma'lumot-tuzilmalari",
+        "subcategory": "modern collection features"
+      },
+      "prompt": "### Collection Expression Builder\n\nC# 12 collection expressions va spread operator ishlatib `CollectionBuilder` static klassi yarating:\n\n- `Combine<T>(params IEnumerable<T>[] collections)` - spread bilan birlashtirishc\n- `Interleave<T>(IEnumerable<T> first, IEnumerable<T> second)` - elementlarni navbatma-navbat\n- `CreateRange(int start, int count, int step = 1)` - arithmetic progression\n- `FilterAndCombine<T>(Func<T, bool> predicate, params IEnumerable<T>[] collections)`\n\nCollection expressions `[..]` sintaksisini ishlatib, performance optimized bo'lsin.",
+      "examples": [
+        "var list1 = [1, 2, 3];\nvar list2 = [4, 5, 6];\nvar combined = CollectionBuilder.Combine(list1, list2); // [1, 2, 3, 4, 5, 6]\nvar range = CollectionBuilder.CreateRange(0, 5, 2); // [0, 2, 4, 6, 8]"
+      ]
+    }
+  ]
+}

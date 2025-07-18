@@ -30,7 +30,7 @@ public sealed class TrueFalseQuestion : Question
 public sealed class FillQuestion : Question
 {
     public string CorrectAnswer { get; init; } = string.Empty;
-    public ICollection<string> FillHints { get; init; } = [];
+    public List<string> FillHints { get; init; } = [];
 }
 
 public sealed class ErrorSpottingQuestion : Question
@@ -46,7 +46,6 @@ public sealed class OutputPredictionQuestion : Question
 public sealed class CodeWritingQuestion : Question
 {
     public string? Solution { get; init; }
-    public ICollection<string> Examples { get; init; } = [];
-    public ICollection<string> Rubric { get; init; } = [];
-    // TestCases collection is inherited from base Question
+    public List<string> Examples { get; init; } = [];
+    public List<string> Rubric { get; init; } = [];
 } 

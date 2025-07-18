@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Quiz.CSharp.Data.Entities;
+using Quiz.CSharp.Data.Models;
+using System.Text.Json;
 
 public class DataSeedingService(
     IServiceProvider serviceProvider,
@@ -19,15 +21,7 @@ public class DataSeedingService(
             using var scope = serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<CSharpDbContext>();
 
-            // Check if data already exists
-            if (await dbContext.Collections.AnyAsync(cancellationToken))
-            {
-                logger.LogInformation("Data already exists, skipping seeding.");
-                return;
-            }
-
-            await SeedCollectionsAsync(dbContext, cancellationToken);
-            await SeedQuestionsAsync(dbContext, cancellationToken);
+            await SeedFromJsonFilesAsync(dbContext, cancellationToken);
 
             logger.LogInformation("Data seeding completed successfully.");
         }
@@ -44,86 +38,250 @@ public class DataSeedingService(
         return Task.CompletedTask;
     }
 
-    private async Task SeedCollectionsAsync(CSharpDbContext dbContext, CancellationToken cancellationToken)
+    private async Task SeedFromJsonFilesAsync(CSharpDbContext dbContext, CancellationToken cancellationToken)
     {
-        var collections = new[]
+        var seedDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Seed", "questions");
+        
+        if (!Directory.Exists(seedDirectory))
         {
-            new Collection
-            {
-                Code = "csharp-basics",
-                Title = "C# Fundamentals",
-                Description = "Master the basics of C# programming language including syntax, data types, and control structures.",
-                Icon = "🔤",
-                SortOrder = 1,
-                IsActive = true
-            },
-            new Collection
-            {
-                Code = "oop-concepts",
-                Title = "Object-Oriented Programming",
-                Description = "Learn OOP principles in C#: classes, inheritance, polymorphism, and encapsulation.",
-                Icon = "️",
-                SortOrder = 2,
-                IsActive = true
-            },
-            new Collection
-            {
-                Code = "linq-queries",
-                Title = "LINQ & Collections",
-                Description = "Explore LINQ queries, collections, and data manipulation in C#.",
-                Icon = "🔍",
-                SortOrder = 3,
-                IsActive = true
-            }
-        };
+            logger.LogWarning("Seed directory not found: {SeedDirectory}", seedDirectory);
+            return;
+        }
 
-        dbContext.Collections.AddRange(collections);
-        await dbContext.SaveChangesAsync(cancellationToken);
-        logger.LogInformation("Collections seeded successfully.");
+        var jsonFiles = Directory.GetFiles(seedDirectory, "*.json");
+        logger.LogInformation("Found {Count} JSON files to process", jsonFiles.Length);
+
+        foreach (var jsonFile in jsonFiles)
+        {
+            try
+            {
+                await ProcessJsonFileAsync(dbContext, jsonFile, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error processing file: {FileName}", jsonFile);
+            }
+        }
     }
 
-    private async Task SeedQuestionsAsync(CSharpDbContext dbContext, CancellationToken cancellationToken)
+    private async Task ProcessJsonFileAsync(CSharpDbContext dbContext, string jsonFilePath, CancellationToken cancellationToken)
     {
-        var collections = await dbContext.Collections.ToListAsync(cancellationToken);
-        var questions = new List<Question>();
+        var fileName = Path.GetFileName(jsonFilePath);
+        logger.LogInformation("Processing file: {FileName}", fileName);
 
-        // C# Basics Collection Questions
-        var csharpBasics = collections.First(c => c.Code == "csharp-basics");
-        
-        // MCQ Questions
-        questions.Add(new MCQQuestion
+        var jsonContent = await File.ReadAllTextAsync(jsonFilePath, cancellationToken);
+        var seedData = JsonSerializer.Deserialize<SeedQuestionFile>(jsonContent);
+
+        if (seedData?.Metadata == null || seedData.Questions == null)
         {
-            CollectionId = csharpBasics.Id,
-            Subcategory = "Data Types",
-            Difficulty = "Beginner",
-            Prompt = "Which of the following is NOT a value type in C#?",
-            EstimatedTimeMinutes = 2,
-            IsActive = true,
-            Options = new List<MCQOption>
+            logger.LogWarning("Invalid JSON structure in file: {FileName}", fileName);
+            return;
+        }
+
+        // Create or get collection
+        var collection = await GetOrCreateCollectionAsync(dbContext, seedData.Metadata, cancellationToken);
+
+        // Process questions
+        var questionId = 1;
+        foreach (var seedQuestion in seedData.Questions)
+        {
+            try
             {
-                new() { Id = "A", QuestionId = 0, Option = "int", IsCorrect = false, IsActive = true },
-                new() { Id = "B", QuestionId = 0, Option = "string", IsCorrect = true, IsActive = true },
-                new() { Id = "C", QuestionId = 0, Option = "bool", IsCorrect = false, IsActive = true },
-                new() { Id = "D", QuestionId = 0, Option = "double", IsCorrect = false, IsActive = true }
+                await CreateQuestionFromSeedAsync(dbContext, collection, seedQuestion, questionId++, cancellationToken);
             }
-        });
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error creating question {QuestionId} from file {FileName}", seedQuestion.Id, fileName);
+            }
+        }
 
-        // True/False Questions
-        questions.Add(new TrueFalseQuestion
+        await dbContext.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Successfully processed {QuestionCount} questions from {FileName}", 
+            seedData.Questions.Count, fileName);
+    }
+
+    private async Task<Collection> GetOrCreateCollectionAsync(CSharpDbContext dbContext, SeedCollectionMetadata metadata, CancellationToken cancellationToken)
+    {
+        var existingCollection = await dbContext.Collections
+            .FirstOrDefaultAsync(c => c.Code == metadata.Id, cancellationToken);
+
+        if (existingCollection != null)
         {
-            CollectionId = csharpBasics.Id,
-            Subcategory = "Variables",
-            Difficulty = "Beginner",
-            Prompt = "In C#, the 'var' keyword can only be used for local variables.",
-            EstimatedTimeMinutes = 1,
-            CorrectAnswer = true,
-            IsActive = true
-        });
+            return existingCollection;
+        }
 
-        // Add questions to context
-        dbContext.Questions.AddRange(questions);
+        var collection = new Collection
+        {
+            Code = metadata.Id,
+            Title = metadata.Title,
+            Description = metadata.Description,
+            Icon = metadata.Icon,
+            SortOrder = metadata.CategoryId,
+            IsActive = true
+        };
+
+        dbContext.Collections.Add(collection);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Questions seeded successfully.");
+        return collection;
+    }
+
+    private async Task CreateQuestionFromSeedAsync(CSharpDbContext dbContext, Collection collection, SeedQuestion seedQuestion, int questionId, CancellationToken cancellationToken)
+    {
+        Question question = seedQuestion.Type.ToLowerInvariant() switch
+        {
+            "mcq" => CreateMCQQuestion(collection, seedQuestion, questionId),
+            "true_false" => CreateTrueFalseQuestion(collection, seedQuestion, questionId),
+            "fill" => CreateFillQuestion(collection, seedQuestion, questionId),
+            "error_spotting" => CreateErrorSpottingQuestion(collection, seedQuestion, questionId),
+            "output_prediction" => CreateOutputPredictionQuestion(collection, seedQuestion, questionId),
+            "code_writing" => CreateCodeWritingQuestion(collection, seedQuestion, questionId),
+            _ => throw new NotSupportedException($"Question type '{seedQuestion.Type}' is not supported")
+        };
+
+        dbContext.Questions.Add(question);
+
+        // Create MCQ options if it's an MCQ question
+        if (seedQuestion.Type.ToLowerInvariant() == "mcq")
+        {
+            foreach (var option in seedQuestion.Options)
+            {
+                var isCorrect = seedQuestion.Answer.Contains(option.Id);
+                var mcqOption = new MCQOption
+                {
+                    Id = option.Id,
+                    QuestionId = questionId,
+                    Option = option.Option,
+                    IsCorrect = isCorrect,
+                    IsActive = true
+                };
+                dbContext.MCQOptions.Add(mcqOption);
+            }
+        }
+
+        // Create hints if any
+        if (!string.IsNullOrEmpty(seedQuestion.Explanation))
+        {
+            var hint = new QuestionHint
+            {
+                Id = 0, // Will be auto-generated
+                QuestionId = questionId,
+                Hint = seedQuestion.Explanation,
+                OrderIndex = 1,
+                IsActive = true
+            };
+            dbContext.QuestionHints.Add(hint);
+        }
+
+        // Create test cases for code writing questions
+        if (seedQuestion.Type.ToLowerInvariant() == "code_writing" && seedQuestion.TestCases.Any())
+        {
+            foreach (var (index, testCase) in seedQuestion.TestCases.Select((tc, i) => (i, tc)))
+            {
+                var dbTestCase = new TestCase
+                {
+                    Id = 0, // Will be auto-generated
+                    QuestionId = questionId,
+                    Input = testCase.Input,
+                    ExpectedOutput = testCase.ExpectedOutput,
+                    IsActive = true
+                };
+                dbContext.TestCases.Add(dbTestCase);
+            }
+        }
+    }
+
+    private MCQQuestion CreateMCQQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    {
+        return new MCQQuestion
+        {
+            Id = questionId,
+            CollectionId = collection.Id,
+            Subcategory = seedQuestion.Metadata.Subcategory,
+            Difficulty = "Beginner", // Default difficulty
+            Prompt = seedQuestion.Prompt,
+            EstimatedTimeMinutes = 2, // Default time
+            IsActive = true
+        };
+    }
+
+    private TrueFalseQuestion CreateTrueFalseQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    {
+        var correctAnswer = seedQuestion.Answer.FirstOrDefault()?.ToLowerInvariant() == "true";
+        
+        return new TrueFalseQuestion
+        {
+            Id = questionId,
+            CollectionId = collection.Id,
+            Subcategory = seedQuestion.Metadata.Subcategory,
+            Difficulty = "Beginner",
+            Prompt = seedQuestion.Prompt,
+            EstimatedTimeMinutes = 1,
+            CorrectAnswer = correctAnswer,
+            IsActive = true
+        };
+    }
+
+    private FillQuestion CreateFillQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    {
+        return new FillQuestion
+        {
+            Id = questionId,
+            CollectionId = collection.Id,
+            Subcategory = seedQuestion.Metadata.Subcategory,
+            Difficulty = "Beginner",
+            Prompt = seedQuestion.Prompt,
+            EstimatedTimeMinutes = 3,
+            CorrectAnswer = seedQuestion.Answer.FirstOrDefault() ?? string.Empty,
+            FillHints = seedQuestion.Examples?.ToList() ?? new List<string>(),
+            IsActive = true
+        };
+    }
+
+    private ErrorSpottingQuestion CreateErrorSpottingQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    {
+        return new ErrorSpottingQuestion
+        {
+            Id = questionId,
+            CollectionId = collection.Id,
+            Subcategory = seedQuestion.Metadata.Subcategory,
+            Difficulty = "Intermediate",
+            Prompt = seedQuestion.Prompt,
+            EstimatedTimeMinutes = 5,
+            CorrectAnswer = seedQuestion.Answer.FirstOrDefault() ?? string.Empty,
+            IsActive = true
+        };
+    }
+
+    private OutputPredictionQuestion CreateOutputPredictionQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    {
+        return new OutputPredictionQuestion
+        {
+            Id = questionId,
+            CollectionId = collection.Id,
+            Subcategory = seedQuestion.Metadata.Subcategory,
+            Difficulty = "Intermediate",
+            Prompt = seedQuestion.Prompt,
+            EstimatedTimeMinutes = 3,
+            ExpectedOutput = seedQuestion.Answer.FirstOrDefault() ?? string.Empty,
+            IsActive = true
+        };
+    }
+
+    private CodeWritingQuestion CreateCodeWritingQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    {
+        return new CodeWritingQuestion
+        {
+            Id = questionId,
+            CollectionId = collection.Id,
+            Subcategory = seedQuestion.Metadata.Subcategory,
+            Difficulty = "Advanced",
+            Prompt = seedQuestion.Prompt,
+            EstimatedTimeMinutes = 10,
+            Solution = seedQuestion.Solution,
+            Examples = seedQuestion.Examples?.ToList() ?? new List<string>(),
+            Rubric = seedQuestion.Rubric?.ToList() ?? new List<string>(),
+            IsActive = true
+        };
     }
 } 
