@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Quiz.CSharp.Data;
@@ -12,9 +13,11 @@ using Quiz.CSharp.Data;
 namespace Quiz.CSharp.Data.Migrations
 {
     [DbContext(typeof(CSharpDbContext))]
-    partial class CSharpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250718135359_UpdateMCQOptionCompoundKey")]
+    partial class UpdateMCQOptionCompoundKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -82,12 +82,21 @@ public class DataSeedingService(
         var collection = await GetOrCreateCollectionAsync(dbContext, seedData.Metadata, cancellationToken);
 
         // Process questions
-        var questionId = 1;
+        var processedCount = 0;
+        var skippedCount = 0;
         foreach (var seedQuestion in seedData.Questions)
         {
             try
             {
-                await CreateQuestionFromSeedAsync(dbContext, collection, seedQuestion, questionId++, cancellationToken);
+                var wasCreated = await CreateQuestionFromSeedAsync(dbContext, collection, seedQuestion, cancellationToken);
+                if (wasCreated)
+                {
+                    processedCount++;
+                }
+                else
+                {
+                    skippedCount++;
+                }
             }
             catch (Exception ex)
             {
@@ -96,8 +105,8 @@ public class DataSeedingService(
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        logger.LogInformation("Successfully processed {QuestionCount} questions from {FileName}", 
-            seedData.Questions.Count, fileName);
+        logger.LogInformation("Successfully processed {ProcessedCount} questions, skipped {SkippedCount} existing questions from {FileName}", 
+            processedCount, skippedCount, fileName);
     }
 
     private async Task<Collection> GetOrCreateCollectionAsync(CSharpDbContext dbContext, SeedCollectionMetadata metadata, CancellationToken cancellationToken)
@@ -126,20 +135,34 @@ public class DataSeedingService(
         return collection;
     }
 
-    private async Task CreateQuestionFromSeedAsync(CSharpDbContext dbContext, Collection collection, SeedQuestion seedQuestion, int questionId, CancellationToken cancellationToken)
+    private async Task<bool> CreateQuestionFromSeedAsync(CSharpDbContext dbContext, Collection collection, SeedQuestion seedQuestion, CancellationToken cancellationToken)
     {
+        // Check if question already exists by checking the prompt and collection
+        var existingQuestion = await dbContext.Questions
+            .FirstOrDefaultAsync(q => q.CollectionId == collection.Id && q.Prompt == seedQuestion.Prompt, cancellationToken);
+
+        if (existingQuestion != null)
+        {
+            logger.LogDebug("Question already exists in collection {CollectionId} with prompt: {Prompt}", 
+                collection.Id, seedQuestion.Prompt);
+            return false;
+        }
+
         Question question = seedQuestion.Type.ToLowerInvariant() switch
         {
-            "mcq" => CreateMCQQuestion(collection, seedQuestion, questionId),
-            "true_false" => CreateTrueFalseQuestion(collection, seedQuestion, questionId),
-            "fill" => CreateFillQuestion(collection, seedQuestion, questionId),
-            "error_spotting" => CreateErrorSpottingQuestion(collection, seedQuestion, questionId),
-            "output_prediction" => CreateOutputPredictionQuestion(collection, seedQuestion, questionId),
-            "code_writing" => CreateCodeWritingQuestion(collection, seedQuestion, questionId),
+            "mcq" => CreateMCQQuestion(collection, seedQuestion),
+            "true_false" => CreateTrueFalseQuestion(collection, seedQuestion),
+            "fill" => CreateFillQuestion(collection, seedQuestion),
+            "error_spotting" => CreateErrorSpottingQuestion(collection, seedQuestion),
+            "output_prediction" => CreateOutputPredictionQuestion(collection, seedQuestion),
+            "code_writing" => CreateCodeWritingQuestion(collection, seedQuestion),
             _ => throw new NotSupportedException($"Question type '{seedQuestion.Type}' is not supported")
         };
 
         dbContext.Questions.Add(question);
+        await dbContext.SaveChangesAsync(cancellationToken); // Save to get the generated ID
+
+        var questionId = question.Id;
 
         // Create MCQ options if it's an MCQ question
         if (seedQuestion.Type.ToLowerInvariant() == "mcq")
@@ -189,13 +212,14 @@ public class DataSeedingService(
                 dbContext.TestCases.Add(dbTestCase);
             }
         }
+
+        return true;
     }
 
-    private MCQQuestion CreateMCQQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    private MCQQuestion CreateMCQQuestion(Collection collection, SeedQuestion seedQuestion)
     {
         return new MCQQuestion
         {
-            Id = questionId,
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
             Difficulty = "Beginner", // Default difficulty
@@ -205,13 +229,12 @@ public class DataSeedingService(
         };
     }
 
-    private TrueFalseQuestion CreateTrueFalseQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    private TrueFalseQuestion CreateTrueFalseQuestion(Collection collection, SeedQuestion seedQuestion)
     {
         var correctAnswer = seedQuestion.Answer.FirstOrDefault()?.ToLowerInvariant() == "true";
         
         return new TrueFalseQuestion
         {
-            Id = questionId,
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
             Difficulty = "Beginner",
@@ -222,11 +245,10 @@ public class DataSeedingService(
         };
     }
 
-    private FillQuestion CreateFillQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    private FillQuestion CreateFillQuestion(Collection collection, SeedQuestion seedQuestion)
     {
         return new FillQuestion
         {
-            Id = questionId,
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
             Difficulty = "Beginner",
@@ -238,11 +260,10 @@ public class DataSeedingService(
         };
     }
 
-    private ErrorSpottingQuestion CreateErrorSpottingQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    private ErrorSpottingQuestion CreateErrorSpottingQuestion(Collection collection, SeedQuestion seedQuestion)
     {
         return new ErrorSpottingQuestion
         {
-            Id = questionId,
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
             Difficulty = "Intermediate",
@@ -253,11 +274,10 @@ public class DataSeedingService(
         };
     }
 
-    private OutputPredictionQuestion CreateOutputPredictionQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    private OutputPredictionQuestion CreateOutputPredictionQuestion(Collection collection, SeedQuestion seedQuestion)
     {
         return new OutputPredictionQuestion
         {
-            Id = questionId,
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
             Difficulty = "Intermediate",
@@ -268,11 +288,10 @@ public class DataSeedingService(
         };
     }
 
-    private CodeWritingQuestion CreateCodeWritingQuestion(Collection collection, SeedQuestion seedQuestion, int questionId)
+    private CodeWritingQuestion CreateCodeWritingQuestion(Collection collection, SeedQuestion seedQuestion)
     {
         return new CodeWritingQuestion
         {
-            Id = questionId,
             CollectionId = collection.Id,
             Subcategory = seedQuestion.Metadata.Subcategory,
             Difficulty = "Advanced",

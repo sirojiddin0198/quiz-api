@@ -1,5 +1,6 @@
 namespace Quiz.CSharp.Data.Models;
 
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 public class SeedCollectionMetadata
@@ -62,6 +63,7 @@ public class SeedQuestion
     public List<SeedQuestionOption> Options { get; set; } = [];
     
     [JsonPropertyName("answer")]
+    [JsonConverter(typeof(AnswerConverter))]
     public List<string> Answer { get; set; } = [];
     
     [JsonPropertyName("explanation")]
@@ -105,4 +107,50 @@ public class SeedQuestionFile
     
     [JsonPropertyName("questions")]
     public List<SeedQuestion> Questions { get; set; } = [];
+}
+
+public class AnswerConverter : JsonConverter<List<string>>
+{
+    public override List<string> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.String)
+        {
+            var stringValue = reader.GetString();
+            return new List<string> { stringValue ?? string.Empty };
+        }
+        else if (reader.TokenType == JsonTokenType.StartArray)
+        {
+            var list = new List<string>();
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndArray)
+                    break;
+                
+                if (reader.TokenType == JsonTokenType.String)
+                {
+                    list.Add(reader.GetString() ?? string.Empty);
+                }
+            }
+            return list;
+        }
+        
+        return new List<string>();
+    }
+
+    public override void Write(Utf8JsonWriter writer, List<string> value, JsonSerializerOptions options)
+    {
+        if (value.Count == 1)
+        {
+            writer.WriteStringValue(value[0]);
+        }
+        else
+        {
+            writer.WriteStartArray();
+            foreach (var item in value)
+            {
+                writer.WriteStringValue(item);
+            }
+            writer.WriteEndArray();
+        }
+    }
 } 

@@ -8,7 +8,7 @@ public sealed class MCQOptionConfiguration : IEntityTypeConfiguration<MCQOption>
 {
     public void Configure(EntityTypeBuilder<MCQOption> builder)
     {
-        builder.HasKey(o => o.Id);
+        builder.HasKey(o => new { o.Id, o.QuestionId });
         builder.Property(o => o.Id).HasMaxLength(10);
         builder.Property(o => o.Option).HasMaxLength(1000);
         builder.Property(o => o.QuestionId).IsRequired();
