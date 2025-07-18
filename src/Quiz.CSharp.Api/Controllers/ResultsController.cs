@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Quiz.CSharp.Api.Contracts.Reviews;
 using Quiz.CSharp.Api.Services;
 using Quiz.Shared.Contracts;
+using Quiz.Infrastructure.Authentication;
 
 [ApiController]
 [Route("api/csharp/results")]
 [Produces("application/json")]
+[RequireSubscription("csharp-quiz")]
 public sealed class ResultsController(IResultsService resultsService) : ControllerBase
 {
     [HttpGet("collections/{collectionId}")]
@@ -47,6 +49,7 @@ public sealed class ResultsController(IResultsService resultsService) : Controll
     }
 
     [HttpPost("sessions/{sessionId}/complete")]
+    [AllowAnonymous]
     [ProducesResponseType<ApiResponse<SessionResultsResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse<SessionResultsResponse>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CompleteSession(

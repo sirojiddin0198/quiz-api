@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAnswerService, AnswerService>();
         services.AddScoped<IAnswerValidator, AnswerValidator>();
         services.AddScoped<IResultsService, ResultsService>();
+        services.AddScoped<ISubscriptionGuard, SubscriptionGuard>();
 
         return services;
     }

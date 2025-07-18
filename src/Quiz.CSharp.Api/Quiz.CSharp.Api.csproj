@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="../Quiz.Shared/Quiz.Shared.csproj" />
     <ProjectReference Include="../Quiz.CSharp.Data/Quiz.CSharp.Data.csproj" />
+    <ProjectReference Include="../Quiz.Infrastructure/Quiz.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

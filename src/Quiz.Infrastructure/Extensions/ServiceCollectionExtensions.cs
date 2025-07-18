@@ -33,6 +33,7 @@ public static class ServiceCollectionExtensions
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<ISubscriptionService, SubscriptionService>();
 
         return services;
     }

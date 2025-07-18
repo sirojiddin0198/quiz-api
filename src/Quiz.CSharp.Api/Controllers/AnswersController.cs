@@ -6,13 +6,16 @@ using Quiz.CSharp.Api.Contracts;
 using Quiz.CSharp.Api.Contracts.Requests;
 using Quiz.CSharp.Api.Services;
 using Quiz.Shared.Contracts;
+using Quiz.Infrastructure.Authentication;
 
 [ApiController]
 [Route("api/csharp/answers")]
 [Produces("application/json")]
+[RequireSubscription("csharp-quiz")]
 public sealed class AnswersController(IAnswerService answerService) : ControllerBase
 {
     [HttpPost]
+    [Authorize]
     [ProducesResponseType<ApiResponse<AnswerSubmissionResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ApiResponse<AnswerSubmissionResponse>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SubmitAnswer(

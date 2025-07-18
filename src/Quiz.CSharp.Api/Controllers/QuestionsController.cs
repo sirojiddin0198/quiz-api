@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Quiz.CSharp.Api.Contracts;
 using Quiz.CSharp.Api.Services;
 using Quiz.Shared.Contracts;
+using Quiz.Infrastructure.Authentication;
 
 [ApiController]
 [Route("api/csharp/questions")]
 [Produces("application/json")]
+[RequireSubscription("csharp-quiz")]
 public sealed class QuestionsController(IQuestionService questionService) : ControllerBase
 {
     [HttpGet]
@@ -29,6 +31,7 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
     }
 
     [HttpGet("preview")]
+    [AllowAnonymous]
     [ProducesResponseType<ApiResponse<List<QuestionResponse>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPreviewQuestions(
         [FromQuery] int collectionId,
