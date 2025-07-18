@@ -48,7 +48,8 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     {
         var query = context.Questions
             .Where(q => q.CollectionId == collectionId && q.IsActive)
-            .Include(q => q.Collection);
+            .Include(q => q.Collection)
+            .OrderBy(q => q.Id);
 
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
@@ -64,7 +65,7 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
         return await context.Questions
             .Where(q => q.CollectionId == collectionId && q.IsActive)
             .Include(q => q.Collection)
-            .OrderBy(q => Guid.NewGuid())
+            .OrderBy(q => q.Id)
             .Take(2)
             .ToListAsync(cancellationToken);
     }

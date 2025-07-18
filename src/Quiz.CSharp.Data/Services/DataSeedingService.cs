@@ -117,7 +117,34 @@ public class DataSeedingService(
         var jsonFiles = Directory.GetFiles(seedDirectory, "*.json");
         logger.LogInformation("Found {Count} JSON files to process", jsonFiles.Length);
 
+        // Sort files by categoryId (difficulty) to ensure questions are seeded in increasing difficulty order
+        var filesWithMetadata = new List<(string FilePath, int CategoryId)>();
+        
         foreach (var jsonFile in jsonFiles)
+        {
+            try
+            {
+                var jsonContent = await File.ReadAllTextAsync(jsonFile, cancellationToken);
+                var seedData = JsonSerializer.Deserialize<SeedQuestionFile>(jsonContent);
+                
+                if (seedData?.Metadata != null)
+                {
+                    filesWithMetadata.Add((jsonFile, seedData.Metadata.CategoryId));
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error reading metadata from file: {FileName}", jsonFile);
+            }
+        }
+
+        // Sort by categoryId (increasing difficulty)
+        filesWithMetadata.Sort((a, b) => a.CategoryId.CompareTo(b.CategoryId));
+        
+        logger.LogInformation("Processing files in difficulty order: {Order}", 
+            string.Join(" → ", filesWithMetadata.Select(f => f.CategoryId)));
+
+        foreach (var (jsonFile, categoryId) in filesWithMetadata)
         {
             try
             {
@@ -147,16 +174,23 @@ public class DataSeedingService(
         // Create or get collection
         var collection = await GetOrCreateCollectionAsync(dbContext, seedData.Metadata, cancellationToken);
 
+        // Sort questions by type within the collection to ensure proper ordering
+        var sortedQuestions = SortQuestionsByType(seedData.Questions);
+        
+        logger.LogInformation("Processing {QuestionCount} questions in type order for collection {CollectionCode}", 
+            sortedQuestions.Count, collection.Code);
+
         // Process questions
         var processedCount = 0;
         var skippedCount = 0;
-        foreach (var seedQuestion in seedData.Questions)
+        foreach (var seedQuestion in sortedQuestions)
         {
             try
             {
                 var wasCreated = await CreateQuestionFromSeedAsync(dbContext, collection, seedQuestion, cancellationToken);
                 if (wasCreated)
                 {
+                    await dbContext.SaveChangesAsync(cancellationToken);
                     processedCount++;
                 }
                 else
@@ -170,9 +204,24 @@ public class DataSeedingService(
             }
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
         logger.LogInformation("Successfully processed {ProcessedCount} questions, skipped {SkippedCount} existing questions from {FileName}", 
             processedCount, skippedCount, fileName);
+    }
+
+    private static List<SeedQuestion> SortQuestionsByType(List<SeedQuestion> questions)
+    {
+        // Define question type order: true_false → mcq → error_spotting → fill → output_prediction → code_writing
+        var typeOrder = new Dictionary<string, int>
+        {
+            { "true_false", 1 },
+            { "mcq", 2 },
+            { "error_spotting", 3 },
+            { "fill", 4 },
+            { "output_prediction", 5 },
+            { "code_writing", 6 }
+        };
+
+        return [.. questions.OrderBy(q => typeOrder.GetValueOrDefault(q.Type.ToLowerInvariant(), 999))];
     }
 
     private async Task<Collection> GetOrCreateCollectionAsync(CSharpDbContext dbContext, SeedCollectionMetadata metadata, CancellationToken cancellationToken)
