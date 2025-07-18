@@ -3,14 +3,13 @@ namespace Quiz.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Quiz.Shared.Authentication;
-using System.Security.Claims;
 
 public sealed class SubscriptionService(
     ICurrentUser currentUser,
     IHttpContextAccessor httpContextAccessor,
     ILogger<SubscriptionService> logger) : ISubscriptionService
 {
-    private const string SubscriptionClaimType = "ustoz-subscription";
+    private const string SubscriptionClaimType = "ustoz-membership";
     
     // Feature access mapping - defines which subscriptions grant access to which features
     private static readonly Dictionary<string, HashSet<string>> FeatureAccessMap = new()
@@ -121,20 +120,11 @@ public sealed class SubscriptionService(
         if (httpContext?.User == null)
             return [];
 
-        var subscriptionClaim = httpContext.User.FindFirst(SubscriptionClaimType);
-        if (subscriptionClaim == null)
+        var subscriptionClaims = httpContext.User.Claims.Where(claim => claim.Type == SubscriptionClaimType);
+        if (subscriptionClaims?.Any() is not true)
             return [];
 
-        // Assuming the claim value is a JSON array string like ["csharp-quiz", "premium"]
-        try
-        {
-            return System.Text.Json.JsonSerializer.Deserialize<string[]>(subscriptionClaim.Value) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to parse subscription claim for user {UserId}", currentUser.UserId);
-            return [];
-        }
+        return subscriptionClaims.Select(claim => claim.Value);
     }
 
     private DateTime? ExtractExpirationClaim()

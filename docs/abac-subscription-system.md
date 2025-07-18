@@ -1,18 +1,18 @@
 # ABAC Subscription System
 
 ## Overview
-The Attribute-Based Access Control (ABAC) system provides subscription-based authorization for the quiz API. It checks the `ustoz-subscription` claim in JWT tokens to determine user access to different features.
+The Attribute-Based Access Control (ABAC) system provides subscription-based authorization for the quiz API. It checks the `ustoz-membership` claim in JWT tokens to determine user access to different features.
 
 ## How It Works
 
 ### 1. JWT Token Structure
-The system expects JWT tokens from Keycloak with a `ustoz-subscription` claim containing a JSON array of subscription types:
+The system expects JWT tokens from Keycloak with a `ustoz-membership` claim containing a JSON array of subscription types:
 
 ```json
 {
   "sub": "user123",
   "email": "user@example.com",
-  "ustoz-subscription": ["csharp-quiz", "premium"],
+  "ustoz-membership": ["csharp-quiz", "premium"],
   "exp": 1640995200
 }
 ```
@@ -167,21 +167,21 @@ When user is not authenticated:
 **Basic User:**
 ```json
 {
-  "ustoz-subscription": ["csharp-quiz"]
+  "ustoz-membership": ["csharp-quiz"]
 }
 ```
 
 **Premium User:**
 ```json
 {
-  "ustoz-subscription": ["premium"]
+  "ustoz-membership": ["premium"]
 }
 ```
 
 **Multiple Subscriptions:**
 ```json
 {
-  "ustoz-subscription": ["csharp-quiz", "premium"]
+  "ustoz-membership": ["csharp-quiz", "premium"]
 }
 ```
 
@@ -190,14 +190,14 @@ When user is not authenticated:
 **No Subscription:**
 ```json
 {
-  "ustoz-subscription": []
+  "ustoz-membership": []
 }
 ```
 
 **Expired Token:**
 ```json
 {
-  "ustoz-subscription": ["csharp-quiz"],
+  "ustoz-membership": ["csharp-quiz"],
   "exp": 1640995200  // Past timestamp
 }
 ```
@@ -205,19 +205,19 @@ When user is not authenticated:
 ## Configuration
 
 ### Keycloak Setup
-Ensure your Keycloak realm includes the `ustoz-subscription` claim in JWT tokens:
+Ensure your Keycloak realm includes the `ustoz-membership` claim in JWT tokens:
 
 1. Create a custom claim mapper
-2. Map user attributes or roles to the `ustoz-subscription` claim
+2. Map user attributes or roles to the `ustoz-membership` claim
 3. Include the claim in JWT tokens
 
 ### Environment Variables
 ```json
 {
   "Keycloak": {
-    "Authority": "https://your-keycloak.com/auth/realms/your-realm",
+    "Authority": "http://auth.localhost.uz/realms/ilmhub",
     "Audience": "your-audience",
-    "RequireHttpsMetadata": true
+    "RequireHttpsMetadata": false
   }
 }
 ```
