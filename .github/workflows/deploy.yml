@@ -1,0 +1,58 @@
+name: Deploy to Production
+
+on:
+  workflow_run:
+    workflows: ["Dockerize"]
+    types:
+      - completed
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Deploy to Production Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Login to GitHub Container Registry
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
+            # Pull the latest image
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            
+            # Navigate to infrastructure directory and deploy
+            cd ~/ilmhub/infra
+            docker compose up -d quiz --no-deps
+            
+            # Clean up old images
+            docker image prune -f
+
+      - name: Verify Deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Wait for service to be ready
+            sleep 10
+            
+            # Check if container is running
+            if docker ps | grep -q quiz; then
+              echo "✅ Quiz service is running"
+              docker ps | grep quiz
+            else
+              echo "❌ Quiz service is not running"
+              exit 1
+            fi 

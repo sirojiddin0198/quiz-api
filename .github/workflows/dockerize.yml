@@ -1,4 +1,4 @@
-name: CI - Build and Push
+name: Dockerize
 
 on:
   push:
