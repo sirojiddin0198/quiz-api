@@ -62,7 +62,7 @@ public static class ServiceCollectionExtensions
                     o.Select(KeyFilter.Any, label);
             });
 
-            if (configuration.GetValue("AppConfig:ReOrderSources", true))
+            if (configuration.GetValue("AppConfig:ReOrderSources", false))
             {
                 var secretsSource = configuration.Sources
                     .FirstOrDefault(t => t is JsonConfigurationSource jsonConfigurationSource && jsonConfigurationSource.Path?.EndsWith("secrets.json") is true);
