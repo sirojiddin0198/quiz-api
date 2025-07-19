@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.AddDbContext<ICSharpDbContext, CSharpDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+            options.UseNpgsql(configuration.GetConnectionString("Quiz"))
                    .UseSnakeCaseNamingConvention());
 
         services.AddScoped<ICSharpRepository, CSharpRepository>();

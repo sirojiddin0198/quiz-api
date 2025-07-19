@@ -8,6 +8,8 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAzureAppConfiguration(builder.Configuration);
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
