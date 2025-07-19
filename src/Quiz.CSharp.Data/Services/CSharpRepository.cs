@@ -140,6 +140,54 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
 
         return (lastAttempt?.AttemptNumber ?? 0) + 1;
     }
+
+    public async Task<PaginatedResult<UserProgress>> GetAllUserProgressesAsync(
+        int page, 
+        int pageSize, 
+        CancellationToken cancellationToken = default)
+    {
+        var query = context.UserProgress
+            .Include(up => up.Collection)
+            .Where(up => up.IsActive)
+            .OrderByDescending(up => up.UpdatedAt ?? up.CreatedAt);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<UserProgress>(items, totalCount, page, pageSize);
+    }
+
+    public async Task<PaginatedResult<IGrouping<string, UserProgress>>> GetUserProgressesGroupedByUserAsync(
+        int page, 
+        int pageSize, 
+        CancellationToken cancellationToken = default)
+    {
+        // Get all user progresses with collection data
+        var allProgresses = await context.UserProgress
+            .Include(up => up.Collection)
+            .Where(up => up.IsActive)
+            .ToListAsync(cancellationToken);
+
+        // Group by user and order by most recent activity
+        var groupedProgresses = allProgresses
+            .GroupBy(up => up.UserId)
+            .OrderByDescending(g => g.Max(up => up.UpdatedAt ?? up.CreatedAt))
+            .ToList();
+
+        var totalCount = groupedProgresses.Count;
+        
+        // Apply pagination to grouped results
+        var paginatedGroups = groupedProgresses
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return new PaginatedResult<IGrouping<string, UserProgress>>(paginatedGroups, totalCount, page, pageSize);
+    }
 }
 
 public sealed class CollectionWithQuestionCount

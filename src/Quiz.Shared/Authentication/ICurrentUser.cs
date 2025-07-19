@@ -11,4 +11,8 @@ public interface ICurrentUser
     string? LastName { get; }
     bool IsAuthenticated { get; }
     IReadOnlyList<string> Roles { get; }
+    IReadOnlyList<string> RealmRoles { get; }
+    IReadOnlyList<string> ResourceRoles { get; }
+    bool HasResourceRole(string role);
+    bool HasRealmRole(string role);
 } 

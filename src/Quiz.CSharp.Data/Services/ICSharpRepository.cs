@@ -24,4 +24,15 @@ public interface ICSharpRepository
         int collectionId, 
         CancellationToken cancellationToken = default);
     Task<int> GetNextAttemptNumberAsync(string userId, int questionId, CancellationToken cancellationToken = default);
+    
+    // Management endpoints
+    Task<PaginatedResult<UserProgress>> GetAllUserProgressesAsync(
+        int page, 
+        int pageSize, 
+        CancellationToken cancellationToken = default);
+    
+    Task<PaginatedResult<IGrouping<string, UserProgress>>> GetUserProgressesGroupedByUserAsync(
+        int page, 
+        int pageSize, 
+        CancellationToken cancellationToken = default);
 } 
