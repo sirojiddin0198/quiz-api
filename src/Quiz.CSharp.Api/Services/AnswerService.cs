@@ -99,6 +99,9 @@ public sealed class AnswerService(
             var newProgress = new UserProgress
             {
                 UserId = userId,
+                Username = currentUser.Username,
+                Name = currentUser.Name,
+                TelegramUsername = currentUser.TelegramUsername,
                 CollectionId = collectionId,
                 TotalQuestions = totalQuestions,
                 AnsweredQuestions = answeredQuestions,

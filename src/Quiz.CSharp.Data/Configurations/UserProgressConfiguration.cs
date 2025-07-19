@@ -11,6 +11,9 @@ public sealed class UserProgressConfiguration : IEntityTypeConfiguration<UserPro
         builder.ToTable("user_progress");
         builder.HasKey(up => new { up.UserId, up.CollectionId });
         builder.Property(up => up.UserId).HasMaxLength(100);
+        builder.Property(up => up.Username).HasMaxLength(100);
+        builder.Property(up => up.Name).HasMaxLength(200);
+        builder.Property(up => up.TelegramUsername).HasMaxLength(100);
         builder.Property(up => up.CollectionId).IsRequired();
         builder.Property(up => up.TotalQuestions);
         builder.Property(up => up.AnsweredQuestions);

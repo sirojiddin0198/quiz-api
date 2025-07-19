@@ -20,6 +20,9 @@ public sealed class CollectionProfile : Profile
             .ForMember(dest => dest.UserProgress, opt => opt.Ignore());
 
         CreateMap<UserProgress, UserProgressResponse>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.TelegramUsername, opt => opt.MapFrom(src => src.TelegramUsername))
             .ForMember(dest => dest.AnsweredQuestions, opt => opt.MapFrom(src => src.AnsweredQuestions))
             .ForMember(dest => dest.CorrectAnswers, opt => opt.MapFrom(src => src.CorrectAnswers))
             .ForMember(dest => dest.SuccessRate, opt => opt.MapFrom(src => src.SuccessRate))

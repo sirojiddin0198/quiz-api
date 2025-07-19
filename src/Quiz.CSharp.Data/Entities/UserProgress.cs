@@ -5,6 +5,9 @@ using Quiz.Shared.Common;
 public sealed class UserProgress : BaseEntity
 {
     public required string UserId { get; init; }
+    public string? Username { get; set; }
+    public string? Name { get; set; }
+    public string? TelegramUsername { get; set; }
     public required int CollectionId { get; init; }
     public int TotalQuestions { get; set; }
     public int AnsweredQuestions { get; set; }
