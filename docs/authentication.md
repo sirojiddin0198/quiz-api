@@ -1,6 +1,6 @@
 # Authentication
 
-The Quiz API uses JWT (JSON Web Token) Bearer token authentication with Keycloak integration.
+The Quiz API uses JWT (JSON Web Token) Bearer token authentication with Keycloak integration and realm-based role authorization.
 
 ## Overview
 
@@ -16,7 +16,9 @@ The API expects JWT tokens with the following claims:
   "preferred_username": "username",
   "email": "user@example.com",
   "name": "Full Name",
-  "roles": ["user", "admin"],
+  "realm_access": {
+    "roles": ["user", "admin"]
+  },
   "exp": 1640995200,
   "iat": 1640908800
 }
@@ -28,17 +30,18 @@ The API expects JWT tokens with the following claims:
 - `preferred_username`: Username for display
 - `email`: User's email address
 - `name`: Full name of the user
-- `roles`: Array of user roles
+- `realm_access.roles`: Array of realm roles assigned to the user
 - `exp`: Token expiration timestamp
 - `iat`: Token issued timestamp
 
 ## Authentication Flow
 
 1. **User Login**: User authenticates with Keycloak
-2. **Token Issuance**: Keycloak issues JWT token
+2. **Token Issuance**: Keycloak issues JWT token with realm roles
 3. **API Request**: Client includes token in Authorization header
 4. **Token Validation**: API validates token signature and claims
-5. **User Context**: API extracts user information for request processing
+5. **Role Authorization**: API checks realm roles for endpoint access
+6. **User Context**: API extracts user information for request processing
 
 ## Authorization Header
 
@@ -67,6 +70,10 @@ The following endpoints require authentication:
 - `GET /api/csharp/progress/{collectionId}` - Get user progress
 - `GET /api/csharp/progress` - Get all user progress
 
+### Management Endpoints (Admin Only)
+- `GET /api/management/user-progresses` - Get all user progress (requires `quiz-admin:read` realm role)
+- `POST /api/management/collections` - Create new collection (requires `quiz-admin:write` realm role)
+
 ## Public Endpoints
 
 The following endpoints are publicly accessible:
@@ -82,6 +89,15 @@ The following endpoints are publicly accessible:
 {
   "success": false,
   "message": "Unauthorized",
+  "data": null
+}
+```
+
+### Forbidden (403)
+```json
+{
+  "success": false,
+  "message": "Insufficient privileges. Quiz admin role required.",
   "data": null
 }
 ```
@@ -110,15 +126,12 @@ The API is configured to validate tokens with the following settings:
 
 ```json
 {
-  "Authentication": {
-    "JwtBearer": {
-      "Authority": "https://your-keycloak-url/auth/realms/your-realm",
-      "Audience": "quiz-api",
-      "RequireHttpsMetadata": false,
-      "ValidateIssuer": true,
-      "ValidateAudience": true,
-      "ValidateLifetime": true
-    }
+  "Keycloak": {
+    "realm": "ilmhub",
+    "auth-server-url": "http://auth.localhost.uz/",
+    "ssl-required": "none",
+    "resource": "quiz-api",
+    "verify-token-audience": false
   }
 }
 ```
@@ -134,16 +147,53 @@ public interface ICurrentUser
     string? Username { get; }
     string? Email { get; }
     bool IsAuthenticated { get; }
+    IReadOnlyList<string> RealmRoles { get; }
+    bool HasRealmRole(string role);
 }
 ```
 
-## Role-Based Access
+## Realm Role-Based Access
 
-The API supports role-based access control:
+The API supports realm role-based access control with the following roles:
 
-- **user**: Standard user access
-- **admin**: Administrative access (future use)
-- **moderator**: Content moderation access (future use)
+### Realm Roles
+- **`user`**: Standard user access to quiz features
+- **`quiz-admin:read`**: Read access to management endpoints
+- **`quiz-admin:write`**: Write access to create/modify management data
+
+### Authorization Policies
+- **`Admin:Read`**: Requires `quiz-admin:read` realm role - Read access to management data
+- **`Admin:Write`**: Requires `quiz-admin:write` realm role - Write access to create/modify data  
+- **`Admin:Manage`**: Requires both `quiz-admin:read` and `quiz-admin:write` realm roles - Full management access
+
+### Usage Examples
+
+```csharp
+// Controller level authorization
+[Authorize(Policy = "Admin:Read")]
+public class UserProgressManagementController : ControllerBase
+{
+    // All endpoints require quiz-admin:read realm role
+}
+
+// Method level authorization
+[Authorize(Policy = "Admin:Write")]
+[HttpPost]
+public async Task<IActionResult> CreateCollection(CreateCollectionRequest request)
+{
+    // Only users with quiz-admin:write can create collections
+}
+
+// Check roles in code
+public async Task<IActionResult> SomeAction()
+{
+    if (!currentUser.HasRealmRole("quiz-admin:read"))
+    {
+        return Forbid("Quiz admin read role required");
+    }
+    // Admin-only logic
+}
+```
 
 ## Security Best Practices
 
@@ -152,6 +202,7 @@ The API supports role-based access control:
 3. **HTTPS**: Always use HTTPS in production
 4. **Token Expiration**: Handle token expiration gracefully
 5. **Logout**: Clear tokens on logout
+6. **Role Validation**: Always validate realm roles on sensitive operations
 
 ## Testing Authentication
 
@@ -159,8 +210,8 @@ The API supports role-based access control:
 
 1. Navigate to `http://localhost:5138/swagger`
 2. Click the "Authorize" button
-3. Enter your JWT token: `Bearer <your-token>`
-4. Click "Authorize"
+3. Use OAuth2 flow to authenticate with Keycloak
+4. Or manually enter JWT token: `Bearer <your-token>`
 
 ### Using curl
 
@@ -169,20 +220,50 @@ curl -H "Authorization: Bearer <your-token>" \
      http://localhost:5138/api/csharp/collections
 ```
 
-### Using Postman
+### Testing Admin Endpoints
 
-1. Set the Authorization type to "Bearer Token"
-2. Enter your JWT token
-3. Make API requests
+```bash
+# Get user progress (requires quiz-admin:read role)
+curl -H "Authorization: Bearer <admin-token>" \
+     http://localhost:5138/api/management/user-progresses
+
+# Create collection (requires quiz-admin:write role)  
+curl -X POST \
+     -H "Authorization: Bearer <admin-token>" \
+     -H "Content-Type: application/json" \
+     -d '{"code":"test","title":"Test Collection","description":"Test"}' \
+     http://localhost:5138/api/management/collections
+```
+
+## Keycloak Configuration
+
+### Realm Setup
+1. Create or configure the `ilmhub` realm in Keycloak
+2. Create realm roles: `user`, `quiz-admin:read`, `quiz-admin:write`
+3. Assign roles to users as needed
+
+### Client Configuration
+1. Create a client with ID `quiz-api`
+2. Enable "Standard Flow" and "Implicit Flow" for Swagger UI
+3. Set valid redirect URIs for your application
+4. Ensure realm roles are included in JWT tokens
+
+### Token Claims
+Ensure your Keycloak configuration includes these claims in JWT tokens:
+- `realm_access.roles` - Array of assigned realm roles
+- `preferred_username` - User's username
+- `name` - User's full name
+- `email` - User's email address
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Invalid Token Format**: Ensure token starts with "Bearer "
-2. **Expired Token**: Refresh your token
-3. **Wrong Audience**: Verify token audience matches API configuration
-4. **Network Issues**: Check Keycloak connectivity
+1. **403 Forbidden**: User doesn't have required realm role (`quiz-admin:read` or `quiz-admin:write`)
+2. **Invalid Token Format**: Ensure token starts with "Bearer "
+3. **Expired Token**: Refresh your token
+4. **Missing Roles**: Check Keycloak role assignments for quiz admin roles
+5. **Wrong Realm**: Verify token is from correct Keycloak realm
 
 ### Debug Information
 
@@ -192,7 +273,8 @@ Enable debug logging to troubleshoot authentication issues:
 {
   "Logging": {
     "LogLevel": {
-      "Microsoft.AspNetCore.Authentication": "Debug"
+      "Microsoft.AspNetCore.Authentication": "Debug",
+      "Microsoft.AspNetCore.Authorization": "Debug"
     }
   }
 }

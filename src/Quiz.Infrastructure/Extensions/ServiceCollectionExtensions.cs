@@ -26,11 +26,11 @@ public static class ServiceCollectionExtensions
             .AddKeycloakAuthorization(configuration)
             .AddAuthorizationBuilder()
             .AddPolicy("Admin:Read", policy =>
-                policy.RequireResourceRoles("admin:read"))
+                policy.RequireRealmRoles("quiz-admin:read"))
             .AddPolicy("Admin:Write", policy =>
-                policy.RequireResourceRoles("admin:write"))
+                policy.RequireRealmRoles("quiz-admin:write"))
             .AddPolicy("Admin:Manage", policy =>
-                policy.RequireResourceRoles("admin:read", "admin:write"));
+                policy.RequireRealmRoles("quiz-admin:read", "quiz-admin:write"));
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUser, CurrentUser>();
