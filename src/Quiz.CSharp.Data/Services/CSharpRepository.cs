@@ -188,6 +188,26 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
 
         return new PaginatedResult<IGrouping<string, UserProgress>>(paginatedGroups, totalCount, page, pageSize);
     }
+
+    public async Task<Collection> CreateCollectionAsync(Collection collection, CancellationToken cancellationToken = default)
+    {
+        context.Collections.Add(collection);
+        await context.SaveChangesAsync(cancellationToken);
+        return collection;
+    }
+
+    public async Task<Question> CreateQuestionAsync(Question question, CancellationToken cancellationToken = default)
+    {
+        context.Questions.Add(question);
+        await context.SaveChangesAsync(cancellationToken);
+        return question;
+    }
+
+    public async Task<bool> CollectionExistsAsync(string code, CancellationToken cancellationToken = default)
+    {
+        return await context.Collections
+            .AnyAsync(c => c.Code == code && c.IsActive, cancellationToken);
+    }
 }
 
 public sealed class CollectionWithQuestionCount

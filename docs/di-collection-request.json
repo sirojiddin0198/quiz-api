@@ -1,0 +1,105 @@
+{
+  "code": "dependency-injection-hosting",
+  "title": ".NET Dependency Injection va Hosting Xizmatlari",
+  "description": ".NET Generic Host, Service Collection, Dependency Injection, service lifetime  va background/hosted xizmatlar haqida chuqur bilimlar. Bu kolleksiya zamonaviy .NET ilovalarida xizmatlarni boshqarish va konfiguratsiya qilish bo'yicha fundamental tushunchalarni o'z ichiga oladi.",
+  "icon": "🪣",
+  "sortOrder": 10,
+  "questions": [
+    {
+      "type": "mcq",
+      "subcategory": "Service Lifetime",
+      "difficulty": "Beginner",
+      "prompt": "**.NET Dependency Injection** tizimida **Singleton** service lifetime qanday ishlaydi?",
+      "estimatedTimeMinutes": 3,
+      "metadata": "{\"Hints\":[{\"Hint\":\"Singleton lifetime bir marta yaratilgan service instance'ini butun ilova hayoti davomida saqlaydi va qayta ishlatadi. Bu memory-efficient va performance uchun yaxshi, lekin state management bilan ehtiyot bo'lish kerak.\",\"OrderIndex\":1}],\"Options\":[{\"Id\":\"A\",\"Text\":\"Har bir so'rov uchun yangi instance yaratiladi\",\"IsCorrect\":false},{\"Id\":\"B\",\"Text\":\"Bitta instance yaratiladi va butun ilova davomida qayta ishlatiladi\",\"IsCorrect\":true},{\"Id\":\"C\",\"Text\":\"Har bir scope uchun yangi instance yaratiladi\",\"IsCorrect\":false},{\"Id\":\"D\",\"Text\":\"Instance faqat birinchi ishlatilganda yaratiladi va keyin o'chiriladi\",\"IsCorrect\":false}],\"CodeAfter\":\"\",\"CodeBefore\":\"```csharp\\nservices.AddSingleton<IMyService, MyService>();\\n```\",\"Explanation\":\"Singleton lifetime bir marta yaratilgan service instance'ini butun ilova hayoti davomida saqlaydi va qayta ishlatadi. Bu memory-efficient va performance uchun yaxshi, lekin state management bilan ehtiyot bo'lish kerak.\",\"CorrectAnswerIds\":[\"B\"]}"
+    },
+    {
+      "type": "mcq",
+      "subcategory": "Generic Host",
+      "difficulty": "Intermediate",
+      "prompt": "**Generic Host**ni sozlashda qaysi methodlar to'g'ri ketma-ketlikda chaqiriladi?",
+      "estimatedTimeMinutes": 4,
+      "metadata": "{\"Hints\":[{\"Hint\":\"To'g'ri ketma-ketlik: avval CreateDefaultBuilder bilan host yaratiladi, keyin ConfigureServices bilan xizmatlar ro'yxatdan o'tkaziladi, va nihoyat Build() bilan host quriladi.\",\"OrderIndex\":1}],\"Options\":[{\"Id\":\"A\",\"Text\":\"CreateDefaultBuilder → Build → ConfigureServices\",\"IsCorrect\":false},{\"Id\":\"B\",\"Text\":\"CreateDefaultBuilder → ConfigureServices → Build\",\"IsCorrect\":true},{\"Id\":\"C\",\"Text\":\"Build → CreateDefaultBuilder → ConfigureServices\",\"IsCorrect\":false},{\"Id\":\"D\",\"Text\":\"ConfigureServices → CreateDefaultBuilder → Build\",\"IsCorrect\":false}],\"CodeAfter\":\"\",\"CodeBefore\":\"```csharp\\nvar builder = Host.CreateDefaultBuilder(args)\\n    .ConfigureServices(services => { /* ... */ })\\n    .Build();\\n```\",\"Explanation\":\"To'g'ri ketma-ketlik: avval CreateDefaultBuilder bilan host yaratiladi, keyin ConfigureServices bilan xizmatlar ro'yxatdan o'tkaziladi, va nihoyat Build() bilan host quriladi.\",\"CorrectAnswerIds\":[\"B\"]}"
+    },
+    {
+      "type": "true_false",
+      "subcategory": "Service Registration",
+      "difficulty": "Beginner",
+      "prompt": "**Service Collection**da bir xil interface uchun bir nechta implementation ro'yxatdan o'tkazish mumkin. Bu holda oxirgi ro'yxatdan o'tkazilgan implementation ishlatiladi.",
+      "estimatedTimeMinutes": 2,
+      "metadata": "{\"Hints\":[{\"Hint\":\"Ha, bu to'g'ri. Bir xil interface uchun bir nechta implementation ro'yxatdan o'tkazish mumkin va DI container oxirgi ro'yxatdan o'tkazilgan implementation'ni ishlatadi. Biroq barcha implementation'larni olish uchun IEnumerable<T> dan foydalanish mumkin.\",\"OrderIndex\":1}],\"CodeAfter\":\"\",\"CodeBefore\":\"```csharp\\nservices.AddScoped<IRepository, SqlRepository>();\\nservices.AddScoped<IRepository, FileRepository>();\\n```\",\"Explanation\":\"Ha, bu to'g'ri. Bir xil interface uchun bir nechta implementation ro'yxatdan o'tkazish mumkin va DI container oxirgi ro'yxatdan o'tkazilgan implementation'ni ishlatadi. Biroq barcha implementation'larni olish uchun IEnumerable<T> dan foydalanish mumkin.\",\"CorrectAnswer\":true}"
+    },
+    {
+      "type": "true_false",
+      "subcategory": "Background Services",
+      "difficulty": "Advanced",
+      "prompt": "**Hosted Service** ichida **Scoped Service**larni to'g'ridan-to'g'ri constructor orqali inject qilish mumkin.",
+      "estimatedTimeMinutes": 4,
+      "metadata": "{\"Hints\":[{\"Hint\":\"Yo'q, bu noto'g'ri. Hosted Service'lar Singleton sifatida ro'yxatdan o'tadi, shuning uchun Scoped Service'larni to'g'ridan-to'g'ri inject qilish mumkin emas. Buning o'rniga IServiceScopeFactory ishlatib scope yaratish kerak.\",\"OrderIndex\":1}],\"CodeAfter\":\"\",\"CodeBefore\":\"```csharp\\npublic class MyBackgroundService : BackgroundService\\n{\\n    public MyBackgroundService(IScopedService scopedService) { }\\n}\\n```\",\"Explanation\":\"Yo'q, bu noto'g'ri. Hosted Service'lar Singleton sifatida ro'yxatdan o'tadi, shuning uchun Scoped Service'larni to'g'ridan-to'g'ri inject qilish mumkin emas. Buning o'rniga IServiceScopeFactory ishlatib scope yaratish kerak.\",\"CorrectAnswer\":false}"
+    },
+    {
+      "type": "fill",
+      "subcategory": "Service Scope",
+      "difficulty": "Intermediate",
+      "prompt": "Quyidagi kodda **Scoped Service**ni **Background Service** ichida ishlatish uchun bo'sh joylarni to'ldiring:",
+      "estimatedTimeMinutes": 5,
+      "metadata": "{\"Hints\":[{\"Hint\":\"IServiceScopeFactory Background Service'larda scoped service'larni ishlatish uchun ishlatiladi. CreateScope() methodi yangi scope yaratadi va scoped service'larni olish imkonini beradi.\",\"OrderIndex\":1}],\"CodeAfter\":\"\",\"FillHints\":[],\"CodeBefore\":\"\",\"Explanation\":\"IServiceScopeFactory Background Service'larda scoped service'larni ishlatish uchun ishlatiladi. CreateScope() methodi yangi scope yaratadi va scoped service'larni olish imkonini beradi.\",\"CodeWithBlank\":\"public class DataProcessorService : BackgroundService\\n{\\n    private readonly _______ _serviceScopeFactory;\\n    \\n    public DataProcessorService(_______ serviceScopeFactory)\\n    {\\n        _serviceScopeFactory = serviceScopeFactory;\\n    }\\n    \\n    protected override async Task ExecuteAsync(CancellationToken stoppingToken)\\n    {\\n        using var scope = _serviceScopeFactory._______();\\n        var dataService = scope.ServiceProvider.GetRequiredService<IDataService>();\\n    }\\n}\",\"CorrectAnswer\":\"public class DataProcessorService : BackgroundService\\n{\\n    private readonly IServiceScopeFactory _serviceScopeFactory;\\n    \\n    public DataProcessorService(IServiceScopeFactory serviceScopeFactory)\\n    {\\n        _serviceScopeFactory = serviceScopeFactory;\\n    }\\n    \\n    protected override async Task ExecuteAsync(CancellationToken stoppingToken)\\n    {\\n        using var scope = _serviceScopeFactory.CreateScope();\\n        var dataService = scope.ServiceProvider.GetRequiredService<IDataService>();\\n    }\\n}\"}"
+    },
+    {
+      "type": "fill",
+      "subcategory": "Service Registration",
+      "difficulty": "Beginner",
+      "prompt": "Quyidagi kodda **Service Registration** methodlarini to'ldiring:",
+      "estimatedTimeMinutes": 3,
+      "metadata": "{\"Hints\":[{\"Hint\":\"AddTransient - har safar yangi instance, AddSingleton - bitta instance, AddScoped - scope davomida bir xil instance ishlatiladi.\",\"OrderIndex\":1}],\"CodeAfter\":\"\",\"FillHints\":[],\"CodeBefore\":\"\",\"Explanation\":\"AddTransient - har safar yangi instance, AddSingleton - bitta instance, AddScoped - scope davomida bir xil instance ishlatiladi.\",\"CodeWithBlank\":\"// Har bir so'rov uchun yangi instance\\nservices._______ <IEmailService, EmailService>();\\n\\n// Bitta instance butun ilova uchun  \\nservices._______ <ILogger, FileLogger>();\\n\\n// Har bir HTTP request scope uchun bir xil instance\\nservices._______ <IUserContext, UserContext>();\",\"CorrectAnswer\":\"// Har bir so'rov uchun yangi instance\\nservices.AddTransient<IEmailService, EmailService>();\\n\\n// Bitta instance butun ilova uchun  \\nservices.AddSingleton<ILogger, FileLogger>();\\n\\n// Har bir HTTP request scope uchun bir xil instance\\nservices.AddScoped<IUserContext, UserContext>();\"}"
+    },
+    {
+      "type": "error_spotting",
+      "subcategory": "Hosted Service Implementation",
+      "difficulty": "Intermediate",
+      "prompt": "Quyidagi **Background Service** kodida xatolarni toping:",
+      "estimatedTimeMinutes": 6,
+      "metadata": "{\"Hints\":[{\"Hint\":\"Task.Delay() ga stoppingToken parametrini berish kerak: Task.Delay(5000, stoppingToken). Bu cancellation token ni to'g'ri ishlatish uchun muhim.\",\"OrderIndex\":1}],\"CodeAfter\":\"\",\"CodeBefore\":\"\",\"Explanation\":\"Task.Delay() ga stoppingToken parametrini berish kerak: Task.Delay(5000, stoppingToken). Bu cancellation token ni to'g'ri ishlatish uchun muhim.\",\"CodeWithError\":\"public class EmailService : BackgroundService\\n{\\n    private readonly IEmailSender _emailSender;\\n    \\n    public EmailService(IEmailSender emailSender)\\n    {\\n        _emailSender = emailSender;\\n    }\\n    \\n    protected override async Task ExecuteAsync(CancellationToken stoppingToken)\\n    {\\n        while (!stoppingToken.IsCancellationRequested)\\n        {\\n            await ProcessEmails();\\n            await Task.Delay(5000);\\n        }\\n    }\\n    \\n    private async Task ProcessEmails()\\n    {\\n        await _emailSender.SendPendingEmailsAsync();\\n    }\\n}\",\"CorrectAnswer\":\"public class EmailService : BackgroundService\\n{\\n    private readonly IEmailSender _emailSender;\\n    \\n    public EmailService(IEmailSender emailSender)\\n    {\\n        _emailSender = emailSender;\\n    }\\n    \\n    protected override async Task ExecuteAsync(CancellationToken stoppingToken)\\n    {\\n        while (!stoppingToken.IsCancellationRequested)\\n        {\\n            await ProcessEmails();\\n            await Task.Delay(5000, stoppingToken);\\n        }\\n    }\\n    \\n    private async Task ProcessEmails()\\n    {\\n        await _emailSender.SendPendingEmailsAsync();\\n    }\\n}\"}"
+    },
+    {
+      "type": "error_spotting",
+      "subcategory": "Service Lifetime Issues",
+      "difficulty": "Advanced",
+      "prompt": "Quyidagi **Service Registration** kodida lifecycle bilan bog'liq xatolarni toping:",
+      "estimatedTimeMinutes": 7,
+      "metadata": "{\"Hints\":[{\"Hint\":\"Singleton service (UserService) Scoped yoki Transient service'ni dependency sifatida ololmaydi - bu captive dependency muammosi. Barcha service'larni Scoped qilish yoki UserService ni ham Scoped qilish kerak.\",\"OrderIndex\":1}],\"CodeAfter\":\"\",\"CodeBefore\":\"\",\"Explanation\":\"Singleton service (UserService) Scoped yoki Transient service'ni dependency sifatida ololmaydi - bu captive dependency muammosi. Barcha service'larni Scoped qilish yoki UserService ni ham Scoped qilish kerak.\",\"CodeWithError\":\"public void ConfigureServices(IServiceCollection services)\\n{\\n    services.AddSingleton<IUserService, UserService>();\\n    services.AddScoped<IEmailService, EmailService>();\\n    services.AddTransient<IDataContext, DataContext>();\\n    \\n    // UserService constructor\\n    public UserService(IEmailService emailService, IDataContext dataContext) { }\\n}\",\"CorrectAnswer\":\"public void ConfigureServices(IServiceCollection services)\\n{\\n    services.AddScoped<IUserService, UserService>();\\n    services.AddScoped<IEmailService, EmailService>();\\n    services.AddScoped<IDataContext, DataContext>();\\n    \\n    // UserService constructor\\n    public UserService(IEmailService emailService, IDataContext dataContext) { }\\n}\"}"
+    },
+    {
+      "type": "output_prediction",
+      "subcategory": "Service Resolution",
+      "difficulty": "Beginner",
+      "prompt": "Quyidagi kodning natijasini bashorat qiling:",
+      "estimatedTimeMinutes": 4,
+      "metadata": "{\"Hints\":[{\"Hint\":\"GetRequiredService() oxirgi ro'yxatdan o'tkazilgan implementation'ni qaytaradi, ya'ni TestService2. Agar barcha implementation'larni olmoqchi bo'lsak, GetServices<ITestService>() ishlatish kerak.\",\"OrderIndex\":1}],\"Snippet\":\"var services = new ServiceCollection();\\nservices.AddTransient<ITestService, TestService1>();\\nservices.AddTransient<ITestService, TestService2>();\\n\\nvar provider = services.BuildServiceProvider();\\nvar service = provider.GetRequiredService<ITestService>();\\n\\nConsole.WriteLine(service.GetType().Name);\",\"CodeAfter\":\"\",\"CodeBefore\":\"\",\"Explanation\":\"GetRequiredService() oxirgi ro'yxatdan o'tkazilgan implementation'ni qaytaradi, ya'ni TestService2. Agar barcha implementation'larni olmoqchi bo'lsak, GetServices<ITestService>() ishlatish kerak.\",\"ExpectedOutput\":\"TestService2\"}"
+    },
+    {
+      "type": "output_prediction",
+      "subcategory": "Service Lifetime Behavior",
+      "difficulty": "Advanced",
+      "prompt": "Quyidagi kodning natijasini bashorat qiling:",
+      "estimatedTimeMinutes": 6,
+      "metadata": "{\"Hints\":[{\"Hint\":\"Scoped lifetime bir scope ichida bir xil instance qaytaradi, lekin static field barcha instance'lar o'rtasida umumiy. Birinchi scope'da 1 ta instance yaratiladi (_count=1), ikkinchi scope'da yana 1 ta (_count=2).\",\"OrderIndex\":1}],\"Snippet\":\"services.AddScoped<ICounter, Counter>();\\n\\n// Counter class\\npublic class Counter : ICounter\\n{\\n    private static int _count = 0;\\n    public Counter() { _count++; }\\n    public int GetCount() => _count;\\n}\\n\\n// Birinchi scope\\nusing (var scope1 = provider.CreateScope())\\n{\\n    var counter1 = scope1.ServiceProvider.GetRequiredService<ICounter>();\\n    var counter2 = scope1.ServiceProvider.GetRequiredService<ICounter>();\\n    Console.WriteLine($\\\"Scope1: {counter1.GetCount()}\\\");\\n}\\n\\n// Ikkinchi scope  \\nusing (var scope2 = provider.CreateScope())\\n{\\n    var counter3 = scope2.ServiceProvider.GetRequiredService<ICounter>();\\n    Console.WriteLine($\\\"Scope2: {counter3.GetCount()}\\\");\\n}\",\"CodeAfter\":\"\",\"CodeBefore\":\"\",\"Explanation\":\"Scoped lifetime bir scope ichida bir xil instance qaytaradi, lekin static field barcha instance'lar o'rtasida umumiy. Birinchi scope'da 1 ta instance yaratiladi (_count=1), ikkinchi scope'da yana 1 ta (_count=2).\",\"ExpectedOutput\":\"Scope1: 1\\nScope2: 2\"}"
+    },
+    {
+      "type": "code_writing",
+      "subcategory": "Custom Hosted Service",
+      "difficulty": "Intermediate",
+      "prompt": "**Custom Background Service** yarating, u har 30 soniyada database'dan expired cache entry'larni tozalaydi:",
+      "estimatedTimeMinutes": 10,
+      "metadata": "{\"Hints\":[],\"Rubric\":[],\"Examples\":[\"Service 30 soniya davomida ishlaydi\",\"Cache cleanup ishlaydi va to'xtatiladi\",\"Exception handling to'g'ri ishlaydi\"],\"Solution\":\"\",\"CodeAfter\":\"\",\"TestCases\":[],\"CodeBefore\":\"\",\"Explanation\":\"\"}"
+    },
+    {
+      "type": "code_writing",
+      "subcategory": "Service Configuration",
+      "difficulty": "Advanced",
+      "prompt": "**Generic Service Registration** extension method yarating, u conditional registration va lifetime selection imkonini beradi:",
+      "estimatedTimeMinutes": 12,
+      "metadata": "{\"Hints\":[],\"Rubric\":[],\"Examples\":[\"AddConditional<IService, Service>(ServiceLifetime.Scoped, t => true) - Service ro'yxatdan o'tadi\",\"AddConditional<IService, Service>(ServiceLifetime.Scoped, t => false) - Service ro'yxatdan o'tmaydi\",\"Method chaining support\"],\"Solution\":\"\",\"CodeAfter\":\"\",\"TestCases\":[],\"CodeBefore\":\"\",\"Explanation\":\"\"}"
+    }
+  ]
+} 

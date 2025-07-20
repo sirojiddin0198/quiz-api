@@ -35,4 +35,8 @@ public interface ICSharpRepository
         int page, 
         int pageSize, 
         CancellationToken cancellationToken = default);
+
+    Task<Collection> CreateCollectionAsync(Collection collection, CancellationToken cancellationToken = default);
+    Task<Question> CreateQuestionAsync(Question question, CancellationToken cancellationToken = default);
+    Task<bool> CollectionExistsAsync(string code, CancellationToken cancellationToken = default);
 } 

@@ -8,7 +8,7 @@ using Quiz.CSharp.Data.Services;
 using Quiz.Shared.Contracts;
 
 [ApiController]
-[Route("api/management/user-progresses")]
+[Route("api/csharp/management/user-progresses")]
 [Produces("application/json")]
 [Authorize(Policy = "Admin:Read")]
 public sealed class UserProgressManagementController(

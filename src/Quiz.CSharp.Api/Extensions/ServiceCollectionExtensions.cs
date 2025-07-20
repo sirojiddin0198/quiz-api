@@ -16,12 +16,13 @@ public static class ServiceCollectionExtensions
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(typeof(SubmitAnswerRequestValidator).Assembly);
 
-        services.AddScoped<ICollectionService, CollectionService>();
-        services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IAnswerService, AnswerService>();
         services.AddScoped<IAnswerValidator, AnswerValidator>();
+        services.AddScoped<ICollectionService, CollectionService>();
+        services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IResultsService, ResultsService>();
         services.AddScoped<ISubscriptionGuard, SubscriptionGuard>();
+        services.AddScoped<ICollectionManagementService, CollectionManagementService>();
 
         return services;
     }
