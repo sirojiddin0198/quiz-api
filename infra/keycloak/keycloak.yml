@@ -1,0 +1,34 @@
+services:
+  keycloak:
+    image: ${IMAGE_TAG}
+    container_name: keycloak
+    env_file:
+      - .env
+    volumes:
+      - ../certs:/opt/keycloak/certs
+    command: start
+    networks:
+      - keycloak
+      - traefik
+    healthcheck:
+      test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/8080' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`${KC_HOSTNAME}`)"
+      - "traefik.http.routers.keycloak.service=keycloak"
+      - "traefik.http.routers.keycloak.entrypoints=web,websecure"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+      # - "traefik.http.routers.keycloak.tls=true"
+      # - "traefik.http.routers.keycloak.tls.certresolver=letsencrypt"
+      - "traefik.http.services.keycloak.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.keycloak.middlewares=compresstraefik"
+      - "traefik.http.middlewares.compresstraefik.compress=true"
+      - "traefik.docker.network=traefik"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy 

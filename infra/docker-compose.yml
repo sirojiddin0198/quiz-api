@@ -1,0 +1,7 @@
+name: ilmhub
+
+include:
+  - path: common.yml
+  - path: postgres/postgres.yml
+  - path: keycloak/keycloak.yml
+  - path: traefik/traefik.yml

@@ -1,0 +1,9 @@
+networks:
+  keycloak:
+    name: keycloak
+  traefik: 
+    name: traefik
+
+volumes:
+  postgres:
+  traefik-certificates:

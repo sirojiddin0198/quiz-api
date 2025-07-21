@@ -1,0 +1,35 @@
+services:
+  quiz:
+    image: ghcr.io/ilmhubuz/quiz-api
+
+    container_name: quiz
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    # healthcheck:
+    #   test: ["CMD", "wget", "http://localhost:8080/api/healthz","--spider"]
+    #   interval: 15s
+    #   timeout: 3s
+    #   retries: 60
+
+    networks:
+      - keycloak
+      - traefik
+    
+    depends_on:
+      - postgres
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.quiz.rule=Host(`${QUIZ_HOSTNAME}`)"
+      - "traefik.http.routers.quiz.service=quiz"
+      - "traefik.http.routers.quiz.entrypoints=web,websecure"
+      - "traefik.http.services.quiz.loadbalancer.server.port=8080"
+      - "traefik.http.routers.quiz.tls=true"
+      - "traefik.http.routers.quiz.tls.certresolver=letsencrypt"
+      - "traefik.http.services.quiz.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.quiz.middlewares=compresstraefik"
+      - "traefik.http.middlewares.compresstraefik.compress=true"
+      - "traefik.docker.network=traefik" 
