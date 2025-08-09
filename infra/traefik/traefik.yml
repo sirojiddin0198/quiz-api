@@ -57,6 +57,3 @@ services:
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
     restart: unless-stopped
-    depends_on:
-      jaeger:
-        condition: service_healthy 
