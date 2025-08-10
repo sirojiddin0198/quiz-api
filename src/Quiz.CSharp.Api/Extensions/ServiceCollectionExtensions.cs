@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IResultsService, ResultsService>();
         services.AddScoped<ISubscriptionGuard, SubscriptionGuard>();
         services.AddScoped<ICollectionManagementService, CollectionManagementService>();
+        services.AddScoped<IUserProgressService, UserProgressService>();
 
         return services;
     }

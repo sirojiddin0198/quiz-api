@@ -20,23 +20,26 @@ public interface ICSharpRepository
     Task UpdateUserProgressAsync(UserProgress progress, CancellationToken cancellationToken = default);
     Task CreateUserProgressAsync(UserProgress progress, CancellationToken cancellationToken = default);
     Task<(int totalQuestions, int answeredQuestions, int correctAnswers)> CalculateProgressStatsAsync(
-        string userId, 
-        int collectionId, 
+        string userId,
+        int collectionId,
         CancellationToken cancellationToken = default);
     Task<int> GetNextAttemptNumberAsync(string userId, int questionId, CancellationToken cancellationToken = default);
-    
+
     // Management endpoints
     Task<PaginatedResult<UserProgress>> GetAllUserProgressesAsync(
-        int page, 
-        int pageSize, 
+        int page,
+        int pageSize,
         CancellationToken cancellationToken = default);
-    
+
     Task<PaginatedResult<IGrouping<string, UserProgress>>> GetUserProgressesGroupedByUserAsync(
-        int page, 
-        int pageSize, 
+        int page,
+        int pageSize,
         CancellationToken cancellationToken = default);
 
     Task<Collection> CreateCollectionAsync(Collection collection, CancellationToken cancellationToken = default);
     Task<Question> CreateQuestionAsync(Question question, CancellationToken cancellationToken = default);
     Task<bool> CollectionExistsAsync(string code, CancellationToken cancellationToken = default);
+    Task<List<int>> GetAnsweredCollectionIdsByUserIdAsync(
+        string userId,
+        CancellationToken cancellationToken = default);
 } 
