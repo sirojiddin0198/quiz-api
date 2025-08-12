@@ -40,5 +40,4 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
         var questions = await questionService.GetPreviewQuestionsAsync(collectionId, cancellationToken);
         return Ok(new ApiResponse<List<QuestionResponse>>(questions));
     }
-    
 } 

@@ -46,19 +46,14 @@ public sealed class CollectionService(
     }
      public async Task<CollectionResponse> CreateCollectionAsync(CreateCollectionDto dto, CancellationToken cancellationToken = default)
     {
-        // Request → Entity mapping
         var collection = mapper.Map<Collection>(dto);
 
-        // Yangi collection’ni DB ga qo‘shish
         await repository.AddCollectionAsync(collection, cancellationToken);
 
-        // Yaratilgan collection’dan response tayyorlash
         var response = mapper.Map<CollectionResponse>(collection);
 
-        // TotalQuestions ni to‘ldirish (yangi yaratilganda 0 bo‘lishi mumkin)
         response = response with { TotalQuestions = collection.Questions?.Count ?? 0 };
 
-        // Agar foydalanuvchi authenticated bo‘lsa, UserProgress qo‘shish
         if (currentUser.IsAuthenticated && currentUser.UserId is not null)
         {
             var userProgress = await repository.GetUserProgressAsync(

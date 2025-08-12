@@ -41,14 +41,8 @@ public sealed class CreateCollectionRequestValidator : AbstractValidator<CreateC
             .NotEmpty()
             .WithMessage("At least one question is required");
 
-        // RuleForEach(x => x.Questions)
-        //     .SetValidator(new CreateQuestionRequestValidator());
-
-        When(x => x.Questions != null && x.Questions.Any(), () =>
-        {
-            RuleForEach(x => x.Questions)
-                .SetValidator(new CreateQuestionRequestValidator());
-        });
+        RuleForEach(x => x.Questions)
+            .SetValidator(new CreateQuestionRequestValidator());
     }
 }
 
