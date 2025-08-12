@@ -23,7 +23,7 @@ public sealed class CollectionsController(ICollectionService collectionService) 
     [ProducesResponseType(typeof(ApiResponse<CollectionResponse>), 201)]
     public async Task<IActionResult> CreateCollection([FromBody] CreateCollectionDto dto, CancellationToken cancellationToken)
     {
-        var collection = await collectionService.CreateCollectionAsync(dto, cancellationToken);
+        var collection = await collectionService.CreateCollectionAsync(dto, cancellationToken); 
         return CreatedAtAction(nameof(GetCollections), new { id = collection.Id }, collection);
     }
 } 
