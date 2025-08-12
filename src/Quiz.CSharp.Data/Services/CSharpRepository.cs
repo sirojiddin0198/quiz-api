@@ -28,8 +28,6 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
             .ToListAsync(cancellationToken);
     }
 
-
-
     public async Task<PaginatedResult<Question>> GetQuestionsByCollectionAsync(
         int collectionId,
         int page,
@@ -84,6 +82,7 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     public async Task<UserProgress?> GetUserProgressAsync(string userId, int collectionId, CancellationToken cancellationToken = default)
     {
         return await context.UserProgress
+            .Include(up => up.Collection)
             .FirstOrDefaultAsync(up => up.UserId == userId && up.CollectionId == collectionId, cancellationToken);
     }
 
@@ -212,6 +211,17 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     {
         context.Collections.Add(collection);
         await context.SaveChangesAsync(cancellationToken);
+    }
+    
+    public async Task<List<int>> GetAnsweredCollectionIdsByUserIdAsync(
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await context.UserAnswers
+            .Where(ua => ua.UserId == userId)
+            .Select(ua => ua.Question.CollectionId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
     }
 }
 
