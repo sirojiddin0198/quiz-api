@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Quiz.CSharp.Api.Contracts;
 using Quiz.CSharp.Api.Services;
 using Quiz.Shared.Contracts;
+using Quiz.CSharp.Api.Dtos;
 
 [ApiController]
 [Route("api/csharp/collections")]
@@ -16,5 +17,13 @@ public sealed class CollectionsController(ICollectionService collectionService) 
     {
         var collections = await collectionService.GetCollectionsAsync(cancellationToken);
         return Ok(new ApiResponse<List<CollectionResponse>>(collections));
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(ApiResponse<CollectionResponse>), 201)]
+    public async Task<IActionResult> CreateCollection([FromBody] CreateCollectionDto dto, CancellationToken cancellationToken)
+    {
+        var collection = await collectionService.CreateCollectionAsync(dto, cancellationToken);
+        return CreatedAtAction(nameof(GetCollections), new { id = collection.Id }, collection);
     }
 } 

@@ -100,8 +100,8 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     }
 
     public async Task<(int totalQuestions, int answeredQuestions, int correctAnswers)> CalculateProgressStatsAsync(
-        string userId, 
-        int collectionId, 
+        string userId,
+        int collectionId,
         CancellationToken cancellationToken = default)
     {
         // Get total questions in collection
@@ -112,14 +112,14 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
         // Get distinct answered questions and count correct answers
         var answeredStats = await context.UserAnswers
             .Where(ua => ua.UserId == userId)
-            .Join(context.Questions, 
-                ua => ua.QuestionId, 
-                q => q.Id, 
+            .Join(context.Questions,
+                ua => ua.QuestionId,
+                q => q.Id,
                 (ua, q) => new { ua, q })
             .Where(joined => joined.q.CollectionId == collectionId && joined.q.IsActive)
             .GroupBy(joined => joined.ua.QuestionId)
-            .Select(g => new 
-            { 
+            .Select(g => new
+            {
                 QuestionId = g.Key,
                 IsCorrect = g.OrderByDescending(x => x.ua.SubmittedAt).First().ua.IsCorrect
             })
@@ -142,8 +142,8 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     }
 
     public async Task<PaginatedResult<UserProgress>> GetAllUserProgressesAsync(
-        int page, 
-        int pageSize, 
+        int page,
+        int pageSize,
         CancellationToken cancellationToken = default)
     {
         var query = context.UserProgress
@@ -152,7 +152,7 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
             .OrderByDescending(up => up.UpdatedAt ?? up.CreatedAt);
 
         var totalCount = await query.CountAsync(cancellationToken);
-        
+
         var items = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -162,8 +162,8 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     }
 
     public async Task<PaginatedResult<IGrouping<string, UserProgress>>> GetUserProgressesGroupedByUserAsync(
-        int page, 
-        int pageSize, 
+        int page,
+        int pageSize,
         CancellationToken cancellationToken = default)
     {
         // Get all user progresses with collection data
@@ -179,7 +179,7 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
             .ToList();
 
         var totalCount = groupedProgresses.Count;
-        
+
         // Apply pagination to grouped results
         var paginatedGroups = groupedProgresses
             .Skip((page - 1) * pageSize)
@@ -208,10 +208,15 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
         return await context.Collections
             .AnyAsync(c => c.Code == code && c.IsActive, cancellationToken);
     }
+     public async Task AddCollectionAsync(Collection collection, CancellationToken cancellationToken = default)
+    {
+        context.Collections.Add(collection);
+        await context.SaveChangesAsync(cancellationToken);
+    }
 }
 
-public sealed class CollectionWithQuestionCount
-{
-    public required Collection Collection { get; init; }
-    public int QuestionCount { get; init; }
-} 
+    public sealed class CollectionWithQuestionCount
+    {
+        public required Collection Collection { get; init; }
+        public int QuestionCount { get; init; }
+    } 
