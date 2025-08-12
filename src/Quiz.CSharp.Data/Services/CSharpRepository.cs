@@ -225,8 +225,8 @@ public sealed class CSharpRepository(ICSharpDbContext context) : ICSharpReposito
     }
 }
 
-    public sealed class CollectionWithQuestionCount
-    {
-        public required Collection Collection { get; init; }
-        public int QuestionCount { get; init; }
-    } 
+public sealed class CollectionWithQuestionCount
+{
+    public required Collection Collection { get; init; }
+    public int QuestionCount { get; init; }
+} 
