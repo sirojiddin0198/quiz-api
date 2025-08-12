@@ -44,32 +44,10 @@ public sealed class CollectionService(
 
         return responses;
     }
-     public async Task<CollectionResponse> CreateCollectionAsync(CreateCollectionDto dto, CancellationToken cancellationToken = default)
+     public async Task<CollectionResponse> CreateCollectionAsync(CreateCollection dto, CancellationToken cancellationToken = default)
     {
-        var collection = mapper.Map<Collection>(dto);
-
+       var collection = mapper.Map<Collection>(dto);
         await repository.AddCollectionAsync(collection, cancellationToken);
-
-        var response = mapper.Map<CollectionResponse>(collection);
-
-        response = response with { TotalQuestions = collection.Questions?.Count ?? 0 };
-
-        if (currentUser.IsAuthenticated && currentUser.UserId is not null)
-        {
-            var userProgress = await repository.GetUserProgressAsync(
-                currentUser.UserId,
-                collection.Id,
-                cancellationToken);
-
-            if (userProgress is not null)
-            {
-                response = response with
-                {
-                    UserProgress = mapper.Map<UserProgressResponse>(userProgress)
-                };
-            }
-        }
-
-        return response;
+        return mapper.Map<CollectionResponse>(collection);
     }
 } 
