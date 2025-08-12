@@ -9,7 +9,7 @@ using Quiz.CSharp.Api.Dtos;
 [ApiController]
 [Route("api/csharp/collections")]
 [Produces("application/json")]
-// [Authorize(Policy = "Admin:Write")]
+[Authorize(Policy = "Admin:Write")]
 public sealed class CollectionsController(ICollectionService collectionService) : ControllerBase
 {
     [HttpGet]
