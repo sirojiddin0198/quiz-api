@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Quiz.CSharp.Api.Contracts;
 using Quiz.CSharp.Api.Contracts.Requests;
-using Quiz.CSharp.Api.Services;
+using Quiz.CSharp.Api.Services.Abstractions;
 using Quiz.Shared.Contracts;
 using Quiz.Infrastructure.Authentication;
 
@@ -42,7 +42,7 @@ public sealed class AnswersController(IAnswerService answerService) : Controller
     [ProducesResponseType<ApiResponse<UserAnswerResponse>>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetLatestAnswer(int questionId, CancellationToken cancellationToken)
     {
-        var answer = await answerService.GetLatestAnswerAsync(questionId, cancellationToken);
+        var answer = await answerService.GetLatestAnswerOrDefaultAsync(questionId, cancellationToken);
         return answer is not null
             ? Ok(new ApiResponse<UserAnswerResponse>(answer))
             : NotFound(new ApiResponse<UserAnswerResponse>(Success: false, Message: "Answer not found"));

@@ -4,7 +4,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Quiz.CSharp.Api.Mapping;
-using Quiz.CSharp.Api.Services;
+using Quiz.CSharp.Api.Services.Abstractions;
 using Quiz.CSharp.Api.Validators;
 
 public static class ServiceCollectionExtensions
@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IQuestionService, QuestionService>();
         services.AddScoped<IResultsService, ResultsService>();
         services.AddScoped<ISubscriptionGuard, SubscriptionGuard>();
-        services.AddScoped<ICollectionManagementService, CollectionManagementService>();
+        services.AddScoped<IUserProgressService, UserProgressService>();
 
         return services;
     }

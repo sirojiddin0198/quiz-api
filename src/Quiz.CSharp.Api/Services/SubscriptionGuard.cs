@@ -2,6 +2,7 @@ namespace Quiz.CSharp.Api.Services;
 
 using Quiz.Shared.Authentication;
 using Quiz.Shared.Common;
+using Quiz.CSharp.Api.Services.Abstractions;
 
 public sealed class SubscriptionGuard(ISubscriptionService subscriptionService) : ISubscriptionGuard
 {

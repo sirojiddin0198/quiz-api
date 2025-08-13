@@ -1,4 +1,4 @@
-namespace Quiz.CSharp.Api.Services;
+namespace Quiz.CSharp.Api.Services.Abstractions;
 
 using Quiz.CSharp.Api.Contracts.Reviews;
 using Quiz.Shared.Common;

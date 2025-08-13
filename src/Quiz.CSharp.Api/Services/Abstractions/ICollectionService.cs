@@ -1,11 +1,10 @@
-namespace Quiz.CSharp.Api.Services;
+namespace Quiz.CSharp.Api.Services.Abstractions;
 
 using Quiz.CSharp.Api.Contracts;
-using Quiz.CSharp.Api.Contracts.Requests;
-using Quiz.Shared.Common;
 
-public interface ICollectionManagementService
+public interface ICollectionService
 {
+    Task<List<CollectionResponse>> GetCollectionsAsync(CancellationToken cancellationToken = default);
     Task<Result<CreateCollectionResponse>> CreateCollectionWithQuestionsAsync(
         CreateCollectionRequest request, 
         CancellationToken cancellationToken = default);

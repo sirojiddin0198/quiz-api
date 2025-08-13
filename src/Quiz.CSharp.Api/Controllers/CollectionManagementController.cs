@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Quiz.CSharp.Api.Contracts;
 using Quiz.CSharp.Api.Contracts.Requests;
-using Quiz.CSharp.Api.Services;
+using Quiz.CSharp.Api.Services.Abstractions;
 using Quiz.Shared.Contracts;
 
 [ApiController]
@@ -12,7 +12,7 @@ using Quiz.Shared.Contracts;
 [Produces("application/json")]
 [Authorize(Policy = "Admin:Write")]
 public sealed class CollectionManagementController(
-    ICollectionManagementService collectionManagementService) : ControllerBase
+    ICollectionService collectionService) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType<ApiResponse<CreateCollectionResponse>>(StatusCodes.Status201Created)]
@@ -23,7 +23,7 @@ public sealed class CollectionManagementController(
         [FromBody] CreateCollectionRequest request,
         CancellationToken cancellationToken = default)
     {
-        var result = await collectionManagementService.CreateCollectionWithQuestionsAsync(request, cancellationToken);
+        var result = await collectionService.CreateCollectionWithQuestionsAsync(request, cancellationToken);
 
         if (result.IsSuccess)
         {

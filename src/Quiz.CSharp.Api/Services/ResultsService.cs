@@ -2,13 +2,15 @@ namespace Quiz.CSharp.Api.Services;
 
 using Quiz.CSharp.Api.Contracts.Reviews;
 using Quiz.CSharp.Data.Entities;
-using Quiz.CSharp.Data.Services;
+using Quiz.CSharp.Data.Repositories.Abstractions;
 using Quiz.Shared.Authentication;
 using Quiz.Shared.Common;
 using System.Text.Json;
+using Quiz.CSharp.Api.Services.Abstractions;
 
 public sealed class ResultsService(
-    ICSharpRepository repository,
+    IAnswerRepository answerRepository,
+    IQuestionRepository questionRepository,
     ICurrentUser currentUser,
     IAnswerValidator answerValidator) : IResultsService
 {
@@ -76,8 +78,6 @@ public sealed class ResultsService(
         public string? ExpectedOutput { get; set; }
     }
 
-
-
     public async Task<Result<List<QuestionReviewResponse>>> GetAnswerReviewAsync(
         int collectionId,
         bool includeUnanswered = false,
@@ -86,12 +86,19 @@ public sealed class ResultsService(
         if (string.IsNullOrEmpty(currentUser.UserId))
             return Result<List<QuestionReviewResponse>>.Failure("User is not authenticated");
 
-        var questions = await repository.GetQuestionsByCollectionAsync(collectionId, 1, int.MaxValue, cancellationToken);
+        var questions = await questionRepository.GetQuestionsByCollectionAsync(
+            collectionId,
+            1,
+            int.MaxValue,
+            cancellationToken);
         var reviewResponses = new List<QuestionReviewResponse>();
 
         foreach (var question in questions.Items)
         {
-            var userAnswer = await repository.GetLatestAnswerAsync(currentUser.UserId, question.Id, cancellationToken);
+            var userAnswer = await answerRepository.GetLatestAnswerOrDefaultAsync(
+                currentUser.UserId,
+                question.Id,
+                cancellationToken);
             
             if (userAnswer == null && !includeUnanswered)
                 continue;
@@ -113,7 +120,7 @@ public sealed class ResultsService(
 
         foreach (var answer in request.Answers)
         {
-            var question = await repository.GetQuestionByIdAsync(answer.QuestionId, cancellationToken);
+            var question = await questionRepository.GetSingleOrDefaultAsync(answer.QuestionId, cancellationToken);
             if (question == null)
                 continue;
 

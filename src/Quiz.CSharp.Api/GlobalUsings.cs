@@ -6,6 +6,7 @@ global using FluentValidation;
 global using Quiz.CSharp.Api.Contracts;
 global using Quiz.CSharp.Api.Contracts.Requests;
 global using Quiz.CSharp.Api.Services;
+global using Quiz.CSharp.Api.Services.Abstractions;
 global using Quiz.CSharp.Data.Services;
 global using Quiz.Shared.Authentication;
 global using Quiz.Shared.Common;

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Quiz.CSharp.Api.Contracts;
-using Quiz.CSharp.Data.Services;
+using Quiz.CSharp.Data.Repositories.Abstractions;
 using Quiz.Shared.Contracts;
 
 [ApiController]
@@ -12,7 +12,7 @@ using Quiz.Shared.Contracts;
 [Produces("application/json")]
 [Authorize(Policy = "Admin:Read")]
 public sealed class UserProgressManagementController(
-    ICSharpRepository repository,
+    IUserProgressRepository userProgressRepository,
     IMapper mapper) : ControllerBase
 {
     [HttpGet]
@@ -28,7 +28,10 @@ public sealed class UserProgressManagementController(
         if (page < 1) page = 1;
         if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
-        var groupedProgresses = await repository.GetUserProgressesGroupedByUserAsync(page, pageSize, cancellationToken);
+        var groupedProgresses = await userProgressRepository.GetUserProgressesGroupedByUserAsync(
+            page,
+            pageSize,
+            cancellationToken);
         
         var responses = new List<UserProgressGroupedResponse>();
 

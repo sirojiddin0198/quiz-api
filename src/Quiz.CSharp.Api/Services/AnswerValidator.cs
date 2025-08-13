@@ -3,6 +3,7 @@ namespace Quiz.CSharp.Api.Services;
 using Quiz.CSharp.Data.Entities;
 using Quiz.CSharp.Data.ValueObjects;
 using System.Text.Json;
+using Quiz.CSharp.Api.Services.Abstractions;
 
 public sealed class AnswerValidator : IAnswerValidator
 {
@@ -45,7 +46,10 @@ public sealed class AnswerValidator : IAnswerValidator
         public string? Solution { get; set; }
     }
 
-    public Task<bool> ValidateAnswerAsync(Question question, string userAnswer, CancellationToken cancellationToken = default)
+    public Task<bool> ValidateAnswerAsync(
+        Question question,
+        string userAnswer,
+        CancellationToken cancellationToken = default)
     {
         var result = question switch
         {

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quiz.CSharp.Data.Data;
 using Quiz.CSharp.Data.Entities;
 using Quiz.CSharp.Data.Models;
 using System.Text.Json;
