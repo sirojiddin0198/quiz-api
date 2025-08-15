@@ -9,7 +9,6 @@ using Quiz.CSharp.Api.Dtos;
 [ApiController]
 [Route("api/csharp/collections")]
 [Produces("application/json")]
-[Authorize(Policy = "Admin:Write")]
 public sealed class CollectionsController(ICollectionService collectionService) : ControllerBase
 {
     [HttpGet]
@@ -21,6 +20,7 @@ public sealed class CollectionsController(ICollectionService collectionService) 
     }
 
     [HttpPost]
+    [Authorize(Policy = "Admin:Write")]
     [ProducesResponseType(typeof(ApiResponse<CollectionResponse>), 201)]
     public async Task<IActionResult> CreateCollection([FromBody] CreateCollection dto, CancellationToken cancellationToken)
     {
