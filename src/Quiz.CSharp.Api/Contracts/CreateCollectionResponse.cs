@@ -8,6 +8,6 @@ public sealed record CreateCollectionResponse
     public string Description { get; init; } = string.Empty;
     public string Icon { get; init; } = string.Empty;
     public int SortOrder { get; init; }
-    public int QuestionsCreated { get; init; }
+    public int QuestionsCreated { get; set; }
     public DateTime CreatedAt { get; init; }
 } 

@@ -6,7 +6,7 @@ using System.Text.Json;
 public abstract class Question : BaseEntity
 {
     public int Id { get; init; }
-    public required int CollectionId { get; init; }
+    public required int CollectionId { get; set; }
     public required string Subcategory { get; init; }
     public required string Difficulty { get; init; }
     public required string Prompt { get; init; }

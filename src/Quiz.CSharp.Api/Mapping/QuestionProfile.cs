@@ -92,8 +92,14 @@ public sealed class QuestionProfile : Profile
 
         CreateMap<MCQOptionData, MCQOptionResponse>()
             .ForMember(dest => dest.Option, opt => opt.MapFrom(src => src.Text));
-            
+
         CreateMap<TestCaseData, TestCaseResponse>();
+        CreateMap<CreateQuestionRequest, MCQQuestion>();
+        CreateMap<CreateQuestionRequest, TrueFalseQuestion>();
+        CreateMap<CreateQuestionRequest, FillQuestion>();
+        CreateMap<CreateQuestionRequest, ErrorSpottingQuestion>();
+        CreateMap<CreateQuestionRequest, OutputPredictionQuestion>();
+        CreateMap<CreateQuestionRequest, CodeWritingQuestion>();
     }
 
     private static string GetQuestionType(Question question)
