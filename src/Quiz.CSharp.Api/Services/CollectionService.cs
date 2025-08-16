@@ -44,14 +44,16 @@ public sealed class CollectionService(
 
         return responses;
     }
-     public async Task<CollectionResponse> CreateCollectionAsync(CreateCollection dto, CancellationToken cancellationToken = default)
+    public async Task<Result<CollectionResponse>> CreateCollectionAsync(CreateCollection dto, CancellationToken cancellationToken = default)
     {
         if (await repository.CollectionExistsAsync(dto.Code, cancellationToken))
-    {
-        throw new InvalidOperationException($"Code '{dto.Code}' allaqachon mavjud.");
-    }
-       var collection = mapper.Map<Collection>(dto);
+        {
+            return Result<CollectionResponse>.Failure($"Collection with code '{dto.Code}' already exists");
+        }
+
+        var collection = mapper.Map<Collection>(dto);
         await repository.AddCollectionAsync(collection, cancellationToken);
-        return mapper.Map<CollectionResponse>(collection);
+
+        return Result<CollectionResponse>.Success(mapper.Map<CollectionResponse>(collection));
     }
-} 
+}

@@ -16,7 +16,6 @@ public static class ServiceCollectionExtensions
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(typeof(SubmitAnswerRequestValidator).Assembly);
 
-
         services.AddScoped<IAnswerService, AnswerService>();
         services.AddScoped<IAnswerValidator, AnswerValidator>();
         services.AddScoped<ICollectionService, CollectionService>();

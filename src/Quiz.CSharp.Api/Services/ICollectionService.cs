@@ -6,5 +6,5 @@ using Quiz.CSharp.Api.Dtos;
 public interface ICollectionService
 {
     Task<List<CollectionResponse>> GetCollectionsAsync(CancellationToken cancellationToken = default);
-    Task<CollectionResponse> CreateCollectionAsync(CreateCollection dto, CancellationToken cancellationToken = default);
+    Task<Result<CollectionResponse>> CreateCollectionAsync(CreateCollection dto, CancellationToken cancellationToken = default);
 } 

@@ -23,8 +23,18 @@ public sealed class CollectionsController(ICollectionService collectionService) 
     [Authorize(Policy = "Admin:Write")]
     [ProducesResponseType(typeof(ApiResponse<CollectionResponse>), 201)]
     public async Task<IActionResult> CreateCollection([FromBody] CreateCollection dto, CancellationToken cancellationToken)
+{
+    var result = await collectionService.CreateCollectionAsync(dto, cancellationToken);
+
+    if (!result.IsSuccess)
     {
-        var collection = await collectionService.CreateCollectionAsync(dto, cancellationToken); 
-        return CreatedAtAction(nameof(GetCollections), new { id = collection.Id }, collection);
+        return BadRequest(result.ErrorMessage);
     }
+
+    return CreatedAtAction(
+        nameof(GetCollections),
+        new { id = result.Value!.Id },
+        result.Value
+    );
+}
 } 
