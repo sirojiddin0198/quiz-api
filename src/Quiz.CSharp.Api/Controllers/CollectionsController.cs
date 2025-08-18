@@ -20,7 +20,7 @@ public sealed class CollectionsController(ICollectionService collectionService) 
     }
 
     [HttpPost]
-    // [Authorize(Policy = "Admin:Write")]
+    [Authorize(Policy = "Admin:Write")]
     [ProducesResponseType(typeof(ApiResponse<CollectionResponse>), 201)]
         public async Task<IActionResult> CreateCollection([FromBody] CreateCollection dto, CancellationToken cancellationToken)
     {
