@@ -20,7 +20,10 @@ public sealed class AnswerRepository(ICSharpDbContext context) : IAnswerReposito
             .OrderByDescending(ua => ua.SubmittedAt)
             .FirstOrDefaultAsync(cancellationToken);
             
-    public async Task<int> GetNextAttemptNumberAsync(string userId, int questionId, CancellationToken cancellationToken = default)
+    public async Task<int> GetNextAttemptNumberAsync(
+        string userId,
+        int questionId,
+        CancellationToken cancellationToken = default)
     {
         var lastAttempt = await context.UserAnswers
             .Where(ua => ua.UserId == userId && ua.QuestionId == questionId)

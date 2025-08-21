@@ -12,14 +12,11 @@ public abstract class Question : BaseEntity
     public required string Prompt { get; init; }
     public int EstimatedTimeMinutes { get; init; }
     
-    // Store all type-specific data as JSON
     public required string Metadata { get; init; }
     
-    // Navigation properties
     public Collection Collection { get; init; } = null!;
     public ICollection<UserAnswer> UserAnswers { get; init; } = [];
     
-    // Helper method for metadata handling
     public T? GetMetadata<T>() where T : class
     {
         try

@@ -2,7 +2,6 @@ namespace Quiz.CSharp.Api.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
 using Quiz.CSharp.Api.Contracts;
-using Quiz.CSharp.Api.Services.Abstractions;
 using Quiz.Shared.Contracts;
 using Quiz.Infrastructure.Authentication;
 

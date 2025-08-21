@@ -101,7 +101,7 @@ public sealed class CreateQuestionRequestValidator : AbstractValidator<CreateQue
     {
         try
         {
-            System.Text.Json.JsonDocument.Parse(json);
+            JsonDocument.Parse(json);
             return true;
         }
         catch

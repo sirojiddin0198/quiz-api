@@ -18,10 +18,8 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services, 
         IConfiguration configuration)
     {
-        // Add Keycloak authentication
         services.AddKeycloakWebApiAuthentication(configuration);
 
-        // Add Keycloak authorization with policies
         services.AddAuthorization()
             .AddKeycloakAuthorization(configuration)
             .AddAuthorizationBuilder()
@@ -51,8 +49,6 @@ public static class ServiceCollectionExtensions
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Quiz Platform API", Version = "v1" });
             
-            // Add OAuth2/OIDC authentication for Keycloak
-            // In Swagger UI, click "Authorize" and use OAuth2 (oauth2) to authenticate with Keycloak
             c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.OAuth2,
@@ -72,7 +68,6 @@ public static class ServiceCollectionExtensions
                 }
             });
 
-            // Keep Bearer token as fallback
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Description = "JWT Authorization header using the Bearer scheme",
@@ -101,7 +96,9 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddAzureAppConfiguration(this IServiceCollection services, ConfigurationManager configuration)
+    public static IServiceCollection AddAzureAppConfiguration(
+        this IServiceCollection services,
+        ConfigurationManager configuration)
     {
         var appConfigConnectionString = configuration["AppConfig:ConnectionString"];
         var copyOfSources = configuration.Sources.ToList();
@@ -112,7 +109,6 @@ public static class ServiceCollectionExtensions
                 o.Connect(appConfigConnectionString);
                 o.Select(KeyFilter.Any, LabelFilter.Null);
 
-                // config label selection.
                 var labels = configuration["AppConfig:Labels"]?.Split(',') ?? [];
                 foreach (var label in labels)
                     o.Select(KeyFilter.Any, label);
@@ -121,7 +117,8 @@ public static class ServiceCollectionExtensions
             if (configuration.GetValue("AppConfig:ReOrderSources", false))
             {
                 var secretsSource = configuration.Sources
-                    .FirstOrDefault(t => t is JsonConfigurationSource jsonConfigurationSource && jsonConfigurationSource.Path?.EndsWith("secrets.json") is true);
+                    .FirstOrDefault(t => t is JsonConfigurationSource jsonConfigurationSource
+                        && jsonConfigurationSource.Path?.EndsWith("secrets.json") is true);
                 configuration.Sources.Add(secretsSource!);
             }
         }

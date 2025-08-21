@@ -17,7 +17,6 @@ public sealed class QuestionConfiguration : IEntityTypeConfiguration<Question>
         builder.Property(q => q.Prompt).HasMaxLength(2000);
         builder.Property(q => q.EstimatedTimeMinutes);
         
-        // Configure JSON metadata column for PostgreSQL
         builder.Property(q => q.Metadata)
             .HasColumnType("jsonb")
             .IsRequired();
@@ -27,7 +26,6 @@ public sealed class QuestionConfiguration : IEntityTypeConfiguration<Question>
             .HasForeignKey(q => q.CollectionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Configure discriminator with snake_case
         builder.HasDiscriminator<string>("question_type")
             .HasValue<MCQQuestion>("mcq")
             .HasValue<TrueFalseQuestion>("true_false")

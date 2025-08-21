@@ -31,16 +31,12 @@ public sealed record UserAnswerReview
 
 public sealed record CorrectAnswerReview
 {
-    // For MCQ
     public List<MCQCorrectOption>? Options { get; init; }
     
-    // For True/False
     public bool? BooleanAnswer { get; init; }
     
-    // For Fill, ErrorSpotting, OutputPrediction
     public string? TextAnswer { get; init; }
     
-    // For CodeWriting
     public string? SampleSolution { get; init; }
     public List<TestCaseResult>? TestCaseResults { get; init; }
 }

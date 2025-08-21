@@ -6,6 +6,7 @@ using Quiz.CSharp.Api.Contracts.Reviews;
 using Quiz.CSharp.Api.Services.Abstractions;
 using Quiz.Shared.Contracts;
 using Quiz.Infrastructure.Authentication;
+using Quiz.Infrastructure.Exceptions;
 
 [ApiController]
 [Route("api/csharp/results")]
@@ -23,12 +24,7 @@ public sealed class ResultsController(IResultsService resultsService) : Controll
         CancellationToken cancellationToken = default)
     {
         var result = await resultsService.GetAnswerReviewAsync(collectionId, includeUnanswered, cancellationToken);
-        
-        return result.IsSuccess
-            ? Ok(new ApiResponse<List<QuestionReviewResponse>>(result.Value))
-            : BadRequest(new ApiResponse<List<QuestionReviewResponse>>(
-                Success: false,
-                Message: result.ErrorMessage));
+        return Ok(new ApiResponse<List<QuestionReviewResponse>>(result));
     }
 
     [HttpPost("sessions/{sessionId}/complete")]
@@ -41,11 +37,6 @@ public sealed class ResultsController(IResultsService resultsService) : Controll
         CancellationToken cancellationToken)
     {
         var result = await resultsService.CompleteSessionAsync(sessionId, request, cancellationToken);
-        
-        return result.IsSuccess
-            ? Ok(new ApiResponse<SessionResultsResponse>(result.Value))
-            : BadRequest(new ApiResponse<SessionResultsResponse>(
-                Success: false,
-                Message: result.ErrorMessage));
+        return Ok(new ApiResponse<SessionResultsResponse>(result));
     }
 } 

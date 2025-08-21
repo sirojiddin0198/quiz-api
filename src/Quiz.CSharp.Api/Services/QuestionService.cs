@@ -2,7 +2,6 @@ namespace Quiz.CSharp.Api.Services;
 
 using AutoMapper;
 using Quiz.CSharp.Api.Contracts;
-using Quiz.CSharp.Data.Entities;
 using Quiz.CSharp.Data.Repositories.Abstractions;
 using Quiz.Shared.Authentication;
 using Quiz.Shared.Common;
@@ -39,7 +38,6 @@ public sealed class QuestionService(
                     cancellationToken);
 
                 if (previousAnswer is not null)
-                {
                     response = response with
                     {
                         PreviousAnswer = new PreviousAnswerResponse
@@ -49,7 +47,6 @@ public sealed class QuestionService(
                             IsCorrect = previousAnswer.IsCorrect
                         }
                     };
-                }
             }
 
             responses.Add(response);

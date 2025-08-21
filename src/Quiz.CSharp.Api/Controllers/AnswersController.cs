@@ -17,7 +17,6 @@ public sealed class AnswersController(IAnswerService answerService) : Controller
     [HttpPost]
     [Authorize]
     [ProducesResponseType<ApiResponse<AnswerSubmissionResponse>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ApiResponse<AnswerSubmissionResponse>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SubmitAnswer(
         [FromBody] SubmitAnswerRequest request,
         CancellationToken cancellationToken)
@@ -28,23 +27,15 @@ public sealed class AnswersController(IAnswerService answerService) : Controller
             request.TimeSpentSeconds,
             cancellationToken);
 
-        return result.IsSuccess
-            ? Ok(new ApiResponse<AnswerSubmissionResponse>(result.Value))
-            : BadRequest(new ApiResponse<AnswerSubmissionResponse>(
-                Success: false,
-                Message: result.ErrorMessage,
-                Errors: result.Errors));
+        return Ok(new ApiResponse<AnswerSubmissionResponse>(result));
     }
 
     [HttpGet("{questionId:int}/latest")]
     [Authorize]
     [ProducesResponseType<ApiResponse<UserAnswerResponse>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ApiResponse<UserAnswerResponse>>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetLatestAnswer(int questionId, CancellationToken cancellationToken)
     {
-        var answer = await answerService.GetLatestAnswerOrDefaultAsync(questionId, cancellationToken);
-        return answer is not null
-            ? Ok(new ApiResponse<UserAnswerResponse>(answer))
-            : NotFound(new ApiResponse<UserAnswerResponse>(Success: false, Message: "Answer not found"));
+        var answer = await answerService.GetLatestAnswerAsync(questionId, cancellationToken);
+        return Ok(new ApiResponse<UserAnswerResponse>(answer));
     }
-} 
+}

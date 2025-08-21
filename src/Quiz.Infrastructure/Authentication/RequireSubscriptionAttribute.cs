@@ -18,7 +18,6 @@ public sealed class RequireSubscriptionAttribute : AuthorizeAttribute, IAsyncAut
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
-        // Skip authorization if AllowAnonymous is present
         if (context.ActionDescriptor.EndpointMetadata.Any(em => em is AllowAnonymousAttribute))
             return;
 
@@ -26,7 +25,7 @@ public sealed class RequireSubscriptionAttribute : AuthorizeAttribute, IAsyncAut
         
         var hasAccess = await subscriptionService.HasAccessAsync(_requiredFeature, context.HttpContext.RequestAborted);
         
-        if (!hasAccess)
+        if (hasAccess is false)
         {
             context.Result = new ForbidResult();
             return;

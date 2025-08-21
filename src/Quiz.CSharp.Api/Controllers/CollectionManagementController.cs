@@ -16,26 +16,17 @@ public sealed class CollectionManagementController(
 {
     [HttpPost]
     [ProducesResponseType<ApiResponse<CreateCollectionResponse>>(StatusCodes.Status201Created)]
-    [ProducesResponseType<ApiResponse<CreateCollectionResponse>>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateCollection(
         [FromBody] CreateCollectionRequest request,
         CancellationToken cancellationToken = default)
     {
-        var result = await collectionService.CreateCollectionWithQuestionsAsync(request, cancellationToken);
+        var response = await collectionService.CreateCollectionWithQuestionsAsync(request, cancellationToken);
 
-        if (result.IsSuccess)
-        {
-            return CreatedAtAction(
-                nameof(CreateCollection),
-                new { id = result.Value!.Id },
-                new ApiResponse<CreateCollectionResponse>(result.Value));
-        }
-
-        return BadRequest(new ApiResponse<CreateCollectionResponse>(
-            Success: false,
-            Message: result.ErrorMessage,
-            Errors: result.Errors));
+        return CreatedAtAction(
+            nameof(CreateCollection),
+            new { id = response.Id },
+            new ApiResponse<CreateCollectionResponse>(response));
     }
-} 
+}

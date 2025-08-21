@@ -1,8 +1,6 @@
 namespace Quiz.Infrastructure.Extensions;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 public static class WebApplicationExtensions
@@ -16,7 +14,6 @@ public static class WebApplicationExtensions
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quiz Platform API v1");
                 
-                // Configure OAuth2 settings for Keycloak
                 c.OAuthClientId(app.Configuration["Keycloak:resource"]);
                 c.OAuthAppName("Quiz Platform API");
                 c.OAuthUsePkce();

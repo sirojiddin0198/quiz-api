@@ -16,7 +16,5 @@ public sealed class SubscriptionGuard(ISubscriptionService subscriptionService) 
     }
 
     public async Task<bool> HasAccessAsync(string feature, CancellationToken cancellationToken = default)
-    {
-        return await subscriptionService.HasAccessAsync(feature, cancellationToken);
-    }
+        => await subscriptionService.HasAccessAsync(feature, cancellationToken);
 } 

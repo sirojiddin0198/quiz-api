@@ -13,7 +13,6 @@ public class DataSeedingService(
     IServiceProvider serviceProvider,
     ILogger<DataSeedingService> logger) : IHostedService
 {
-    // Internal metadata classes - not exposed outside this service
     internal class QuestionMetadataBase
     {
         public string? CodeBefore { get; set; }
@@ -109,7 +108,7 @@ public class DataSeedingService(
     {
         var seedDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Seed", "questions");
         
-        if (!Directory.Exists(seedDirectory))
+        if (Directory.Exists(seedDirectory) is false)
         {
             logger.LogWarning("Seed directory not found: {SeedDirectory}", seedDirectory);
             return;
@@ -118,7 +117,6 @@ public class DataSeedingService(
         var jsonFiles = Directory.GetFiles(seedDirectory, "*.json");
         logger.LogInformation("Found {Count} JSON files to process", jsonFiles.Length);
 
-        // Sort files by categoryId (difficulty) to ensure questions are seeded in increasing difficulty order
         var filesWithMetadata = new List<(string FilePath, int CategoryId)>();
         
         foreach (var jsonFile in jsonFiles)
@@ -129,9 +127,7 @@ public class DataSeedingService(
                 var seedData = JsonSerializer.Deserialize<SeedQuestionFile>(jsonContent);
                 
                 if (seedData?.Metadata != null)
-                {
                     filesWithMetadata.Add((jsonFile, seedData.Metadata.CategoryId));
-                }
             }
             catch (Exception ex)
             {
@@ -139,7 +135,6 @@ public class DataSeedingService(
             }
         }
 
-        // Sort by categoryId (increasing difficulty)
         filesWithMetadata.Sort((a, b) => a.CategoryId.CompareTo(b.CategoryId));
         
         logger.LogInformation("Processing files in difficulty order: {Order}", 
@@ -158,7 +153,10 @@ public class DataSeedingService(
         }
     }
 
-    private async Task ProcessJsonFileAsync(CSharpDbContext dbContext, string jsonFilePath, CancellationToken cancellationToken)
+    private async Task ProcessJsonFileAsync(
+        CSharpDbContext dbContext,
+        string jsonFilePath,
+        CancellationToken cancellationToken)
     {
         var fileName = Path.GetFileName(jsonFilePath);
         logger.LogInformation("Processing file: {FileName}", fileName);
@@ -172,46 +170,52 @@ public class DataSeedingService(
             return;
         }
 
-        // Create or get collection
-        var collection = await GetOrCreateCollectionAsync(dbContext, seedData.Metadata, cancellationToken);
+        var collection = await GetOrCreateCollectionAsync(
+            dbContext,
+            seedData.Metadata,
+            cancellationToken);
 
-        // Sort questions by type within the collection to ensure proper ordering
         var sortedQuestions = SortQuestionsByType(seedData.Questions);
         
         logger.LogInformation("Processing {QuestionCount} questions in type order for collection {CollectionCode}", 
             sortedQuestions.Count, collection.Code);
 
-        // Process questions
         var processedCount = 0;
         var skippedCount = 0;
         foreach (var seedQuestion in sortedQuestions)
         {
             try
             {
-                var wasCreated = await CreateQuestionFromSeedAsync(dbContext, collection, seedQuestion, cancellationToken);
+                var wasCreated = await CreateQuestionFromSeedAsync(
+                    dbContext,
+                    collection,
+                    seedQuestion,
+                    cancellationToken);
                 if (wasCreated)
                 {
                     await dbContext.SaveChangesAsync(cancellationToken);
                     processedCount++;
                 }
                 else
-                {
                     skippedCount++;
-                }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error creating question {QuestionId} from file {FileName}", seedQuestion.Id, fileName);
+                logger.LogError(
+                    ex,
+                    "Error creating question {QuestionId} from file {FileName}",
+                    seedQuestion.Id,
+                    fileName);
             }
         }
 
-        logger.LogInformation("Successfully processed {ProcessedCount} questions, skipped {SkippedCount} existing questions from {FileName}", 
+        logger.LogInformation(@"Successfully processed {ProcessedCount} questions, 
+            skipped {SkippedCount} existing questions from {FileName}", 
             processedCount, skippedCount, fileName);
     }
 
     private static List<SeedQuestion> SortQuestionsByType(List<SeedQuestion> questions)
     {
-        // Define question type order: true_false → mcq → error_spotting → fill → output_prediction → code_writing
         var typeOrder = new Dictionary<string, int>
         {
             { "true_false", 1 },
@@ -225,15 +229,15 @@ public class DataSeedingService(
         return [.. questions.OrderBy(q => typeOrder.GetValueOrDefault(q.Type.ToLowerInvariant(), 999))];
     }
 
-    private async Task<Collection> GetOrCreateCollectionAsync(CSharpDbContext dbContext, SeedCollectionMetadata metadata, CancellationToken cancellationToken)
+    private async Task<Collection> GetOrCreateCollectionAsync(
+        CSharpDbContext dbContext,
+        SeedCollectionMetadata metadata,
+        CancellationToken cancellationToken)
     {
         var existingCollection = await dbContext.Collections
             .FirstOrDefaultAsync(c => c.Code == metadata.Id, cancellationToken);
 
-        if (existingCollection != null)
-        {
-            return existingCollection;
-        }
+        if (existingCollection is not null) return existingCollection;
 
         var collection = new Collection
         {
@@ -251,16 +255,20 @@ public class DataSeedingService(
         return collection;
     }
 
-    private async Task<bool> CreateQuestionFromSeedAsync(CSharpDbContext dbContext, Collection collection, SeedQuestion seedQuestion, CancellationToken cancellationToken)
+    private async Task<bool> CreateQuestionFromSeedAsync(
+        CSharpDbContext dbContext,
+        Collection collection,
+        SeedQuestion seedQuestion,
+        CancellationToken cancellationToken)
     {
-        // Check if question already exists by checking the prompt and collection
         var existingQuestion = await dbContext.Questions
             .FirstOrDefaultAsync(q => q.CollectionId == collection.Id && q.Prompt == seedQuestion.Prompt, cancellationToken);
 
-        if (existingQuestion != null)
+        if (existingQuestion is not null)
         {
             logger.LogDebug("Question already exists in collection {CollectionId} with prompt: {Prompt}", 
-                collection.Id, seedQuestion.Prompt);
+                collection.Id,
+                seedQuestion.Prompt);
             return false;
         }
 
@@ -440,7 +448,7 @@ public class DataSeedingService(
     {
         var hints = new List<QuestionHintData>();
         
-        if (!string.IsNullOrWhiteSpace(explanation))
+        if (string.IsNullOrWhiteSpace(explanation) is false)
         {
             hints.Add(new QuestionHintData
             {
@@ -453,9 +461,5 @@ public class DataSeedingService(
     }
 
     private string DetermineDifficulty(SeedQuestion seedQuestion, string defaultDifficulty = "Beginner")
-    {
-        // You can implement more sophisticated logic here based on question properties
-        // For now, using defaults based on question type
-        return defaultDifficulty;
-    }
+        => defaultDifficulty;
 } 

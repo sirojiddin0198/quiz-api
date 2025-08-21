@@ -24,7 +24,6 @@ public sealed class UserProgressManagementController(
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
-        // Validate pagination parameters
         if (page < 1) page = 1;
         if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
@@ -40,7 +39,6 @@ public sealed class UserProgressManagementController(
             var userProgresses = userGroup.ToList();
             var firstProgress = userProgresses.First();
 
-            // Calculate overall statistics
             var totalQuestionsAnswered = userProgresses.Sum(up => up.AnsweredQuestions);
             var totalCorrectAnswers = userProgresses.Sum(up => up.CorrectAnswers);
             var overallSuccessRate = totalQuestionsAnswered > 0 

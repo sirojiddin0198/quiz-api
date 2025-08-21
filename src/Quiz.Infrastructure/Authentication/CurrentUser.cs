@@ -27,8 +27,7 @@ public sealed class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICur
         get
         {
             var realmAccessClaim = _principal?.FindFirst("realm_access")?.Value;
-            if (string.IsNullOrEmpty(realmAccessClaim))
-                return [];
+            if (string.IsNullOrEmpty(realmAccessClaim)) return [];
 
             try
             {
@@ -47,19 +46,18 @@ public sealed class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICur
         get
         {
             var resourceAccessClaim = _principal?.FindFirst("resource_access")?.Value;
-            if (string.IsNullOrEmpty(resourceAccessClaim))
-                return [];
+            if (string.IsNullOrEmpty(resourceAccessClaim)) return [];
 
             try
             {
                 var resourceAccess = JsonSerializer.Deserialize<Dictionary<string, ResourceAccess>>(resourceAccessClaim);
                 var clientRoles = new List<string>();
                 
-                if (resourceAccess != null)
+                if (resourceAccess is not null)
                 {
                     foreach (var resource in resourceAccess.Values)
                     {
-                        if (resource.Roles != null)
+                        if (resource.Roles is not null)
                             clientRoles.AddRange(resource.Roles);
                     }
                 }

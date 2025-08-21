@@ -7,6 +7,7 @@ using Quiz.Shared.Authentication;
 using Quiz.Shared.Common;
 using System.Text.Json;
 using Quiz.CSharp.Api.Services.Abstractions;
+using Quiz.Infrastructure.Exceptions;
 
 public sealed class ResultsService(
     IAnswerRepository answerRepository,
@@ -14,7 +15,6 @@ public sealed class ResultsService(
     ICurrentUser currentUser,
     IAnswerValidator answerValidator) : IResultsService
 {
-    // Internal metadata classes for deserialization
     private class QuestionMetadataBase
     {
         public string? CodeBefore { get; set; }
@@ -78,13 +78,13 @@ public sealed class ResultsService(
         public string? ExpectedOutput { get; set; }
     }
 
-    public async Task<Result<List<QuestionReviewResponse>>> GetAnswerReviewAsync(
+    public async Task<List<QuestionReviewResponse>> GetAnswerReviewAsync(
         int collectionId,
         bool includeUnanswered = false,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(currentUser.UserId))
-            return Result<List<QuestionReviewResponse>>.Failure("User is not authenticated");
+            throw new CustomUnauthorizedException("User is not authenticated");
 
         var questions = await questionRepository.GetQuestionsByCollectionAsync(
             collectionId,
@@ -107,26 +107,33 @@ public sealed class ResultsService(
             reviewResponses.Add(reviewResponse);
         }
 
-        return Result<List<QuestionReviewResponse>>.Success(reviewResponses);
+        return reviewResponses;
     }
 
-    public async Task<Result<SessionResultsResponse>> CompleteSessionAsync(
+    public async Task<SessionResultsResponse> CompleteSessionAsync(
         string sessionId,
         CompleteSessionRequest request,
         CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(sessionId))
+            throw new CustomBadRequestException("Session ID is required");
+
+        if (request?.Answers == null || request.Answers.Count == 0)
+            throw new CustomBadRequestException("Answers are required to complete the session");
+
         var reviewResponses = new List<QuestionReviewResponse>();
         var correctCount = 0;
 
         foreach (var answer in request.Answers)
         {
             var question = await questionRepository.GetSingleOrDefaultAsync(answer.QuestionId, cancellationToken);
-            if (question == null)
-                continue;
+            if (question == null) continue;
 
-            var isCorrect = await answerValidator.ValidateAnswerAsync(question, answer.Answer, cancellationToken);
-            if (isCorrect)
-                correctCount++;
+            var isCorrect = await answerValidator.ValidateAnswerAsync(
+                question,
+                answer.Answer,
+                cancellationToken);
+            if (isCorrect) correctCount++;
 
             var userAnswerReview = new UserAnswerReview
             {
@@ -153,14 +160,13 @@ public sealed class ResultsService(
             ReviewItems = reviewResponses
         };
 
-        return Result<SessionResultsResponse>.Success(response);
+        return response;
     }
 
     private QuestionReviewResponse BuildQuestionReview(Question question, UserAnswer? userAnswer)
     {
         UserAnswerReview? userAnswerReview = null;
-        if (userAnswer != null)
-        {
+        if (userAnswer is not null)
             userAnswerReview = new UserAnswerReview
             {
                 Answer = userAnswer.Answer,
@@ -168,7 +174,6 @@ public sealed class ResultsService(
                 SubmittedAt = userAnswer.SubmittedAt,
                 TimeSpentSeconds = userAnswer.TimeSpentSeconds
             };
-        }
 
         return BuildQuestionReview(question, userAnswerReview);
     }
@@ -269,7 +274,7 @@ public sealed class ResultsService(
             {
                 Input = tc.Input ?? string.Empty,
                 ExpectedOutput = tc.ExpectedOutput ?? string.Empty,
-                UserOutput = null, // Would need to run tests to get this
+                UserOutput = null, 
                 Passed = false
             }).ToList();
 
@@ -281,8 +286,7 @@ public sealed class ResultsService(
     }
 
     private string GetQuestionType(Question question)
-    {
-        return question switch
+        => question switch
         {
             MCQQuestion => "MCQ",
             TrueFalseQuestion => "TrueFalse",
@@ -292,29 +296,34 @@ public sealed class ResultsService(
             CodeWritingQuestion => "CodeWriting",
             _ => "Unknown"
         };
-    }
 
     private string? GetCodeWithBlank(Question question)
     {
         if (question is not FillQuestion) return null;
+
         var metadata = JsonSerializer.Deserialize<FillMetadata>(question.Metadata);
         var codeWithBlank = metadata?.CodeWithBlank;
+
         return string.IsNullOrWhiteSpace(codeWithBlank) ? null : codeWithBlank;
     }
 
     private string? GetCodeWithError(Question question)
     {
         if (question is not ErrorSpottingQuestion) return null;
+
         var metadata = JsonSerializer.Deserialize<ErrorSpottingMetadata>(question.Metadata);
         var codeWithError = metadata?.CodeWithError;
+
         return string.IsNullOrWhiteSpace(codeWithError) ? null : codeWithError;
     }
 
     private string? GetSnippet(Question question)
     {
         if (question is not OutputPredictionQuestion) return null;
+
         var metadata = JsonSerializer.Deserialize<OutputPredictionMetadata>(question.Metadata);
         var snippet = metadata?.Snippet;
+        
         return string.IsNullOrWhiteSpace(snippet) ? null : snippet;
     }
 } 

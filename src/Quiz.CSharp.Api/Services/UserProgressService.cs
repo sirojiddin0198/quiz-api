@@ -25,6 +25,7 @@ public sealed class UserProgressService(
                     responses.Add(mapper.Map<CollectionProgressResponse>(userProgress));
             }
         }
+        
         return responses;
     }
 } 

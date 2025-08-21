@@ -30,12 +30,10 @@ public sealed class UserProgressRepository(ICSharpDbContext context) : IUserProg
         int collectionId,
         CancellationToken cancellationToken = default)
     {
-        // Get total questions in collection
         var totalQuestions = await context.Questions
             .Where(q => q.CollectionId == collectionId && q.IsActive)
             .CountAsync(cancellationToken);
 
-        // Get distinct answered questions and count correct answers
         var answeredStats = await context.UserAnswers
             .Where(ua => ua.UserId == userId)
             .Join(context.Questions,
@@ -82,21 +80,17 @@ public sealed class UserProgressRepository(ICSharpDbContext context) : IUserProg
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        // Get all user progresses with collection data
         var allProgresses = await context.UserProgress
             .Include(up => up.Collection)
             .Where(up => up.IsActive)
             .ToListAsync(cancellationToken);
 
-        // Group by user and order by most recent activity
         var groupedProgresses = allProgresses
             .GroupBy(up => up.UserId)
             .OrderByDescending(g => g.Max(up => up.UpdatedAt ?? up.CreatedAt))
             .ToList();
 
         var totalCount = groupedProgresses.Count;
-
-        // Apply pagination to grouped results
         var paginatedGroups = groupedProgresses
             .Skip((page - 1) * pageSize)
             .Take(pageSize)

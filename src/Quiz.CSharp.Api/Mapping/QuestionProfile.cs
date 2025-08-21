@@ -7,7 +7,6 @@ using System.Text.Json;
 
 public sealed class QuestionProfile : Profile
 {
-    // Internal metadata classes for deserialization
     private class QuestionMetadataBase
     {
         public string? CodeBefore { get; set; }
