@@ -9,4 +9,5 @@ public interface ICollectionRepository
     Task<List<int>> GetAnsweredCollectionIdsByUserIdAsync(
         string userId,
         CancellationToken cancellationToken = default);
+    Task<bool> ExistAsync(int id, CancellationToken cancellationToken = default);
 }

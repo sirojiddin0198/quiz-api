@@ -3,6 +3,7 @@ namespace Quiz.CSharp.Api.Mapping;
 using AutoMapper;
 using Quiz.CSharp.Api.Contracts;
 using Quiz.CSharp.Data.Entities;
+using Quiz.CSharp.Data.Models;
 using System.Text.Json;
 
 public sealed class QuestionProfile : Profile
@@ -99,6 +100,16 @@ public sealed class QuestionProfile : Profile
         CreateMap<CreateQuestionRequest, ErrorSpottingQuestion>();
         CreateMap<CreateQuestionRequest, OutputPredictionQuestion>();
         CreateMap<CreateQuestionRequest, CodeWritingQuestion>();
+
+        CreateMap<CreateQuestionDto, CreateQuestionModel>();
+        CreateMap<CreateQuestionModel, MCQQuestion>();
+        CreateMap<CreateQuestionModel, TrueFalseQuestion>();
+        CreateMap<CreateQuestionModel, FillQuestion>();
+        CreateMap<CreateQuestionModel, ErrorSpottingQuestion>();
+        CreateMap<CreateQuestionModel, OutputPredictionQuestion>();
+        CreateMap<CreateQuestionModel, CodeWritingQuestion>();
+        CreateMap<Question, CreateQuestionResponse>()
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => GetQuestionType(src)));
     }
 
     private static string GetQuestionType(Question question)

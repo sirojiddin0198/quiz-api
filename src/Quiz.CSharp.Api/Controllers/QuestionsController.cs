@@ -6,12 +6,15 @@ using Quiz.CSharp.Api.Contracts;
 using Quiz.CSharp.Api.Services.Abstractions;
 using Quiz.Shared.Contracts;
 using Quiz.Infrastructure.Authentication;
+using Quiz.CSharp.Data.Models;
 
 [ApiController]
 [Route("api/csharp/questions")]
 [Produces("application/json")]
 [RequireSubscription("csharp-quiz")]
-public sealed class QuestionsController(IQuestionService questionService) : ControllerBase
+public sealed class QuestionsController(
+    IQuestionService questionService,
+    IMapper mapper) : ControllerBase
 {
     [HttpGet]
     [Authorize]
@@ -43,5 +46,18 @@ public sealed class QuestionsController(IQuestionService questionService) : Cont
     {
         var questions = await questionService.GetPreviewQuestionsAsync(collectionId, cancellationToken);
         return Ok(new ApiResponse<List<QuestionResponse>>(questions));
+    }
+
+    [HttpPost("create")]
+    [Authorize("Admin:Write")]
+    [ProducesResponseType<ApiResponse<CreateQuestionResponse>>(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> CreateQuestion(
+        [FromBody] CreateQuestionDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await questionService.CreateQuestionAsync(mapper.Map<CreateQuestionModel>(request), cancellationToken);
+        return Ok(new ApiResponse<CreateQuestionResponse>(response.Value));
     }
 } 

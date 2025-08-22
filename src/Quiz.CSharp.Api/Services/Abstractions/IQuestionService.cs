@@ -1,6 +1,7 @@
 namespace Quiz.CSharp.Api.Services.Abstractions;
 
 using Quiz.CSharp.Api.Contracts;
+using Quiz.CSharp.Data.Models;
 using Quiz.Shared.Common;
 
 public interface IQuestionService
@@ -11,4 +12,5 @@ public interface IQuestionService
         int pageSize,
         CancellationToken cancellationToken = default);
     Task<List<QuestionResponse>> GetPreviewQuestionsAsync(int collectionId, CancellationToken cancellationToken = default);
+    Task<Result<CreateQuestionResponse>> CreateQuestionAsync(CreateQuestionModel model, CancellationToken cancellationToken = default);
 } 

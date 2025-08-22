@@ -40,6 +40,9 @@ public sealed class CollectionRepository(ICSharpDbContext context) : ICollection
             .Select(ua => ua.Question.CollectionId)
             .Distinct()
             .ToListAsync(cancellationToken);
+
+    public async Task<bool> ExistAsync(int id, CancellationToken cancellationToken = default)
+        => await context.Collections.AnyAsync(c => c.Id == id && c.IsActive, cancellationToken);
 }
 
 public sealed class CollectionWithQuestionCount

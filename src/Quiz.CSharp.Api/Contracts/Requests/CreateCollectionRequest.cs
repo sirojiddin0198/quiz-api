@@ -10,7 +10,7 @@ public sealed record CreateCollectionRequest
     public List<CreateQuestionRequest> Questions { get; init; } = [];
 }
 
-public sealed record CreateQuestionRequest
+public record CreateQuestionRequest
 {
     public required string Type { get; init; }
     public required string Subcategory { get; init; }
